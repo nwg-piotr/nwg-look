@@ -2,7 +2,7 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
-  <object class="GtkWindow">
+  <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
     <child>
       <!-- n-columns=3 n-rows=3 -->
