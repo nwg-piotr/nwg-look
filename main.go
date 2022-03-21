@@ -35,6 +35,9 @@ func main() {
 	prop, _ := gtkSettings.GetProperty("gtk-theme-name")
 	currentTheme, _ := prop.(string)
 
+	prop, _ = gtkSettings.GetProperty("gtk-font-name")
+	defaultFontName, _ := prop.(string)
+
 	fmt.Println("Current theme:", currentTheme)
 
 	win.Connect("destroy", func() {
@@ -56,6 +59,9 @@ func main() {
 	for _, prop := range margins {
 		preview.SetProperty(prop, 6)
 	}
+
+	fontSelector := setUpFontSelector(defaultFontName)
+	grid.Attach(fontSelector, 1, 2, 1, 1)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

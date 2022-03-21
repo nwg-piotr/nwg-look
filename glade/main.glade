@@ -5,7 +5,7 @@
   <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
     <child>
-      <!-- n-columns=2 n-rows=3 -->
+      <!-- n-columns=2 n-rows=4 -->
       <object class="GtkGrid" id="grid">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
@@ -78,6 +78,7 @@
           <packing>
             <property name="left-attach">0</property>
             <property name="top-attach">1</property>
+            <property name="height">2</property>
           </packing>
         </child>
         <child>
@@ -108,6 +109,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="margin-end">6</property>
                 <property name="margin-bottom">6</property>
               </object>
               <packing>
@@ -135,9 +137,12 @@
           </object>
           <packing>
             <property name="left-attach">0</property>
-            <property name="top-attach">2</property>
+            <property name="top-attach">3</property>
             <property name="width">2</property>
           </packing>
+        </child>
+        <child>
+          <placeholder/>
         </child>
         <child>
           <placeholder/>

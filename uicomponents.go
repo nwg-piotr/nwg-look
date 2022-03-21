@@ -71,6 +71,7 @@ func setUpWidgetsPreview() *gtk.Frame {
 	grid.Attach(scale, 2, 0, 1, 1)
 
 	separator, _ := gtk.SeparatorNew(gtk.ORIENTATION_HORIZONTAL)
+	separator.SetProperty("valign", gtk.ALIGN_CENTER)
 	grid.Attach(separator, 2, 1, 1, 1)
 
 	combo, _ := gtk.ComboBoxTextNew()
@@ -79,4 +80,18 @@ func setUpWidgetsPreview() *gtk.Frame {
 	grid.Attach(combo, 2, 2, 1, 1)
 
 	return frame
+}
+
+func setUpFontSelector(defaultFontName string) *gtk.Box {
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+
+	btn, _ := gtk.ButtonNew()
+	btn.SetLabel(defaultFontName)
+	btn.SetProperty("valign", gtk.ALIGN_CENTER)
+	box.PackEnd(btn, true, true, 6)
+
+	label, _ := gtk.LabelNew("Default font:")
+	box.PackEnd(label, false, false, 6)
+
+	return box
 }
