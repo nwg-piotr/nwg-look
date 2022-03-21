@@ -7,56 +7,62 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
+var themeNames = [...]string{
+	"Adapta",
+	"Adapta-Eta",
+	"Adwaita",
+	"Adwaita-Dark-Green",
+	"Adwaita-dark",
+	"Aero",
+	"Aero-dark",
+	"Aquatix",
+	"ArchLabs-Dark",
+	"ArchLabs-Light",
+}
+
+var (
+	listBox *gtk.ListBox
+	margins = [...]string{"margin-start", "margin-end", "margin-top", "margin-bottom"}
+)
+
 func main() {
 	gtk.Init(nil)
 
 	builder, _ := gtk.BuilderNewFromFile("/home/piotr/Code/nwg-look/glade/main.glade")
-	win, _ := getWindow(builder)
-	fmt.Println(win)
+	win, _ := getWindow(builder, "window")
 
-	// gtkSettings, _ := gtk.SettingsGetDefault()
+	gtkSettings, _ := gtk.SettingsGetDefault()
+	prop, _ := gtkSettings.GetProperty("gtk-theme-name")
+	currentTheme, _ := prop.(string)
 
-	// win, err := gtk.WindowNew(gtk.WINDOW_TOPLEVEL)
-	// if err != nil {
-	// 	log.Fatal("Unable to create window:", err)
-	// }
+	fmt.Println("Current theme:", currentTheme)
 
 	win.Connect("destroy", func() {
 		gtk.MainQuit()
 	})
 
-	// box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
-	// win.Add(box)
+	viewport, _ := getViewPort(builder, "viewport-list")
 
-	// var names = [...]string{"Adwaita", "Adwaita-dark", "HighContrast", "Raleigh"}
+	listBox = setUpThemeListBox(gtkSettings, currentTheme)
 
-	// for _, name := range names {
-	// 	btn, _ := gtk.ButtonNew()
-	// 	n := name
-	// 	btn.SetLabel(name)
-	// 	btn.Connect("clicked", func() {
-	// 		gtkSettings.SetProperty("gtk-theme-name", n)
-	// 	})
-	// 	box.PackStart(btn, false, false, 10)
-	// }
+	viewport.Add(listBox)
+
+	grid, _ := getGrid(builder, "grid")
+
+	preview := setUpWidgetsPreview()
+
+	grid.Attach(preview, 1, 1, 1, 1)
+
+	for _, prop := range margins {
+		preview.SetProperty(prop, 6)
+	}
+
+	btnClose, _ := getButton(builder, "btn-close")
+	btnClose.Connect("clicked", func() {
+		gtk.MainQuit()
+	})
 
 	win.ShowAll()
 
 	gtk.Main()
-}
-
-// getWindow returns *gtk.Window object from the glade resource
-func getWindow(b *gtk.Builder) (*gtk.Window, error) {
-
-	obj, err := b.GetObject("window")
-	if err != nil {
-		return nil, err
-	}
-
-	window, ok := obj.(*gtk.Window)
-	if !ok {
-		return nil, err
-	}
-
-	return window, nil
 }
