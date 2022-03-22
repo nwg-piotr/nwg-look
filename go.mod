@@ -7,6 +7,7 @@ require github.com/gotk3/gotk3 v0.6.1
 require (
 	github.com/creack/pty v1.1.17 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/visualfc/fastmod v1.3.9 // indirect
 	github.com/visualfc/gocode v1.3.2 // indirect
 	github.com/visualfc/gotools v1.3.6 // indirect

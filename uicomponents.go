@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/gotk3/gotk3/gtk"
 )
 
-func setUpThemeListBox(settings *gtk.Settings, currentTheme string) *gtk.ListBox {
+func setUpThemeListBox(currentTheme string) *gtk.ListBox {
+	settings, _ := gtk.SettingsGetDefault()
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
@@ -21,7 +20,6 @@ func setUpThemeListBox(settings *gtk.Settings, currentTheme string) *gtk.ListBox
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			settings.SetProperty("gtk-theme-name", n)
-			fmt.Println(n)
 		})
 		if n == currentTheme {
 			rowToSelect = row
@@ -30,7 +28,6 @@ func setUpThemeListBox(settings *gtk.Settings, currentTheme string) *gtk.ListBox
 		box.PackStart(lbl, false, false, 0)
 
 		row.Add(eventBox)
-		fmt.Println(name)
 		listBox.Add(row)
 	}
 	listBox.SelectRow(rowToSelect)
@@ -40,6 +37,9 @@ func setUpThemeListBox(settings *gtk.Settings, currentTheme string) *gtk.ListBox
 
 func setUpWidgetsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Preview")
+	for _, prop := range margins {
+		frame.SetProperty(prop, 6)
+	}
 
 	grid, _ := gtk.GridNew()
 	grid.SetRowSpacing(6)

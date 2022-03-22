@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	// "log"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gotk3/gotk3/gtk"
 )
@@ -25,20 +24,25 @@ var (
 	margins = [...]string{"margin-start", "margin-end", "margin-top", "margin-bottom"}
 )
 
+type gtkSettingsFields struct {
+	themeName       string
+	iconThemeName   string
+	fontName        string
+	cursorThemeName string
+	cursorThemeSize int
+}
+
+var gtkSettings gtkSettingsFields
+
 func main() {
+	log.SetLevel(log.DebugLevel)
+
 	gtk.Init(nil)
+
+	loadGtkSettings()
 
 	builder, _ := gtk.BuilderNewFromFile("/home/piotr/Code/nwg-look/glade/main.glade")
 	win, _ := getWindow(builder, "window")
-
-	gtkSettings, _ := gtk.SettingsGetDefault()
-	prop, _ := gtkSettings.GetProperty("gtk-theme-name")
-	currentTheme, _ := prop.(string)
-
-	prop, _ = gtkSettings.GetProperty("gtk-font-name")
-	defaultFontName, _ := prop.(string)
-
-	fmt.Println("Current theme:", currentTheme)
 
 	win.Connect("destroy", func() {
 		gtk.MainQuit()
@@ -46,7 +50,7 @@ func main() {
 
 	viewport, _ := getViewPort(builder, "viewport-list")
 
-	listBox = setUpThemeListBox(gtkSettings, currentTheme)
+	listBox = setUpThemeListBox(gtkSettings.themeName)
 
 	viewport.Add(listBox)
 
@@ -56,11 +60,7 @@ func main() {
 
 	grid.Attach(preview, 1, 1, 1, 1)
 
-	for _, prop := range margins {
-		preview.SetProperty(prop, 6)
-	}
-
-	fontSelector := setUpFontSelector(defaultFontName)
+	fontSelector := setUpFontSelector(gtkSettings.fontName)
 	grid.Attach(fontSelector, 1, 2, 1, 1)
 
 	btnClose, _ := getButton(builder, "btn-close")
