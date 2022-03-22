@@ -2,6 +2,10 @@
 package main
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/gotk3/gotk3/gtk"
 	log "github.com/sirupsen/logrus"
 )
@@ -23,6 +27,60 @@ func loadGtkSettings() {
 	prop, _ = settings.GetProperty("gtk-cursor-theme-name")
 	gtkSettings.cursorThemeName, _ = prop.(string)
 	log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
+}
+
+func getAppDirs() []string {
+	var dirs []string
+	xdgDataDirs := ""
+
+	home := os.Getenv("HOME")
+	xdgDataHome := os.Getenv("XDG_DATA_HOME")
+	if os.Getenv("XDG_DATA_DIRS") != "" {
+		xdgDataDirs = os.Getenv("XDG_DATA_DIRS")
+	} else {
+		xdgDataDirs = "/usr/local/share/:/usr/share/"
+	}
+	if xdgDataHome != "" {
+		dirs = append(dirs, filepath.Join(xdgDataHome, "applications"))
+	} else if home != "" {
+		dirs = append(dirs, filepath.Join(home, ".local/share/applications"))
+	}
+	for _, d := range strings.Split(xdgDataDirs, ":") {
+		dirs = append(dirs, filepath.Join(d, "applications"))
+	}
+	flatpakDirs := []string{filepath.Join(home, ".local/share/flatpak/exports/share/applications"),
+		"/var/lib/flatpak/exports/share/applications"}
+
+	for _, d := range flatpakDirs {
+		if pathExists(d) && !isIn(dirs, d) {
+			dirs = append(dirs, d)
+		}
+	}
+	var confirmedDirs []string
+	for _, d := range dirs {
+		if pathExists(d) {
+			confirmedDirs = append(confirmedDirs, d)
+		}
+	}
+	return confirmedDirs
+}
+
+func isIn(slice []string, val string) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+func pathExists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }
 
 // getWindow returns *gtk.Window object from the glade resource

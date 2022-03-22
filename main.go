@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -36,6 +38,8 @@ var gtkSettings gtkSettingsFields
 
 func main() {
 	log.SetLevel(log.DebugLevel)
+
+	fmt.Println("AppDirs", getAppDirs())
 
 	gtk.Init(nil)
 
