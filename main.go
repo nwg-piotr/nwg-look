@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -59,8 +61,17 @@ func main() {
 
 	grid.Attach(preview, 1, 1, 1, 1)
 
-	fontSelector := setUpFontSelector(gtkSettings.fontName)
-	grid.Attach(fontSelector, 1, 2, 1, 1)
+	// fontSelector := setUpFontSelector(gtkSettings.fontName)
+	// fontSelector.SetProperty("vexpand", true)
+	// fontSelector.SetProperty("valign", gtk.ALIGN_START)
+	// grid.Attach(fontSelector, 1, 2, 1, 1)
+
+	fontChooser, err := getFontChooser(builder, "font-chooser")
+	if err != nil {
+		log.Panic(err)
+	}
+	fmt.Println(">>>", fontChooser)
+	fontChooser.SetFont(gtkSettings.fontName)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

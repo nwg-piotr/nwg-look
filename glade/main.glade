@@ -23,7 +23,7 @@
               <object class="GtkMenuItem">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Widgets</property>
+                <property name="label" translatable="yes">_Widget</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -31,7 +31,7 @@
               <object class="GtkMenuItem">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Icons</property>
+                <property name="label" translatable="yes">_Icon Theme</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -39,7 +39,7 @@
               <object class="GtkMenuItem">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Cursors</property>
+                <property name="label" translatable="yes">_Mouse Cursor</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -48,6 +48,14 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Font</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">_Other</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
@@ -66,6 +74,8 @@
             <property name="margin-start">6</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
             <property name="shadow-type">in</property>
             <property name="propagate-natural-width">True</property>
             <child>
@@ -159,7 +169,45 @@
           </packing>
         </child>
         <child>
-          <placeholder/>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="valign">start</property>
+            <property name="vexpand">True</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Default font: </property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFontButton" id="font-chooser">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="valign">center</property>
+                <property name="hexpand">True</property>
+                <property name="font">Sans 12</property>
+                <property name="language">c</property>
+                <property name="preview-text"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">2</property>
+          </packing>
         </child>
         <child>
           <placeholder/>

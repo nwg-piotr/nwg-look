@@ -203,3 +203,16 @@ func getGrid(b *gtk.Builder, id string) (*gtk.Grid, error) {
 	}
 	return grid, nil
 }
+
+func getFontChooser(b *gtk.Builder, id string) (*gtk.FontChooser, error) {
+	obj, err := b.GetObject(id)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	selector, ok := obj.(*gtk.FontChooser)
+	if !ok {
+		return nil, err
+	}
+	return selector, nil
+}
