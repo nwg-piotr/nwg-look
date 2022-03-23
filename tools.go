@@ -2,8 +2,11 @@
 package main
 
 import (
+	"io/fs"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -29,33 +32,80 @@ func loadGtkSettings() {
 	log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
 }
 
-func getAppDirs() []string {
+func getThemeNames() []string {
+	dataDirs := getDataDirs()
+	var dirs []string
+
+	// get theme dirs
+	for _, dir := range dataDirs {
+		if pathExists(filepath.Join(dir, "themes")) {
+			dirs = append(dirs, filepath.Join(dir, "themes"))
+		}
+	}
+
+	home := os.Getenv("HOME")
+	if home != "" {
+		if pathExists(filepath.Join(home, ".themes")) {
+			dirs = append(dirs, filepath.Join(home, ".themes"))
+		}
+	}
+
+	exclusions := []string{"Default", "Emacs"}
+	var names []string
+	for _, d := range dirs {
+		files, err := listFiles(d)
+		if err == nil {
+			for _, f := range files {
+				if f.IsDir() {
+					subdirs, err := listFiles(filepath.Join(d, f.Name()))
+					if err == nil {
+						for _, sd := range subdirs {
+							if sd.IsDir() && strings.HasPrefix(sd.Name(), "gtk-") {
+								if !isIn(names, f.Name()) {
+									if !isIn(exclusions, f.Name()) {
+										names = append(names, f.Name())
+										log.Debugf("Theme found: %s", f.Name())
+									} else {
+										log.Debugf("Excluded theme: %s", f.Name())
+									}
+									break
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	sort.Slice(names, func(i, j int) bool {
+		return names[i] < names[j]
+	})
+
+	return names
+}
+
+func getDataDirs() []string {
 	var dirs []string
 	xdgDataDirs := ""
 
 	home := os.Getenv("HOME")
 	xdgDataHome := os.Getenv("XDG_DATA_HOME")
+	if xdgDataHome != "" {
+		dirs = append(dirs, xdgDataHome)
+	} else if home != "" {
+		dirs = append(dirs, filepath.Join(home, ".local/share"))
+	}
+
 	if os.Getenv("XDG_DATA_DIRS") != "" {
 		xdgDataDirs = os.Getenv("XDG_DATA_DIRS")
 	} else {
 		xdgDataDirs = "/usr/local/share/:/usr/share/"
 	}
-	if xdgDataHome != "" {
-		dirs = append(dirs, filepath.Join(xdgDataHome, "applications"))
-	} else if home != "" {
-		dirs = append(dirs, filepath.Join(home, ".local/share/applications"))
-	}
-	for _, d := range strings.Split(xdgDataDirs, ":") {
-		dirs = append(dirs, filepath.Join(d, "applications"))
-	}
-	flatpakDirs := []string{filepath.Join(home, ".local/share/flatpak/exports/share/applications"),
-		"/var/lib/flatpak/exports/share/applications"}
 
-	for _, d := range flatpakDirs {
-		if pathExists(d) && !isIn(dirs, d) {
-			dirs = append(dirs, d)
-		}
+	for _, d := range strings.Split(xdgDataDirs, ":") {
+		dirs = append(dirs, d)
 	}
+
 	var confirmedDirs []string
 	for _, d := range dirs {
 		if pathExists(d) {
@@ -63,6 +113,14 @@ func getAppDirs() []string {
 		}
 	}
 	return confirmedDirs
+}
+
+func listFiles(dir string) ([]fs.FileInfo, error) {
+	files, err := ioutil.ReadDir(dir)
+	if err == nil {
+		return files, nil
+	}
+	return nil, err
 }
 
 func isIn(slice []string, val string) bool {
@@ -83,9 +141,8 @@ func pathExists(name string) bool {
 	return true
 }
 
-// getWindow returns *gtk.Window object from the glade resource
+// Assert types to gtk.Builder objects
 func getWindow(b *gtk.Builder, id string) (*gtk.Window, error) {
-
 	obj, err := b.GetObject(id)
 	if err != nil {
 		return nil, err
@@ -95,7 +152,6 @@ func getWindow(b *gtk.Builder, id string) (*gtk.Window, error) {
 	if !ok {
 		return nil, err
 	}
-
 	return window, nil
 }
 
@@ -109,7 +165,6 @@ func getScrolledWindow(b *gtk.Builder, id string) (*gtk.ScrolledWindow, error) {
 	if !ok {
 		return nil, err
 	}
-
 	return window, nil
 }
 
@@ -118,12 +173,10 @@ func getViewPort(b *gtk.Builder, id string) (*gtk.Viewport, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	viewport, ok := obj.(*gtk.Viewport)
 	if !ok {
 		return nil, err
 	}
-
 	return viewport, nil
 }
 
@@ -132,12 +185,10 @@ func getButton(b *gtk.Builder, id string) (*gtk.Button, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	btn, ok := obj.(*gtk.Button)
 	if !ok {
 		return nil, err
 	}
-
 	return btn, nil
 }
 
@@ -146,11 +197,9 @@ func getGrid(b *gtk.Builder, id string) (*gtk.Grid, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	grid, ok := obj.(*gtk.Grid)
 	if !ok {
 		return nil, err
 	}
-
 	return grid, nil
 }

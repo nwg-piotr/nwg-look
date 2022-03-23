@@ -11,11 +11,13 @@
         <property name="can-focus">False</property>
         <property name="margin-start">6</property>
         <property name="margin-end">6</property>
+        <property name="row-spacing">6</property>
+        <property name="column-spacing">6</property>
         <child>
           <object class="GtkMenuBar">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="margin-start">6</property>
+            <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <child>
               <object class="GtkMenuItem">
@@ -58,6 +60,7 @@
         </child>
         <child>
           <object class="GtkScrolledWindow" id="scrolled-window">
+            <property name="height-request">400</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="margin-start">6</property>
@@ -65,7 +68,6 @@
             <property name="margin-bottom">6</property>
             <property name="shadow-type">in</property>
             <property name="propagate-natural-width">True</property>
-            <property name="propagate-natural-height">True</property>
             <child>
               <object class="GtkViewport" id="viewport-list">
                 <property name="visible">True</property>
@@ -87,6 +89,7 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="margin-top">6</property>
+            <property name="hexpand">True</property>
             <property name="spacing">6</property>
             <property name="homogeneous">True</property>
             <child>
@@ -105,34 +108,47 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Apply</property>
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="margin-end">6</property>
-                <property name="margin-bottom">6</property>
+                <property name="can-focus">False</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkButton">
+                    <property name="label" translatable="yes">Apply</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-right">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-bottom">6</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="pack-type">end</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn-close">
+                    <property name="label" translatable="yes">Close</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="margin-bottom">6</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="pack-type">end</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="pack-type">end</property>
                 <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn-close">
-                <property name="label" translatable="yes">Close</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="margin-bottom">6</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack-type">end</property>
-                <property name="position">2</property>
               </packing>
             </child>
           </object>

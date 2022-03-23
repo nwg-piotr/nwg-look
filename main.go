@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gotk3/gotk3/gtk"
@@ -23,7 +21,6 @@ var themeNames = [...]string{
 
 var (
 	listBox *gtk.ListBox
-	margins = [...]string{"margin-start", "margin-end", "margin-top", "margin-bottom"}
 )
 
 type gtkSettingsFields struct {
@@ -38,8 +35,6 @@ var gtkSettings gtkSettingsFields
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-
-	fmt.Println("AppDirs", getAppDirs())
 
 	gtk.Init(nil)
 

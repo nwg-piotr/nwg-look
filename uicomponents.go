@@ -9,7 +9,7 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
-	for _, name := range themeNames {
+	for _, name := range getThemeNames() {
 		row, _ := gtk.ListBoxRowNew()
 
 		eventBox, _ := gtk.EventBoxNew()
@@ -37,16 +37,12 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 
 func setUpWidgetsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Preview")
-	for _, prop := range margins {
-		frame.SetProperty(prop, 6)
-	}
+	frame.SetProperty("margin", 6)
 
 	grid, _ := gtk.GridNew()
 	grid.SetRowSpacing(6)
 	grid.SetColumnSpacing(12)
-	for _, prop := range margins {
-		grid.SetProperty(prop, 6)
-	}
+	grid.SetProperty("margin", 6)
 	frame.Add(grid)
 
 	checkButton, _ := gtk.CheckButtonNew()
