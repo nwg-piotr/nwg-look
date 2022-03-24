@@ -14,7 +14,8 @@ import (
 const version = "0.0.1"
 
 var (
-	listBox *gtk.ListBox
+	listBox    *gtk.ListBox
+	rowToFocus *gtk.ListBoxRow
 )
 
 type gtkSettingsFields struct {
@@ -65,6 +66,7 @@ func main() {
 
 	listBox = setUpThemeListBox(gtkSettings.themeName)
 	viewport.Add(listBox)
+	rowToFocus.GrabFocus()
 
 	grid, _ := getGrid(builder, "grid")
 
