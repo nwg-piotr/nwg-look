@@ -46,7 +46,7 @@ func main() {
 
 	loadGtkSettings()
 
-	builder, _ := gtk.BuilderNewFromFile("/home/piotr/Code/nwg-look/glade/main.glade")
+	builder, _ := gtk.BuilderNewFromFile("/usr/share/nwg-look/main.glade")
 	win, _ := getWindow(builder, "window")
 
 	win.Connect("destroy", func() {

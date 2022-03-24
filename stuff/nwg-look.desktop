@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=GTK3 Settings Editor
+Name[pl]=Edytor ustawień GTK
+GenericName=Adjust Look and Feel
+GenericName[pl]=Preferencje wyglądu
+Comment=Customizes GTK3 look and feel settings
+Comment[pl]=Dostosowuje ustawienia środowiska graficznego GTK3
+Keywords=windows;preferences;settings;theme;style;appearance;look;
+Keywords[pl]=okna;preferencje;ustawienia;motyw;styl;wygląd;
+Icon=nwg-look.svg
+Exec=nwg-look
+NotShowIn=GNOME;KDE;XFCE;MATE;
+StartupNotify=true
+Categories=GTK;Settings;DesktopSettings;

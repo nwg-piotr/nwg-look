@@ -17,6 +17,8 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 		eventBox.Add(box)
 
 		lbl, _ := gtk.LabelNew(name)
+		lbl.SetProperty("margin-start", 6)
+		lbl.SetProperty("margin-end", 6)
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			settings.SetProperty("gtk-theme-name", n)
