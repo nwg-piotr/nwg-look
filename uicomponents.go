@@ -36,7 +36,7 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 }
 
 func setUpWidgetsPreview() *gtk.Frame {
-	frame, _ := gtk.FrameNew("Preview")
+	frame, _ := gtk.FrameNew("Widget style preview")
 	frame.SetProperty("margin", 6)
 	frame.SetProperty("valign", gtk.ALIGN_START)
 
@@ -78,7 +78,6 @@ func setUpWidgetsPreview() *gtk.Frame {
 	grid.Attach(button, 1, 3, 1, 1)
 
 	scale, _ := gtk.ScaleNewWithRange(gtk.ORIENTATION_HORIZONTAL, 0, 100, 1)
-	// scale.SetSizeRequest(200, 0)
 	scale.SetDrawValue(true)
 	scale.SetValue(60)
 	grid.Attach(scale, 1, 1, 2, 1)
@@ -98,10 +97,6 @@ func setUpWidgetsPreview() *gtk.Frame {
 func setUpFontSelector(defaultFontName string) *gtk.Box {
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
 
-	// btn, _ := gtk.ButtonNew()
-	// btn.SetLabel(defaultFontName)
-	// btn.SetProperty("valign", gtk.ALIGN_CENTER)
-	// box.PackEnd(btn, true, true, 6)
 	fontButton, _ := gtk.FontButtonNew()
 	fontButton.SetProperty("valign", gtk.ALIGN_CENTER)
 	fontButton.SetFont(defaultFontName)
