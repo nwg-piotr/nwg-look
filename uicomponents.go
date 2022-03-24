@@ -103,9 +103,9 @@ func setUpWidgetsPreview() *gtk.Frame {
 	grid.Attach(separator, 1, 2, 2, 1)
 
 	combo, _ := gtk.ComboBoxTextNew()
-	combo.SetProperty("can-focus", false)
 	combo.Append("entry #1", "entry #1")
 	combo.Append("entry #2", "entry #2")
+	combo.SetProperty("can-focus", false)
 	grid.Attach(combo, 2, 3, 1, 1)
 
 	return frame
