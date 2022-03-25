@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=GTK3 Settings Editor
-Name[pl]=Edytor ustawień GTK
+Name=GTK Settings
+Name[pl]=Ustawienia GTK
 GenericName=Adjust Look and Feel
-GenericName[pl]=Preferencje wyglądu
+GenericName[pl]=Dopasuj ustawienia wyglądu
 Comment=Customizes GTK3 look and feel settings
 Comment[pl]=Dostosowuje ustawienia środowiska graficznego GTK3
 Keywords=windows;preferences;settings;theme;style;appearance;look;

@@ -215,3 +215,27 @@ func getLabel(b *gtk.Builder, id string) (*gtk.Label, error) {
 	}
 	return label, nil
 }
+
+func getMenuBar(b *gtk.Builder, id string) (*gtk.MenuBar, error) {
+	obj, err := b.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+	menuBar, ok := obj.(*gtk.MenuBar)
+	if !ok {
+		return nil, err
+	}
+	return menuBar, nil
+}
+
+func getMenuItem(b *gtk.Builder, id string) (*gtk.MenuItem, error) {
+	obj, err := b.GetObject(id)
+	if err != nil {
+		return nil, err
+	}
+	item, ok := obj.(*gtk.MenuItem)
+	if !ok {
+		return nil, err
+	}
+	return item, nil
+}

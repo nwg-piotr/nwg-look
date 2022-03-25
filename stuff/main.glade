@@ -14,21 +14,22 @@
         <property name="row-spacing">6</property>
         <property name="column-spacing">6</property>
         <child>
-          <object class="GtkMenuBar">
+          <object class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
+            <property name="take-focus">False</property>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="item-widgets">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_Widget</property>
+                <property name="label" translatable="yes">_Widgets</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="item-theme">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Icon Theme</property>
@@ -124,6 +125,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin-start">6</property>
                     <property name="label" translatable="yes">nwg-look v</property>
                   </object>
                   <packing>
@@ -145,7 +147,7 @@
                 <property name="can-focus">False</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkButton">
+                  <object class="GtkButton" id="btn-apply">
                     <property name="label" translatable="yes">Apply</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>

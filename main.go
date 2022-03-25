@@ -14,8 +14,13 @@ import (
 const version = "0.0.1"
 
 var (
-	listBox    *gtk.ListBox
-	rowToFocus *gtk.ListBoxRow
+	viewport     *gtk.Viewport
+	listBox      *gtk.ListBox
+	menuBar      *gtk.MenuBar
+	fontSelector *gtk.Box
+	grid         *gtk.Grid
+	preview      *gtk.Frame
+	rowToFocus   *gtk.ListBoxRow
 )
 
 type gtkSettingsFields struct {
@@ -27,6 +32,33 @@ type gtkSettingsFields struct {
 }
 
 var gtkSettings gtkSettingsFields
+
+func displayThemes() {
+	if listBox != nil {
+		listBox.Destroy()
+	}
+	listBox = setUpThemeListBox(gtkSettings.themeName)
+	viewport.Add(listBox)
+	menuBar.Deactivate()
+	rowToFocus.GrabFocus()
+
+	if preview != nil {
+		preview.Destroy()
+	}
+	preview = setUpWidgetsPreview()
+	grid.Attach(preview, 1, 1, 1, 1)
+
+	if fontSelector != nil {
+		fontSelector.Destroy()
+	}
+	fontSelector = setUpFontSelector(gtkSettings.fontName)
+	fontSelector.SetProperty("vexpand", true)
+	fontSelector.SetProperty("valign", gtk.ALIGN_START)
+	grid.Attach(fontSelector, 1, 2, 1, 1)
+
+	viewport.ShowAll()
+	grid.ShowAll()
+}
 
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
@@ -62,29 +94,26 @@ func main() {
 		return false
 	})
 
-	viewport, _ := getViewPort(builder, "viewport-list")
+	viewport, _ = getViewPort(builder, "viewport-list")
+	grid, _ = getGrid(builder, "grid")
 
-	listBox = setUpThemeListBox(gtkSettings.themeName)
-	viewport.Add(listBox)
-	rowToFocus.GrabFocus()
+	menuBar, _ = getMenuBar(builder, "menubar")
 
-	grid, _ := getGrid(builder, "grid")
-
-	preview := setUpWidgetsPreview()
-	grid.Attach(preview, 1, 1, 1, 1)
-
-	fontSelector := setUpFontSelector(gtkSettings.fontName)
-	fontSelector.SetProperty("vexpand", true)
-	fontSelector.SetProperty("valign", gtk.ALIGN_START)
-	grid.Attach(fontSelector, 1, 2, 1, 1)
+	item, _ := getMenuItem(builder, "item-widgets")
+	item.Connect("button-release-event", displayThemes)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {
 		gtk.MainQuit()
 	})
 
+	btnApply, _ := getButton(builder, "btn-apply")
+	btnApply.SetSensitive(false)
+
 	verLabel, _ := getLabel(builder, "version-label")
 	verLabel.SetText(fmt.Sprintf("nwg-look v%s", version))
+
+	displayThemes()
 
 	win.ShowAll()
 
