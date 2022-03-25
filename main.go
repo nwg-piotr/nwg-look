@@ -14,6 +14,7 @@ import (
 const version = "0.0.1"
 
 var (
+	dataDirs     []string
 	viewport     *gtk.Viewport
 	listBox      *gtk.ListBox
 	menuBar      *gtk.MenuBar
@@ -74,6 +75,8 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	dataDirs = getDataDirs()
+
 	gtk.Init(nil)
 
 	loadGtkSettings()
@@ -114,6 +117,8 @@ func main() {
 	verLabel.SetText(fmt.Sprintf("nwg-look v%s", version))
 
 	displayThemes()
+
+	fmt.Println(getIconThemeNames())
 
 	win.ShowAll()
 

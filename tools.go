@@ -33,7 +33,6 @@ func loadGtkSettings() {
 }
 
 func getThemeNames() []string {
-	dataDirs := getDataDirs()
 	var dirs []string
 
 	// get theme dirs
@@ -79,6 +78,47 @@ func getThemeNames() []string {
 	}
 	sort.Slice(names, func(i, j int) bool {
 		return names[i] < names[j]
+	})
+
+	return names
+}
+
+func getIconThemeNames() []string {
+	var dirs []string
+
+	// get theme dirs
+	for _, dir := range dataDirs {
+		if pathExists(filepath.Join(dir, "icons")) {
+			dirs = append(dirs, filepath.Join(dir, "icons"))
+		}
+	}
+
+	home := os.Getenv("HOME")
+	if home != "" {
+		if pathExists(filepath.Join(home, ".icons")) {
+			dirs = append(dirs, filepath.Join(home, ".icons"))
+		}
+	}
+
+	exclusions := []string{"default", "hicolor", "locolor"}
+	var names []string
+	for _, d := range dirs {
+		files, err := listFiles(d)
+		if err == nil {
+			for _, f := range files {
+				if f.IsDir() {
+					if !isIn(exclusions, f.Name()) {
+						names = append(names, f.Name())
+						log.Debugf("Icon theme found: %s", f.Name())
+					} else {
+						log.Debugf("Excluded icon theme: %s", f.Name())
+					}
+				}
+			}
+		}
+	}
+	sort.Slice(names, func(i, j int) bool {
+		return strings.ToUpper(names[i]) < strings.ToUpper(names[j])
 	})
 
 	return names
