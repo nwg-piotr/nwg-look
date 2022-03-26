@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gotk3/gotk3/gtk"
+	log "github.com/sirupsen/logrus"
 )
 
 func setUpThemeListBox(currentTheme string) *gtk.ListBox {
@@ -27,6 +28,47 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 		row.Connect("focus-in-event", func() {
 			settings.SetProperty("gtk-theme-name", n)
 			gtkSettings.themeName = n
+		})
+		if n == currentTheme {
+			rowToSelect = row
+		}
+
+		box.PackStart(lbl, false, false, 0)
+
+		row.Add(eventBox)
+		listBox.Add(row)
+	}
+	if rowToSelect != nil {
+		listBox.SelectRow(rowToSelect)
+		rowToFocus = rowToSelect
+	}
+
+	return listBox
+}
+
+func setUpIconThemeListBox(currentTheme string) *gtk.ListBox {
+	settings, _ := gtk.SettingsGetDefault()
+	listBox, _ := gtk.ListBoxNew()
+	var rowToSelect *gtk.ListBoxRow
+
+	for _, name := range getIconThemeNames() {
+		row, _ := gtk.ListBoxRowNew()
+
+		eventBox, _ := gtk.EventBoxNew()
+		box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+		eventBox.Add(box)
+
+		lbl, _ := gtk.LabelNew(name)
+		lbl.SetProperty("margin-start", 6)
+		lbl.SetProperty("margin-end", 6)
+		n := name
+		eventBox.Connect("button-press-event", func() {
+			settings.SetProperty("gtk-icon-theme-name", n)
+			gtkSettings.iconThemeName = n
+		})
+		row.Connect("focus-in-event", func() {
+			settings.SetProperty("gtk-icon-theme-name", n)
+			gtkSettings.iconThemeName = n
 		})
 		if n == currentTheme {
 			rowToSelect = row
@@ -111,6 +153,66 @@ func setUpWidgetsPreview() *gtk.Frame {
 	combo.Append("entry #2", "entry #2")
 	combo.SetProperty("can-focus", false)
 	grid.Attach(combo, 2, 3, 1, 1)
+
+	return frame
+}
+
+func setUpIconsPreview() *gtk.Frame {
+	frame, _ := gtk.FrameNew("Icon theme preview")
+	frame.SetProperty("margin", 6)
+	frame.SetProperty("valign", gtk.ALIGN_START)
+
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
+	box.SetProperty("hexpand", true)
+	frame.Add(box)
+
+	flowBox, _ := gtk.FlowBoxNew()
+	box.PackStart(flowBox, false, false, 0)
+	icons := []string{
+		"user-home",
+		"user-desktop",
+		"folder",
+		"folder-remote",
+		"user-trash",
+		"x-office-document",
+		"application-x-executable",
+		"image-x-generic",
+		"package-x-generic",
+		"emblem-mail",
+		"utilities-terminal",
+		"chromium",
+		"firefox",
+		"gimp"}
+	for _, name := range icons {
+		img, err := gtk.ImageNewFromIconName(name, gtk.ICON_SIZE_DIALOG)
+		if err == nil {
+			flowBox.Add(img)
+			log.Debugf("Added icon: '%s'", name)
+		} else {
+			log.Warnf("Couldn't create image: '%s'", name)
+		}
+	}
+
+	flowBox, _ = gtk.FlowBoxNew()
+	box.PackStart(flowBox, false, false, 12)
+	icons = []string{
+		"network-wired-symbolic",
+		"bluetooth-active-symbolic",
+		"computer-symbolic",
+		"audio-volume-high-symbolic",
+		"battery-full-charging-symbolic",
+		"audio-input-microphone-symbolic",
+		"printer-symbolic",
+	}
+	for _, name := range icons {
+		img, err := gtk.ImageNewFromIconName(name, gtk.ICON_SIZE_MENU)
+		if err == nil {
+			flowBox.Add(img)
+			log.Debugf("Added icon: '%s'", name)
+		} else {
+			log.Warnf("Couldn't create image: '%s'", name)
+		}
+	}
 
 	return frame
 }

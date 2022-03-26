@@ -61,6 +61,29 @@ func displayThemes() {
 	grid.ShowAll()
 }
 
+func displayIconThemes() {
+	if listBox != nil {
+		listBox.Destroy()
+	}
+	listBox = setUpIconThemeListBox(gtkSettings.themeName)
+	viewport.Add(listBox)
+	menuBar.Deactivate()
+	// rowToFocus.GrabFocus()
+
+	if preview != nil {
+		preview.Destroy()
+	}
+	preview = setUpIconsPreview()
+	grid.Attach(preview, 1, 1, 1, 1)
+
+	if fontSelector != nil {
+		fontSelector.Destroy()
+	}
+
+	viewport.ShowAll()
+	grid.ShowAll()
+}
+
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
@@ -104,6 +127,9 @@ func main() {
 
 	item, _ := getMenuItem(builder, "item-widgets")
 	item.Connect("button-release-event", displayThemes)
+
+	item, _ = getMenuItem(builder, "item-theme")
+	item.Connect("button-release-event", displayIconThemes)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {
