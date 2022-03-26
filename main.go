@@ -65,10 +65,10 @@ func displayIconThemes() {
 	if listBox != nil {
 		listBox.Destroy()
 	}
-	listBox = setUpIconThemeListBox(gtkSettings.themeName)
+	listBox = setUpIconThemeListBox(gtkSettings.iconThemeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
-	// rowToFocus.GrabFocus()
+	rowToFocus.GrabFocus()
 
 	if preview != nil {
 		preview.Destroy()
@@ -125,11 +125,11 @@ func main() {
 
 	menuBar, _ = getMenuBar(builder, "menubar")
 
-	item, _ := getMenuItem(builder, "item-widgets")
-	item.Connect("button-release-event", displayThemes)
+	item1, _ := getMenuItem(builder, "item-widgets")
+	item1.Connect("button-release-event", displayThemes)
 
-	item, _ = getMenuItem(builder, "item-theme")
-	item.Connect("button-release-event", displayIconThemes)
+	item2, _ := getMenuItem(builder, "item-theme")
+	item2.Connect("button-release-event", displayIconThemes)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {
@@ -143,8 +143,6 @@ func main() {
 	verLabel.SetText(fmt.Sprintf("nwg-look v%s", version))
 
 	displayThemes()
-
-	fmt.Println(getIconThemeNames())
 
 	win.ShowAll()
 

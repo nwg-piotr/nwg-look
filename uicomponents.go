@@ -46,7 +46,7 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 	return listBox
 }
 
-func setUpIconThemeListBox(currentTheme string) *gtk.ListBox {
+func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 	settings, _ := gtk.SettingsGetDefault()
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
@@ -70,7 +70,7 @@ func setUpIconThemeListBox(currentTheme string) *gtk.ListBox {
 			settings.SetProperty("gtk-icon-theme-name", n)
 			gtkSettings.iconThemeName = n
 		})
-		if n == currentTheme {
+		if n == currentIconTheme {
 			rowToSelect = row
 		}
 
