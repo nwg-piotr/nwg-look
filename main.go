@@ -14,14 +14,16 @@ import (
 const version = "0.0.1"
 
 var (
-	dataDirs     []string
-	viewport     *gtk.Viewport
-	listBox      *gtk.ListBox
-	menuBar      *gtk.MenuBar
-	fontSelector *gtk.Box
-	grid         *gtk.Grid
-	preview      *gtk.Frame
-	rowToFocus   *gtk.ListBoxRow
+	dataDirs         []string
+	cursorThemes     map[string]string
+	cursorThemeNames map[string]string
+	viewport         *gtk.Viewport
+	listBox          *gtk.ListBox
+	menuBar          *gtk.MenuBar
+	fontSelector     *gtk.Box
+	grid             *gtk.Grid
+	preview          *gtk.Frame
+	rowToFocus       *gtk.ListBoxRow
 )
 
 type gtkSettingsFields struct {
@@ -84,6 +86,29 @@ func displayIconThemes() {
 	grid.ShowAll()
 }
 
+func displayCursorThemes() {
+	if listBox != nil {
+		listBox.Destroy()
+	}
+	listBox = setUpCursorThemeListBox(gtkSettings.cursorThemeName)
+	viewport.Add(listBox)
+	menuBar.Deactivate()
+	rowToFocus.GrabFocus()
+
+	if preview != nil {
+		preview.Destroy()
+	}
+	preview = setUpCursorsPreview(cursorThemes[gtkSettings.cursorThemeName])
+	grid.Attach(preview, 1, 1, 1, 1)
+
+	if fontSelector != nil {
+		fontSelector.Destroy()
+	}
+
+	viewport.ShowAll()
+	grid.ShowAll()
+}
+
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
@@ -99,6 +124,8 @@ func main() {
 	}
 
 	dataDirs = getDataDirs()
+	cursorThemes, cursorThemeNames = getCursorThemes()
+	fmt.Println(">>> ", cursorThemeNames)
 
 	gtk.Init(nil)
 
@@ -128,8 +155,11 @@ func main() {
 	item1, _ := getMenuItem(builder, "item-widgets")
 	item1.Connect("button-release-event", displayThemes)
 
-	item2, _ := getMenuItem(builder, "item-theme")
+	item2, _ := getMenuItem(builder, "item-icons")
 	item2.Connect("button-release-event", displayIconThemes)
+
+	item3, _ := getMenuItem(builder, "item-cursors")
+	item3.Connect("button-release-event", displayCursorThemes)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

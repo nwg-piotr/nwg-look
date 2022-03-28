@@ -1,6 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"sort"
+	"strings"
+
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	log "github.com/sirupsen/logrus"
 )
@@ -51,7 +59,17 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
-	for _, name := range getIconThemeNames() {
+	// map[displayName]folderName
+	namesMap := getIconThemeNames()
+	var displayNames []string
+	for name, _ := range namesMap {
+		displayNames = append(displayNames, name)
+	}
+	sort.Slice(displayNames, func(i, j int) bool {
+		return strings.ToUpper(displayNames[i]) < strings.ToUpper(displayNames[j])
+	})
+
+	for _, name := range displayNames {
 		row, _ := gtk.ListBoxRowNew()
 
 		eventBox, _ := gtk.EventBoxNew()
@@ -63,14 +81,66 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 		lbl.SetProperty("margin-end", 6)
 		n := name
 		eventBox.Connect("button-press-event", func() {
-			settings.SetProperty("gtk-icon-theme-name", n)
+			settings.SetProperty("gtk-icon-theme-name", namesMap[n])
 			gtkSettings.iconThemeName = n
 		})
 		row.Connect("focus-in-event", func() {
-			settings.SetProperty("gtk-icon-theme-name", n)
+			settings.SetProperty("gtk-icon-theme-name", namesMap[n])
 			gtkSettings.iconThemeName = n
 		})
-		if n == currentIconTheme {
+
+		if namesMap[n] == currentIconTheme || n == currentIconTheme {
+			rowToSelect = row
+		}
+
+		box.PackStart(lbl, false, false, 0)
+
+		row.Add(eventBox)
+		listBox.Add(row)
+	}
+	if rowToSelect != nil {
+		listBox.SelectRow(rowToSelect)
+		rowToFocus = rowToSelect
+	}
+
+	return listBox
+}
+
+func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
+	settings, _ := gtk.SettingsGetDefault()
+	listBox, _ := gtk.ListBoxNew()
+	var rowToSelect *gtk.ListBoxRow
+
+	var names []string
+	for name, _ := range cursorThemeNames {
+		names = append(names, name)
+	}
+	sort.Slice(names, func(i, j int) bool {
+		return strings.ToUpper(names[i]) < strings.ToUpper(names[j])
+	})
+
+	for _, name := range names {
+		row, _ := gtk.ListBoxRowNew()
+
+		eventBox, _ := gtk.EventBoxNew()
+		box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+		eventBox.Add(box)
+
+		lbl, _ := gtk.LabelNew(name)
+		lbl.SetProperty("margin-start", 6)
+		lbl.SetProperty("margin-end", 6)
+		n := name
+		eventBox.Connect("button-press-event", func() {
+			settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
+			fmt.Println(">>>", cursorThemeNames[n])
+			gtkSettings.cursorThemeName = cursorThemeNames[n]
+			displayCursorThemes()
+		})
+		row.Connect("focus-in-event", func() {
+			settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
+			gtkSettings.cursorThemeName = cursorThemeNames[n]
+		})
+		if cursorThemeNames[n] == currentCursorTheme {
 			rowToSelect = row
 		}
 
@@ -211,6 +281,61 @@ func setUpIconsPreview() *gtk.Frame {
 			log.Debugf("Added icon: '%s'", name)
 		} else {
 			log.Warnf("Couldn't create image: '%s'", name)
+		}
+	}
+
+	return frame
+}
+
+func setUpCursorsPreview(path string) *gtk.Frame {
+	frame, _ := gtk.FrameNew("Cursor theme preview")
+	frame.SetProperty("margin", 6)
+	frame.SetProperty("valign", gtk.ALIGN_FILL)
+
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
+	box.SetProperty("hexpand", true)
+	frame.Add(box)
+
+	flowBox, _ := gtk.FlowBoxNew()
+	flowBox.SetMinChildrenPerLine(8)
+	box.PackStart(flowBox, false, false, 0)
+	images := []string{
+		"left_ptr",
+		"hand2",
+		"wait",
+		"all-scroll",
+		"text",
+		"left_side",
+		"top_left_corner",
+		"h_double_arrow",
+	}
+
+	// temp dir to extract png images from xcursor file
+	cursorsDir := filepath.Join(tempDir(), "nwg-look-cursors")
+	os.RemoveAll(cursorsDir)
+	makeDir(cursorsDir)
+
+	for _, name := range images {
+		imgPath := filepath.Join(path, name)
+
+		args := []string{imgPath, "-d", cursorsDir, "-c", cursorsDir, "-q"}
+		cmd := exec.Command("xcur2png", args...)
+
+		cmd.Run()
+
+		fName := fmt.Sprintf("%s_000.png", name)
+		pngPath := filepath.Join(cursorsDir, fName)
+		pixbuf, err := gdk.PixbufNewFromFileAtSize(pngPath, 24, 24)
+		if err == nil {
+			img, err := gtk.ImageNewFromPixbuf(pixbuf)
+			if err == nil {
+				flowBox.Add(img)
+				log.Debugf("Added icon: '%s'", pngPath)
+			} else {
+				log.Warnf("Couldn't create pixbuf from '%s'", pngPath)
+			}
+		} else {
+			log.Warnf("Couldn't create image from '%s'", pngPath)
 		}
 	}
 

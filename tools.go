@@ -83,10 +83,12 @@ func getThemeNames() []string {
 	return names
 }
 
-func getIconThemeNames() []string {
+// returns map[displayName]folderName
+func getIconThemeNames() map[string]string {
 	var dirs []string
+	name2folderName := make(map[string]string)
 
-	// get theme dirs
+	// get icon theme dirs
 	for _, dir := range dataDirs {
 		if pathExists(filepath.Join(dir, "icons")) {
 			dirs = append(dirs, filepath.Join(dir, "icons"))
@@ -108,8 +110,12 @@ func getIconThemeNames() []string {
 			for _, f := range files {
 				if f.IsDir() {
 					if !isIn(exclusions, f.Name()) {
-						names = append(names, f.Name())
-						log.Debugf("Icon theme found: %s", f.Name())
+						name, hasDirs, err := iconThemeName(filepath.Join(d, f.Name()))
+						if err == nil && hasDirs {
+							names = append(names, name)
+							name2folderName[name] = f.Name()
+							log.Debugf("Icon theme found: %s", name)
+						}
 					} else {
 						log.Debugf("Excluded icon theme: %s", f.Name())
 					}
@@ -121,7 +127,55 @@ func getIconThemeNames() []string {
 		return strings.ToUpper(names[i]) < strings.ToUpper(names[j])
 	})
 
-	return names
+	return name2folderName
+}
+
+func getCursorThemes() (map[string]string, map[string]string) {
+	var dirs []string
+	name2path := make(map[string]string)
+	name2FolderName := make(map[string]string)
+
+	// get icon theme dirs
+	for _, dir := range dataDirs {
+		if pathExists(filepath.Join(dir, "icons")) {
+			dirs = append(dirs, filepath.Join(dir, "icons"))
+		}
+	}
+
+	home := os.Getenv("HOME")
+	if home != "" {
+		if pathExists(filepath.Join(home, ".icons")) {
+			dirs = append(dirs, filepath.Join(home, ".icons"))
+		}
+	}
+
+	exclusions := []string{"default", "hicolor", "locolor"}
+	for _, d := range dirs {
+		files, err := listFiles(d)
+		if err == nil {
+			for _, f := range files {
+				if f.IsDir() {
+					if !isIn(exclusions, f.Name()) {
+						content, _ := listFiles(filepath.Join(d, f.Name()))
+						if err == nil {
+							for _, item := range content {
+								if item.Name() == "cursors" {
+									name, _, err := iconThemeName(filepath.Join(d, f.Name()))
+									if err == nil {
+										name2FolderName[name] = f.Name()
+									}
+									log.Debugf("Cursor theme found: %s", f.Name())
+									name2path[f.Name()] = filepath.Join(d, f.Name(), "cursors")
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return name2path, name2FolderName
 }
 
 func getDataDirs() []string {
@@ -155,6 +209,45 @@ func getDataDirs() []string {
 	return confirmedDirs
 }
 
+func iconThemeName(path string) (string, bool, error) {
+	name := ""
+	hasDirs := false
+
+	lines, err := loadTextFile(filepath.Join(path, "index.theme"))
+	if err != nil {
+		return name, hasDirs, err
+	}
+
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Name=") || strings.HasPrefix(line, "Name =") {
+			name = strings.Split(line, "=")[1]
+			name = strings.TrimSpace(name)
+			break
+		}
+	}
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Directories=") {
+			hasDirs = true
+			break
+		}
+	}
+	return name, hasDirs, err
+}
+
+func loadTextFile(path string) ([]string, error) {
+	bytes, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	lines := strings.Split(string(bytes), "\n")
+	var output []string
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		output = append(output, line)
+	}
+	return output, nil
+}
+
 func listFiles(dir string) ([]fs.FileInfo, error) {
 	files, err := ioutil.ReadDir(dir)
 	if err == nil {
@@ -179,6 +272,26 @@ func pathExists(name string) bool {
 		}
 	}
 	return true
+}
+
+func tempDir() string {
+	if os.Getenv("TMPDIR") != "" {
+		return os.Getenv("TMPDIR")
+	} else if os.Getenv("TEMP") != "" {
+		return os.Getenv("TEMP")
+	} else if os.Getenv("TMP") != "" {
+		return os.Getenv("TMP")
+	}
+	return "/tmp"
+}
+
+func makeDir(dir string) {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err == nil {
+			log.Infof("Creating dir: %s", dir)
+		}
+	}
 }
 
 // Assert types to gtk.Builder objects

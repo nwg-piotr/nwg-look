@@ -29,7 +29,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="item-theme">
+              <object class="GtkMenuItem" id="item-icons">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Icon Theme</property>
@@ -37,7 +37,7 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="item-cursors">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Mouse Cursor</property>
