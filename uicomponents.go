@@ -293,18 +293,19 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 	frame.SetProperty("valign", gtk.ALIGN_FILL)
 
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
+	box.SetProperty("margin-left", 12)
+	box.SetProperty("margin-top", 12)
 	box.SetProperty("hexpand", true)
 	frame.Add(box)
 
 	flowBox, _ := gtk.FlowBoxNew()
-	flowBox.SetMinChildrenPerLine(8)
-	box.PackStart(flowBox, false, false, 0)
+	box.Add(flowBox)
 	images := []string{
 		"left_ptr",
 		"hand2",
-		"wait",
-		"all-scroll",
-		"text",
+		"watch",
+		"fleur",
+		"xterm",
 		"left_side",
 		"top_left_corner",
 		"h_double_arrow",
@@ -330,6 +331,9 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 			img, err := gtk.ImageNewFromPixbuf(pixbuf)
 			if err == nil {
 				flowBox.Add(img)
+				// img.SetProperty("halign", gtk.ALIGN_END)
+				// img.SetProperty("margin", 0)
+
 				log.Debugf("Added icon: '%s'", pngPath)
 			} else {
 				log.Warnf("Couldn't create pixbuf from '%s'", pngPath)
