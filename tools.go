@@ -289,7 +289,7 @@ func makeDir(dir string) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err := os.MkdirAll(dir, os.ModePerm)
 		if err == nil {
-			log.Infof("Creating dir: %s", dir)
+			log.Debugf("Creating dir: %s", dir)
 		}
 	}
 }

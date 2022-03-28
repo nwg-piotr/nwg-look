@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -237,6 +238,8 @@ func setUpIconsPreview() *gtk.Frame {
 	frame.Add(box)
 
 	flowBox, _ := gtk.FlowBoxNew()
+	flowBox.SetMaxChildrenPerLine(7)
+	flowBox.SetMinChildrenPerLine(5)
 	box.PackStart(flowBox, false, false, 0)
 	icons := []string{
 		"user-home",
@@ -290,20 +293,20 @@ func setUpIconsPreview() *gtk.Frame {
 func setUpCursorsPreview(path string) *gtk.Frame {
 	frame, _ := gtk.FrameNew("Cursor theme preview")
 	frame.SetProperty("margin", 6)
-	frame.SetProperty("valign", gtk.ALIGN_FILL)
 
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
-	box.SetProperty("margin-left", 12)
-	box.SetProperty("margin-top", 12)
+	box.SetProperty("margin", 12)
 	box.SetProperty("hexpand", true)
 	frame.Add(box)
 
 	flowBox, _ := gtk.FlowBoxNew()
+	flowBox.SetMaxChildrenPerLine(8)
 	box.Add(flowBox)
+
 	images := []string{
 		"left_ptr",
 		"hand2",
-		"watch",
+		"sb_v_double_arrow",
 		"fleur",
 		"xterm",
 		"left_side",
@@ -311,9 +314,17 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 		"h_double_arrow",
 	}
 
-	// temp dir to extract png images from xcursor file
+	// As I have no better idea, we'll use the external `xcur2png` tool
+	// to extract images from xcursor files, and save them to tmp dir.
 	cursorsDir := filepath.Join(tempDir(), "nwg-look-cursors")
-	os.RemoveAll(cursorsDir)
+
+	dir, err := ioutil.ReadDir(cursorsDir)
+	if err == nil {
+		for _, d := range dir {
+			os.RemoveAll(filepath.Join([]string{cursorsDir, d.Name()}...))
+		}
+	}
+	// just in case it didn't yet exist
 	makeDir(cursorsDir)
 
 	for _, name := range images {
@@ -331,8 +342,9 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 			img, err := gtk.ImageNewFromPixbuf(pixbuf)
 			if err == nil {
 				flowBox.Add(img)
-				// img.SetProperty("halign", gtk.ALIGN_END)
-				// img.SetProperty("margin", 0)
+				p, _ := img.GetParent()
+				parent, _ := p.(*gtk.FlowBoxChild)
+				parent.SetProperty("can-focus", false)
 
 				log.Debugf("Added icon: '%s'", pngPath)
 			} else {

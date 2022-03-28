@@ -4,6 +4,8 @@
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkWindow" id="window">
     <property name="can-focus">False</property>
+    <property name="hexpand">True</property>
+    <property name="vexpand">True</property>
     <child>
       <!-- n-columns=2 n-rows=4 -->
       <object class="GtkGrid" id="grid">
@@ -77,6 +79,7 @@
             <property name="margin-bottom">6</property>
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
+            <property name="hscrollbar-policy">never</property>
             <property name="shadow-type">in</property>
             <property name="propagate-natural-width">True</property>
             <child>
@@ -112,7 +115,7 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="icon-name">nwg-look</property>
-                    <property name="icon_size">3</property>
+                    <property name="icon_size">1</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
