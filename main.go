@@ -125,7 +125,6 @@ func main() {
 
 	dataDirs = getDataDirs()
 	cursorThemes, cursorThemeNames = getCursorThemes()
-	fmt.Println(">>> ", cursorThemeNames)
 
 	gtk.Init(nil)
 

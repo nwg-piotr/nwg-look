@@ -133,7 +133,6 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-			fmt.Println(">>>", cursorThemeNames[n])
 			gtkSettings.cursorThemeName = cursorThemeNames[n]
 			displayCursorThemes()
 		})
@@ -239,7 +238,7 @@ func setUpIconsPreview() *gtk.Frame {
 
 	flowBox, _ := gtk.FlowBoxNew()
 	flowBox.SetMaxChildrenPerLine(7)
-	flowBox.SetMinChildrenPerLine(5)
+	flowBox.SetMinChildrenPerLine(7)
 	box.PackStart(flowBox, false, false, 0)
 	icons := []string{
 		"user-home",

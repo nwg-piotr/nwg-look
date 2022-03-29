@@ -226,7 +226,7 @@ func iconThemeName(path string) (string, bool, error) {
 		}
 	}
 	for _, line := range lines {
-		if strings.HasPrefix(line, "Directories=") {
+		if strings.HasPrefix(line, "Directories=") || strings.HasPrefix(line, "Directories =") {
 			hasDirs = true
 			break
 		}
