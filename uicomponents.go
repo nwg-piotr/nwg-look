@@ -375,8 +375,5 @@ func setUpFontSelector(defaultFontName string) *gtk.Box {
 	label, _ := gtk.LabelNew("Default font:")
 	box.PackEnd(label, false, false, 6)
 
-	// settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-	// gtkSettings.cursorThemeName = cursorThemeNames[n]
-
 	return box
 }

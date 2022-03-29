@@ -27,14 +27,25 @@ var (
 )
 
 type gtkSettingsFields struct {
-	themeName       string
-	iconThemeName   string
-	fontName        string
-	cursorThemeName string
-	cursorThemeSize int
+	themeName                 string
+	iconThemeName             string
+	fontName                  string
+	cursorThemeName           string
+	cursorThemeSize           int
+	toolbarStyle              string
+	toolbarIconSize           string
+	buttonImages              bool
+	menuImages                bool
+	enableEventSounds         bool
+	enableInputFeedbackSounds bool
+	xftAntialias              bool
+	xftHinting                bool
+	xftHintstyle              string
+	xftRgba                   string
 }
 
 var gtkSettings gtkSettingsFields
+var originalGtkSettings []string
 
 func displayThemes() {
 	if listBox != nil {

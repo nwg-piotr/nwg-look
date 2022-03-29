@@ -7,28 +7,109 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/gotk3/gotk3/gtk"
 	log "github.com/sirupsen/logrus"
 )
 
+func configHome() string {
+	cHome := os.Getenv("XDG_CONFIG_HOME")
+	if cHome != "" {
+		return cHome
+	}
+	return filepath.Join(os.Getenv("HOME"), ".config/")
+}
+
 func loadGtkSettings() {
-	settings, _ := gtk.SettingsGetDefault()
-	prop, _ := settings.GetProperty("gtk-theme-name")
-	gtkSettings.themeName, _ = prop.(string)
-	log.Infof("Current theme: %s", gtkSettings.themeName)
+	// settings, _ := gtk.SettingsGetDefault()
+	// prop, _ := settings.GetProperty("gtk-theme-name")
+	// gtkSettings.themeName, _ = prop.(string)
+	// log.Infof("Current theme: %s", gtkSettings.themeName)
 
-	prop, _ = settings.GetProperty("gtk-icon-theme-name")
-	gtkSettings.iconThemeName, _ = prop.(string)
-	log.Infof("Icon theme: %s", gtkSettings.iconThemeName)
+	// prop, _ = settings.GetProperty("gtk-icon-theme-name")
+	// gtkSettings.iconThemeName, _ = prop.(string)
+	// log.Infof("Icon theme: %s", gtkSettings.iconThemeName)
 
-	prop, _ = settings.GetProperty("gtk-font-name")
-	gtkSettings.fontName, _ = prop.(string)
+	// prop, _ = settings.GetProperty("gtk-font-name")
+	// gtkSettings.fontName, _ = prop.(string)
+	// log.Infof("Default font: %s", gtkSettings.fontName)
+
+	// prop, _ = settings.GetProperty("gtk-cursor-theme-name")
+	// gtkSettings.cursorThemeName, _ = prop.(string)
+	// log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
+
+	// parse gtk settings file
+	originalGtkSettings = []string{}
+	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
+	if pathExists(configFile) {
+		lines, err := loadTextFile(configFile)
+		if err == nil {
+			log.Infof("Loaded %s", configFile)
+		} else {
+			log.Warnf("Couldn't load %s", configFile)
+		}
+
+		for _, line := range lines {
+			// In case users settings.ini had some lines we didn't expect,
+			// we'll append them back from here.
+			if !strings.HasPrefix(line, "[") {
+				originalGtkSettings = append(originalGtkSettings, line)
+			}
+			if !strings.HasPrefix(line, "[") && !strings.HasPrefix(line, "#") &&
+				strings.Contains(line, "=") {
+				parts := strings.Split(line, "=")
+				key := strings.TrimSpace(parts[0])
+				value := strings.TrimSpace(parts[1])
+				switch key {
+				case "gtk-theme-name":
+					gtkSettings.themeName = value
+				case "gtk-icon-theme-name":
+					gtkSettings.iconThemeName = value
+				case "gtk-font-name":
+					gtkSettings.fontName = value
+				case "gtk-cursor-theme-name":
+					gtkSettings.cursorThemeName = value
+				case "gtk-cursor-theme-size":
+					i, err := strconv.Atoi(value)
+					if err == nil {
+						gtkSettings.cursorThemeSize = i
+					} else {
+						gtkSettings.cursorThemeSize = 0
+					}
+				case "gtk-toolbar-style":
+					gtkSettings.toolbarStyle = value
+				case "gtk-toolbar-icon-size":
+					gtkSettings.toolbarIconSize = value
+				case "gtk-button-images":
+					gtkSettings.buttonImages = value == "1"
+				case "gtk-menu-images":
+					gtkSettings.menuImages = value == "1"
+				case "gtk-enable-event-sounds":
+					gtkSettings.enableEventSounds = value == "1"
+				case "gtk-enable-input-feedback-sounds":
+					gtkSettings.enableInputFeedbackSounds = value == "1"
+				case "gtk-xft-antialias":
+					gtkSettings.xftAntialias = value == "1"
+				case "gtk-xft-hinting":
+					gtkSettings.xftHinting = value == "1"
+				case "gtk-xft-hintstyle":
+					gtkSettings.xftHintstyle = value
+				case "gtk-xft-rgba":
+					gtkSettings.xftRgba = value
+				default:
+					log.Warnf("Unsupported config key: %s", key)
+				}
+			}
+		}
+		log.Debugf("settings.ini: %v", gtkSettings)
+	} else {
+		log.Warnf("Could'n find %s", configFile)
+	}
+	log.Infof("Widget theme: %s", gtkSettings.themeName)
+	log.Infof("Icon theme:   %s", gtkSettings.iconThemeName)
 	log.Infof("Default font: %s", gtkSettings.fontName)
-
-	prop, _ = settings.GetProperty("gtk-cursor-theme-name")
-	gtkSettings.cursorThemeName, _ = prop.(string)
 	log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
 }
 
