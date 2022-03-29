@@ -269,12 +269,12 @@ func setUpIconsPreview() *gtk.Frame {
 	box.PackStart(flowBox, false, false, 12)
 	icons = []string{
 		"network-wired-symbolic",
+		"network-wireless-symbolic",
 		"bluetooth-active-symbolic",
 		"computer-symbolic",
 		"audio-volume-high-symbolic",
-		"battery-full-charging-symbolic",
-		"audio-input-microphone-symbolic",
-		"printer-symbolic",
+		"battery-low-charging-symbolic",
+		"display-brightness-medium-symbolic",
 	}
 	for _, name := range icons {
 		img, err := gtk.ImageNewFromIconName(name, gtk.ICON_SIZE_MENU)
@@ -358,15 +358,25 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 }
 
 func setUpFontSelector(defaultFontName string) *gtk.Box {
+	settings, _ := gtk.SettingsGetDefault()
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
 
 	fontButton, _ := gtk.FontButtonNew()
 	fontButton.SetProperty("valign", gtk.ALIGN_CENTER)
 	fontButton.SetFont(defaultFontName)
+	fontButton.Connect("font-set", func() {
+		fontName := fontButton.GetFont()
+		fmt.Println(fontName)
+		settings.SetProperty("gtk-font-name", fontName)
+		gtkSettings.fontName = fontName
+	})
 	box.PackEnd(fontButton, true, true, 6)
 
 	label, _ := gtk.LabelNew("Default font:")
 	box.PackEnd(label, false, false, 6)
+
+	// settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
+	// gtkSettings.cursorThemeName = cursorThemeNames[n]
 
 	return box
 }
