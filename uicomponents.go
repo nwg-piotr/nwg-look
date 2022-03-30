@@ -15,7 +15,6 @@ import (
 )
 
 func setUpThemeListBox(currentTheme string) *gtk.ListBox {
-	settings, _ := gtk.SettingsGetDefault()
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
@@ -56,7 +55,6 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 }
 
 func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
-	settings, _ := gtk.SettingsGetDefault()
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
@@ -108,7 +106,6 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 }
 
 func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
-	settings, _ := gtk.SettingsGetDefault()
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
@@ -360,7 +357,6 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 }
 
 func setUpFontSelector(defaultFontName string) *gtk.Box {
-	settings, _ := gtk.SettingsGetDefault()
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
 
 	fontButton, _ := gtk.FontButtonNew()

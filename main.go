@@ -14,6 +14,7 @@ import (
 const version = "0.0.1"
 
 var (
+	settings         *gtk.Settings
 	dataDirs         []string
 	cursorThemes     map[string]string
 	cursorThemeNames map[string]string
@@ -164,6 +165,7 @@ func main() {
 
 	gtk.Init(nil)
 
+	settings, _ = gtk.SettingsGetDefault()
 	gtkSettings = gtkSettingsFieldsDefault()
 
 	loadGtkSettings()
