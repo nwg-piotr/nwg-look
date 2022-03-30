@@ -30,12 +30,12 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 		lbl.SetProperty("margin-end", 6)
 		n := name
 		eventBox.Connect("button-press-event", func() {
-			settings.SetProperty("gtk-theme-name", n)
-			gtkSettings.themeName = n
+			gtkSettings.SetProperty("gtk-theme-name", n)
+			gtkConfig.themeName = n
 		})
 		row.Connect("focus-in-event", func() {
-			settings.SetProperty("gtk-theme-name", n)
-			gtkSettings.themeName = n
+			gtkSettings.SetProperty("gtk-theme-name", n)
+			gtkConfig.themeName = n
 		})
 		if n == currentTheme {
 			rowToSelect = row
@@ -80,12 +80,12 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 		lbl.SetProperty("margin-end", 6)
 		n := name
 		eventBox.Connect("button-press-event", func() {
-			settings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gtkSettings.iconThemeName = n
+			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
+			gtkConfig.iconThemeName = n
 		})
 		row.Connect("focus-in-event", func() {
-			settings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gtkSettings.iconThemeName = n
+			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
+			gtkConfig.iconThemeName = n
 		})
 
 		if namesMap[n] == currentIconTheme || n == currentIconTheme {
@@ -129,13 +129,13 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 		lbl.SetProperty("margin-end", 6)
 		n := name
 		eventBox.Connect("button-press-event", func() {
-			settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-			gtkSettings.cursorThemeName = cursorThemeNames[n]
+			gtkSettings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
+			gtkConfig.cursorThemeName = cursorThemeNames[n]
 			displayCursorThemes()
 		})
 		row.Connect("focus-in-event", func() {
-			settings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-			gtkSettings.cursorThemeName = cursorThemeNames[n]
+			gtkSettings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
+			gtkConfig.cursorThemeName = cursorThemeNames[n]
 		})
 		if cursorThemeNames[n] == currentCursorTheme {
 			rowToSelect = row
@@ -364,8 +364,8 @@ func setUpFontSelector(defaultFontName string) *gtk.Box {
 	fontButton.SetFont(defaultFontName)
 	fontButton.Connect("font-set", func() {
 		fontName := fontButton.GetFont()
-		settings.SetProperty("gtk-font-name", fontName)
-		gtkSettings.fontName = fontName
+		gtkSettings.SetProperty("gtk-font-name", fontName)
+		gtkConfig.fontName = fontName
 	})
 	box.PackEnd(fontButton, true, true, 6)
 

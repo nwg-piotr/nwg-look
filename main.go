@@ -14,20 +14,22 @@ import (
 const version = "0.0.1"
 
 var (
-	settings         *gtk.Settings
-	dataDirs         []string
-	cursorThemes     map[string]string
-	cursorThemeNames map[string]string
-	viewport         *gtk.Viewport
-	listBox          *gtk.ListBox
-	menuBar          *gtk.MenuBar
-	fontSelector     *gtk.Box
-	grid             *gtk.Grid
-	preview          *gtk.Frame
-	rowToFocus       *gtk.ListBoxRow
+	gtkConfig         gtkConfigFields
+	originalGtkConfig []string
+	gtkSettings       *gtk.Settings
+	dataDirs          []string
+	cursorThemes      map[string]string
+	cursorThemeNames  map[string]string
+	viewport          *gtk.Viewport
+	listBox           *gtk.ListBox
+	menuBar           *gtk.MenuBar
+	fontSelector      *gtk.Box
+	grid              *gtk.Grid
+	preview           *gtk.Frame
+	rowToFocus        *gtk.ListBoxRow
 )
 
-type gtkSettingsFields struct {
+type gtkConfigFields struct {
 	themeName                 string
 	iconThemeName             string
 	fontName                  string
@@ -46,8 +48,8 @@ type gtkSettingsFields struct {
 	xftRgba                   string
 }
 
-func gtkSettingsFieldsDefault() gtkSettingsFields {
-	s := gtkSettingsFields{}
+func gtkSettingsFieldsDefault() gtkConfigFields {
+	s := gtkConfigFields{}
 	// 'ignored' and 'deprecated' values left for lxappearance compatibility
 	s.themeName = "Adwaita"
 	s.iconThemeName = "Adwaita"
@@ -69,14 +71,11 @@ func gtkSettingsFieldsDefault() gtkSettingsFields {
 	return s
 }
 
-var gtkSettings gtkSettingsFields
-var originalGtkSettings []string
-
 func displayThemes() {
 	if listBox != nil {
 		listBox.Destroy()
 	}
-	listBox = setUpThemeListBox(gtkSettings.themeName)
+	listBox = setUpThemeListBox(gtkConfig.themeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
@@ -90,7 +89,7 @@ func displayThemes() {
 	if fontSelector != nil {
 		fontSelector.Destroy()
 	}
-	fontSelector = setUpFontSelector(gtkSettings.fontName)
+	fontSelector = setUpFontSelector(gtkConfig.fontName)
 	fontSelector.SetProperty("vexpand", true)
 	fontSelector.SetProperty("valign", gtk.ALIGN_START)
 	grid.Attach(fontSelector, 1, 2, 1, 1)
@@ -103,7 +102,7 @@ func displayIconThemes() {
 	if listBox != nil {
 		listBox.Destroy()
 	}
-	listBox = setUpIconThemeListBox(gtkSettings.iconThemeName)
+	listBox = setUpIconThemeListBox(gtkConfig.iconThemeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
@@ -126,7 +125,7 @@ func displayCursorThemes() {
 	if listBox != nil {
 		listBox.Destroy()
 	}
-	listBox = setUpCursorThemeListBox(gtkSettings.cursorThemeName)
+	listBox = setUpCursorThemeListBox(gtkConfig.cursorThemeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
@@ -135,7 +134,7 @@ func displayCursorThemes() {
 		preview.Destroy()
 	}
 
-	preview = setUpCursorsPreview(cursorThemes[gtkSettings.cursorThemeName])
+	preview = setUpCursorsPreview(cursorThemes[gtkConfig.cursorThemeName])
 	grid.Attach(preview, 1, 1, 1, 1)
 
 	if fontSelector != nil {
@@ -165,8 +164,8 @@ func main() {
 
 	gtk.Init(nil)
 
-	settings, _ = gtk.SettingsGetDefault()
-	gtkSettings = gtkSettingsFieldsDefault()
+	gtkSettings, _ = gtk.SettingsGetDefault()
+	gtkConfig = gtkSettingsFieldsDefault()
 
 	loadGtkSettings()
 

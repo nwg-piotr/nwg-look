@@ -41,7 +41,7 @@ func loadGtkSettings() {
 	// log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
 
 	// parse gtk settings file
-	originalGtkSettings = []string{}
+	originalGtkConfig = []string{}
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if pathExists(configFile) {
 		lines, err := loadTextFile(configFile)
@@ -55,7 +55,7 @@ func loadGtkSettings() {
 			// In case users settings.ini had some lines we didn't expect,
 			// we'll append them back from here.
 			if !strings.HasPrefix(line, "[") {
-				originalGtkSettings = append(originalGtkSettings, line)
+				originalGtkConfig = append(originalGtkConfig, line)
 			}
 
 			if !strings.HasPrefix(line, "[") && !strings.HasPrefix(line, "#") &&
@@ -65,86 +65,85 @@ func loadGtkSettings() {
 				value := strings.TrimSpace(parts[1])
 				switch key {
 				case "gtk-theme-name":
-					gtkSettings.themeName = value
+					gtkConfig.themeName = value
 				case "gtk-icon-theme-name":
-					gtkSettings.iconThemeName = value
+					gtkConfig.iconThemeName = value
 				case "gtk-font-name":
-					gtkSettings.fontName = value
+					gtkConfig.fontName = value
 				case "gtk-cursor-theme-name":
-					gtkSettings.cursorThemeName = value
+					gtkConfig.cursorThemeName = value
 				case "gtk-cursor-theme-size":
 					i := intValue(value)
 					if i != -1 {
-						gtkSettings.cursorThemeSize = i
+						gtkConfig.cursorThemeSize = i
 					} else {
-						gtkSettings.cursorThemeSize = 0
+						gtkConfig.cursorThemeSize = 0
 					}
 				case "gtk-toolbar-style":
-					gtkSettings.toolbarStyle = value
+					gtkConfig.toolbarStyle = value
 				case "gtk-toolbar-icon-size":
-					gtkSettings.toolbarIconSize = value
+					gtkConfig.toolbarIconSize = value
 				case "gtk-button-images":
-					gtkSettings.buttonImages = value == "1"
+					gtkConfig.buttonImages = value == "1"
 				case "gtk-menu-images":
-					gtkSettings.menuImages = value == "1"
+					gtkConfig.menuImages = value == "1"
 				case "gtk-enable-event-sounds":
-					gtkSettings.enableEventSounds = value == "1"
+					gtkConfig.enableEventSounds = value == "1"
 				case "gtk-enable-input-feedback-sounds":
-					gtkSettings.enableInputFeedbackSounds = value == "1"
+					gtkConfig.enableInputFeedbackSounds = value == "1"
 				case "gtk-xft-antialias":
-					gtkSettings.xftAntialias = intValue(value)
+					gtkConfig.xftAntialias = intValue(value)
 				case "gtk-xft-dpi":
-					gtkSettings.xftDpi = intValue(value)
+					gtkConfig.xftDpi = intValue(value)
 				case "gtk-xft-hinting":
-					gtkSettings.xftHinting = intValue(value)
+					gtkConfig.xftHinting = intValue(value)
 				case "gtk-xft-hintstyle":
-					gtkSettings.xftHintstyle = value
+					gtkConfig.xftHintstyle = value
 				case "gtk-xft-rgba":
-					gtkSettings.xftRgba = value
+					gtkConfig.xftRgba = value
 				default:
 					log.Warnf("Unsupported config key: %s", key)
 				}
 			}
 		}
-		log.Debugf("settings.ini: %v", gtkSettings)
 	} else {
 		log.Warnf("Could'n find %s", configFile)
 	}
-	log.Infof("gtk-theme-name:                   %s [default: Adwaita]", gtkSettings.themeName)
-	log.Infof("gtk-icon-theme-name:              %s [default: Adwaita]", gtkSettings.iconThemeName)
-	log.Infof("gtk-font-name:                    %s [default: Sans 10]", gtkSettings.fontName)
-	log.Infof("gtk-cursor-theme-name:            %s [default: none]", gtkSettings.cursorThemeName)
-	log.Infof("gtk-cursor-theme-size:            %v [default: 0]", gtkSettings.cursorThemeSize)
-	log.Infof("gtk-toolbar-style:                %s [ignored]", gtkSettings.toolbarStyle)
-	log.Infof("gtk-toolbar-icon-size:            %s [ignored]", gtkSettings.toolbarIconSize)
-	log.Infof("gtk-button-images:                %v [default: false]", gtkSettings.buttonImages)
-	log.Infof("gtk-menu-images:                  %v [default: false]", gtkSettings.menuImages)
-	log.Infof("gtk-enable-event-sounds:          %v [default: true]", gtkSettings.enableEventSounds)
-	log.Infof("gtk-enable-input-feedback-sounds: %v [default: true]", gtkSettings.enableInputFeedbackSounds)
-	log.Infof("gtk-xft-antialias:                %v [0=no, 1=yes, -1=default]", gtkSettings.xftAntialias)
-	log.Infof("gtk-xft-dpi:                      %v [1024*dots/inch. -1 for default]", gtkSettings.xftDpi)
-	log.Infof("gtk-xft-hinting:                  %v [0=no, 1=yes, -1=default]", gtkSettings.xftHinting)
-	log.Infof("gtk-xft-hintstyle:                %v [hintnone|hintslight|hintmedium|hintfull]", gtkSettings.xftHintstyle)
-	log.Infof("gtk-xft-rgba:                     %v [none|rgb|bgr|vrgb|vbgr]", gtkSettings.xftRgba)
+	log.Infof("gtk-theme-name:                   %s [default: Adwaita]", gtkConfig.themeName)
+	log.Infof("gtk-icon-theme-name:              %s [default: Adwaita]", gtkConfig.iconThemeName)
+	log.Infof("gtk-font-name:                    %s [default: Sans 10]", gtkConfig.fontName)
+	log.Infof("gtk-cursor-theme-name:            %s [default: none]", gtkConfig.cursorThemeName)
+	log.Infof("gtk-cursor-theme-size:            %v [default: 0]", gtkConfig.cursorThemeSize)
+	log.Infof("gtk-toolbar-style:                %s [ignored]", gtkConfig.toolbarStyle)
+	log.Infof("gtk-toolbar-icon-size:            %s [ignored]", gtkConfig.toolbarIconSize)
+	log.Infof("gtk-button-images:                %v [default: false]", gtkConfig.buttonImages)
+	log.Infof("gtk-menu-images:                  %v [default: false]", gtkConfig.menuImages)
+	log.Infof("gtk-enable-event-sounds:          %v [default: true]", gtkConfig.enableEventSounds)
+	log.Infof("gtk-enable-input-feedback-sounds: %v [default: true]", gtkConfig.enableInputFeedbackSounds)
+	log.Infof("gtk-xft-antialias:                %v [0=no, 1=yes, -1=default]", gtkConfig.xftAntialias)
+	log.Infof("gtk-xft-dpi:                      %v [1024*dots/inch. -1 for default]", gtkConfig.xftDpi)
+	log.Infof("gtk-xft-hinting:                  %v [0=no, 1=yes, -1=default]", gtkConfig.xftHinting)
+	log.Infof("gtk-xft-hintstyle:                %v [hintnone|hintslight|hintmedium|hintfull]", gtkConfig.xftHintstyle)
+	log.Infof("gtk-xft-rgba:                     %v [none|rgb|bgr|vrgb|vbgr]", gtkConfig.xftRgba)
 
 	// Apply setting to the window
-	settings.SetProperty("gtk-theme-name", gtkSettings.themeName)
-	settings.SetProperty("gtk-icon-theme-name", gtkSettings.iconThemeName)
-	settings.SetProperty("gtk-font-name", gtkSettings.fontName)
-	settings.SetProperty("gtk-cursor-theme-name", gtkSettings.cursorThemeName)
+	gtkSettings.SetProperty("gtk-theme-name", gtkConfig.themeName)
+	gtkSettings.SetProperty("gtk-icon-theme-name", gtkConfig.iconThemeName)
+	gtkSettings.SetProperty("gtk-font-name", gtkConfig.fontName)
+	gtkSettings.SetProperty("gtk-cursor-theme-name", gtkConfig.cursorThemeName)
 	// In docs 0 is default, but setting 0 prevents the cursor theme from loading!
-	if gtkSettings.cursorThemeSize > 0 {
-		settings.SetProperty("gtk-cursor-theme-size", gtkSettings.cursorThemeSize)
+	if gtkConfig.cursorThemeSize > 0 {
+		gtkSettings.SetProperty("gtk-cursor-theme-size", gtkConfig.cursorThemeSize)
 	}
-	settings.SetProperty("gtk-button-images", gtkSettings.buttonImages)
-	settings.SetProperty("gtk-menu-images", gtkSettings.menuImages)
-	settings.SetProperty("gtk-enable-event-sounds", gtkSettings.enableEventSounds)
-	settings.SetProperty("gtk-enable-input-feedback-sounds", gtkSettings.enableInputFeedbackSounds)
-	settings.SetProperty("gtk-xft-antialias", gtkSettings.xftAntialias)
-	settings.SetProperty("gtk-xft-dpi", gtkSettings.xftDpi)
-	settings.SetProperty("gtk-xft-hinting", gtkSettings.xftHinting)
-	settings.SetProperty("gtk-xft-hintstyle", gtkSettings.xftHintstyle)
-	settings.SetProperty("gtk-xft-rgba", gtkSettings.xftRgba)
+	gtkSettings.SetProperty("gtk-button-images", gtkConfig.buttonImages)
+	gtkSettings.SetProperty("gtk-menu-images", gtkConfig.menuImages)
+	gtkSettings.SetProperty("gtk-enable-event-sounds", gtkConfig.enableEventSounds)
+	gtkSettings.SetProperty("gtk-enable-input-feedback-sounds", gtkConfig.enableInputFeedbackSounds)
+	gtkSettings.SetProperty("gtk-xft-antialias", gtkConfig.xftAntialias)
+	gtkSettings.SetProperty("gtk-xft-dpi", gtkConfig.xftDpi)
+	gtkSettings.SetProperty("gtk-xft-hinting", gtkConfig.xftHinting)
+	gtkSettings.SetProperty("gtk-xft-hintstyle", gtkConfig.xftHintstyle)
+	gtkSettings.SetProperty("gtk-xft-rgba", gtkConfig.xftRgba)
 }
 
 func intValue(s string) int {
