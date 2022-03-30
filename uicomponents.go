@@ -313,44 +313,46 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 		"h_double_arrow",
 	}
 
-	// As I have no better idea, we'll use the external `xcur2png` tool
-	// to extract images from xcursor files, and save them to tmp dir.
-	cursorsDir := filepath.Join(tempDir(), "nwg-look-cursors")
+	if path != "" {
+		// As I have no better idea, we'll use the external `xcur2png` tool
+		// to extract images from xcursor files, and save them to tmp dir.
+		cursorsDir := filepath.Join(tempDir(), "nwg-look-cursors")
 
-	dir, err := ioutil.ReadDir(cursorsDir)
-	if err == nil {
-		for _, d := range dir {
-			os.RemoveAll(filepath.Join([]string{cursorsDir, d.Name()}...))
-		}
-	}
-	// just in case it didn't yet exist
-	makeDir(cursorsDir)
-
-	for _, name := range images {
-		imgPath := filepath.Join(path, name)
-
-		args := []string{imgPath, "-d", cursorsDir, "-c", cursorsDir, "-q"}
-		cmd := exec.Command("xcur2png", args...)
-
-		cmd.Run()
-
-		fName := fmt.Sprintf("%s_000.png", name)
-		pngPath := filepath.Join(cursorsDir, fName)
-		pixbuf, err := gdk.PixbufNewFromFileAtSize(pngPath, 24, 24)
+		dir, err := ioutil.ReadDir(cursorsDir)
 		if err == nil {
-			img, err := gtk.ImageNewFromPixbuf(pixbuf)
-			if err == nil {
-				flowBox.Add(img)
-				p, _ := img.GetParent()
-				parent, _ := p.(*gtk.FlowBoxChild)
-				parent.SetProperty("can-focus", false)
-
-				log.Debugf("Added icon: '%s'", pngPath)
-			} else {
-				log.Warnf("Couldn't create pixbuf from '%s'", pngPath)
+			for _, d := range dir {
+				os.RemoveAll(filepath.Join([]string{cursorsDir, d.Name()}...))
 			}
-		} else {
-			log.Warnf("Couldn't create image from '%s'", pngPath)
+		}
+		// just in case it didn't yet exist
+		makeDir(cursorsDir)
+
+		for _, name := range images {
+			imgPath := filepath.Join(path, name)
+
+			args := []string{imgPath, "-d", cursorsDir, "-c", cursorsDir, "-q"}
+			cmd := exec.Command("xcur2png", args...)
+
+			cmd.Run()
+
+			fName := fmt.Sprintf("%s_000.png", name)
+			pngPath := filepath.Join(cursorsDir, fName)
+			pixbuf, err := gdk.PixbufNewFromFileAtSize(pngPath, 24, 24)
+			if err == nil {
+				img, err := gtk.ImageNewFromPixbuf(pixbuf)
+				if err == nil {
+					flowBox.Add(img)
+					p, _ := img.GetParent()
+					parent, _ := p.(*gtk.FlowBoxChild)
+					parent.SetProperty("can-focus", false)
+
+					log.Debugf("Added icon: '%s'", pngPath)
+				} else {
+					log.Warnf("Couldn't create pixbuf from '%s'", pngPath)
+				}
+			} else {
+				log.Warnf("Couldn't create image from '%s'", pngPath)
+			}
 		}
 	}
 
@@ -366,7 +368,6 @@ func setUpFontSelector(defaultFontName string) *gtk.Box {
 	fontButton.SetFont(defaultFontName)
 	fontButton.Connect("font-set", func() {
 		fontName := fontButton.GetFont()
-		fmt.Println(fontName)
 		settings.SetProperty("gtk-font-name", fontName)
 		gtkSettings.fontName = fontName
 	})

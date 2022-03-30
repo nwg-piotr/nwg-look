@@ -38,10 +38,34 @@ type gtkSettingsFields struct {
 	menuImages                bool
 	enableEventSounds         bool
 	enableInputFeedbackSounds bool
-	xftAntialias              bool
-	xftHinting                bool
+	xftAntialias              int
+	xftDpi                    int
+	xftHinting                int
 	xftHintstyle              string
 	xftRgba                   string
+}
+
+func gtkSettingsFieldsDefault() gtkSettingsFields {
+	s := gtkSettingsFields{}
+	// 'ignored' and 'deprecated' values left for lxappearance compatibility
+	s.themeName = "Adwaita"
+	s.iconThemeName = "Adwaita"
+	s.fontName = "Sans 10"
+	s.cursorThemeName = ""
+	s.cursorThemeSize = 0
+	s.toolbarStyle = "GTK_TOOLBAR_ICONS"              // ignored
+	s.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR" // ignored
+	s.buttonImages = false                            // deprecated
+	s.menuImages = false                              // deprecated
+	s.enableEventSounds = true
+	s.enableInputFeedbackSounds = true
+	s.xftAntialias = -1
+	s.xftDpi = -1
+	s.xftHinting = -1
+	s.xftHintstyle = ""
+	s.xftRgba = ""
+
+	return s
 }
 
 var gtkSettings gtkSettingsFields
@@ -109,6 +133,7 @@ func displayCursorThemes() {
 	if preview != nil {
 		preview.Destroy()
 	}
+
 	preview = setUpCursorsPreview(cursorThemes[gtkSettings.cursorThemeName])
 	grid.Attach(preview, 1, 1, 1, 1)
 
@@ -138,6 +163,8 @@ func main() {
 	cursorThemes, cursorThemeNames = getCursorThemes()
 
 	gtk.Init(nil)
+
+	gtkSettings = gtkSettingsFieldsDefault()
 
 	loadGtkSettings()
 

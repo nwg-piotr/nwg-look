@@ -57,6 +57,7 @@ func loadGtkSettings() {
 			if !strings.HasPrefix(line, "[") {
 				originalGtkSettings = append(originalGtkSettings, line)
 			}
+
 			if !strings.HasPrefix(line, "[") && !strings.HasPrefix(line, "#") &&
 				strings.Contains(line, "=") {
 				parts := strings.Split(line, "=")
@@ -72,8 +73,8 @@ func loadGtkSettings() {
 				case "gtk-cursor-theme-name":
 					gtkSettings.cursorThemeName = value
 				case "gtk-cursor-theme-size":
-					i, err := strconv.Atoi(value)
-					if err == nil {
+					i := intValue(value)
+					if i != -1 {
 						gtkSettings.cursorThemeSize = i
 					} else {
 						gtkSettings.cursorThemeSize = 0
@@ -91,9 +92,11 @@ func loadGtkSettings() {
 				case "gtk-enable-input-feedback-sounds":
 					gtkSettings.enableInputFeedbackSounds = value == "1"
 				case "gtk-xft-antialias":
-					gtkSettings.xftAntialias = value == "1"
+					gtkSettings.xftAntialias = intValue(value)
+				case "gtk-xft-dpi":
+					gtkSettings.xftDpi = intValue(value)
 				case "gtk-xft-hinting":
-					gtkSettings.xftHinting = value == "1"
+					gtkSettings.xftHinting = intValue(value)
 				case "gtk-xft-hintstyle":
 					gtkSettings.xftHintstyle = value
 				case "gtk-xft-rgba":
@@ -107,10 +110,49 @@ func loadGtkSettings() {
 	} else {
 		log.Warnf("Could'n find %s", configFile)
 	}
-	log.Infof("Widget theme: %s", gtkSettings.themeName)
-	log.Infof("Icon theme:   %s", gtkSettings.iconThemeName)
-	log.Infof("Default font: %s", gtkSettings.fontName)
-	log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
+	log.Infof("gtk-theme-name:                   %s", gtkSettings.themeName)
+	log.Infof("gtk-icon-theme-name:              %s", gtkSettings.iconThemeName)
+	log.Infof("gtk-font-name:                    %s", gtkSettings.fontName)
+	log.Infof("gtk-cursor-theme-name:            %s", gtkSettings.cursorThemeName)
+	log.Infof("gtk-cursor-theme-size:            %v", gtkSettings.cursorThemeSize)
+	log.Infof("gtk-toolbar-style:                %s (ignored since GTK 3.10)", gtkSettings.toolbarStyle)
+	log.Infof("gtk-toolbar-icon-size:            %s (ignored since GTK 3.10)", gtkSettings.toolbarIconSize)
+	log.Infof("gtk-button-images:                %v", gtkSettings.buttonImages)
+	log.Infof("gtk-menu-images:                  %v", gtkSettings.menuImages)
+	log.Infof("gtk-enable-event-sounds:          %v", gtkSettings.enableEventSounds)
+	log.Infof("gtk-enable-input-feedback-sounds: %v", gtkSettings.enableInputFeedbackSounds)
+	log.Infof("gtk-xft-antialias:                %v", gtkSettings.xftAntialias)
+	log.Infof("gtk-xft-dpi:                      %v", gtkSettings.xftDpi)
+	log.Infof("gtk-xft-hinting:                  %v", gtkSettings.xftHinting)
+	log.Infof("gtk-xft-hintstyle:                %v", gtkSettings.xftHintstyle)
+	log.Infof("gtk-xft-rgba:                     %v", gtkSettings.xftRgba)
+
+	// Apply setting to the window
+	settings, _ := gtk.SettingsGetDefault()
+	settings.SetProperty("gtk-theme-name", gtkSettings.themeName)
+	settings.SetProperty("gtk-icon-theme-name", gtkSettings.iconThemeName)
+	settings.SetProperty("gtk-font-name", gtkSettings.fontName)
+	settings.SetProperty("gtk-cursor-theme-name", gtkSettings.cursorThemeName)
+	settings.SetProperty("gtk-cursor-theme-size", gtkSettings.cursorThemeSize)
+	settings.SetProperty("gtk-toolbar-style", gtkSettings.toolbarStyle)
+	settings.SetProperty("gtk-toolbar-icon-size", gtkSettings.toolbarIconSize)
+	settings.SetProperty("gtk-button-images", gtkSettings.buttonImages)
+	settings.SetProperty("gtk-menu-images", gtkSettings.menuImages)
+	settings.SetProperty("gtk-enable-event-sounds", gtkSettings.enableEventSounds)
+	settings.SetProperty("gtk-enable-input-feedback-sounds", gtkSettings.enableInputFeedbackSounds)
+	settings.SetProperty("gtk-xft-antialias", gtkSettings.xftAntialias)
+	settings.SetProperty("gtk-xft-dpi", gtkSettings.xftDpi)
+	settings.SetProperty("gtk-xft-hinting", gtkSettings.xftHinting)
+	settings.SetProperty("gtk-xft-hintstyle", gtkSettings.xftHintstyle)
+	settings.SetProperty("gtk-xft-rgba", gtkSettings.xftRgba)
+}
+
+func intValue(s string) int {
+	i, err := strconv.Atoi(s)
+	if err == nil {
+		return i
+	}
+	return -1
 }
 
 func getThemeNames() []string {
