@@ -14,12 +14,12 @@ import (
 const version = "0.0.1"
 
 var (
-	gtkConfig         gtkConfigFields
-	originalGtkConfig []string
+	gtkConfig         gtkConfigFields // struct to store parsed settings.ini
+	originalGtkConfig []string        // not parsed settings.ini lines, if any
 	gtkSettings       *gtk.Settings
 	dataDirs          []string
-	cursorThemes      map[string]string
-	cursorThemeNames  map[string]string
+	cursorThemes      map[string]string // theme name to path
+	cursorThemeNames  map[string]string // theme name to theme folder name
 	viewport          *gtk.Viewport
 	listBox           *gtk.ListBox
 	menuBar           *gtk.MenuBar
