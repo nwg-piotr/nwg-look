@@ -48,7 +48,7 @@ type gtkConfigFields struct {
 	xftRgba                   string
 }
 
-func gtkSettingsFieldsDefault() gtkConfigFields {
+func gtkConfigFieldsDefault() gtkConfigFields {
 	s := gtkConfigFields{}
 	// 'ignored' and 'deprecated' values left for lxappearance compatibility
 	s.themeName = "Adwaita"
@@ -65,8 +65,8 @@ func gtkSettingsFieldsDefault() gtkConfigFields {
 	s.xftAntialias = -1
 	s.xftDpi = -1
 	s.xftHinting = -1
-	s.xftHintstyle = ""
-	s.xftRgba = ""
+	s.xftHintstyle = "hintmedium"
+	s.xftRgba = "none"
 
 	return s
 }
@@ -165,7 +165,7 @@ func main() {
 	gtk.Init(nil)
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
-	gtkConfig = gtkSettingsFieldsDefault()
+	gtkConfig = gtkConfigFieldsDefault()
 
 	loadGtkSettings()
 
@@ -205,7 +205,10 @@ func main() {
 	})
 
 	btnApply, _ := getButton(builder, "btn-apply")
-	btnApply.SetSensitive(false)
+	btnApply.Connect("clicked", func() {
+		applyGtkSettings()
+		saveGtkSettings()
+	})
 
 	verLabel, _ := getLabel(builder, "version-label")
 	verLabel.SetText(fmt.Sprintf("nwg-look v%s", version))

@@ -2,9 +2,12 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -27,18 +30,6 @@ func loadGtkSettings() {
 	// prop, _ := settings.GetProperty("gtk-theme-name")
 	// gtkSettings.themeName, _ = prop.(string)
 	// log.Infof("Current theme: %s", gtkSettings.themeName)
-
-	// prop, _ = settings.GetProperty("gtk-icon-theme-name")
-	// gtkSettings.iconThemeName, _ = prop.(string)
-	// log.Infof("Icon theme: %s", gtkSettings.iconThemeName)
-
-	// prop, _ = settings.GetProperty("gtk-font-name")
-	// gtkSettings.fontName, _ = prop.(string)
-	// log.Infof("Default font: %s", gtkSettings.fontName)
-
-	// prop, _ = settings.GetProperty("gtk-cursor-theme-name")
-	// gtkSettings.cursorThemeName, _ = prop.(string)
-	// log.Infof("Cursor theme: %s", gtkSettings.cursorThemeName)
 
 	// parse gtk settings file
 	originalGtkConfig = []string{}
@@ -152,6 +143,111 @@ func intValue(s string) int {
 		return i
 	}
 	return -1
+}
+
+func applyGtkSettings() {
+	gnomeSchema := "org.gnome.desktop.interface"
+
+	cmd := exec.Command("gsettings", "set", gnomeSchema, "gtk-theme", gtkConfig.themeName)
+	err := cmd.Run()
+	if err != nil {
+		log.Warn(err)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "icon-theme", gtkConfig.iconThemeName)
+	err = cmd.Run()
+	if err != nil {
+		log.Warn(err)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "cursor-theme", gtkConfig.cursorThemeName)
+	err = cmd.Run()
+	if err != nil {
+		log.Warn(err)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-name", gtkConfig.fontName)
+	err = cmd.Run()
+	if err != nil {
+		log.Warn(err)
+	}
+}
+
+func saveGtkSettings() {
+	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
+	lines := []string{"[Settings]"}
+
+	lines = append(lines, fmt.Sprintf("gtk-theme-name=%s", gtkConfig.themeName))
+	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=%s", gtkConfig.iconThemeName))
+	lines = append(lines, fmt.Sprintf("gtk-font-name=%s", gtkConfig.fontName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=%s", gtkConfig.cursorThemeName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gtkConfig.cursorThemeSize))
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-style=%s", gtkConfig.toolbarStyle))
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-icon-size=%s", gtkConfig.toolbarIconSize))
+	v := 0
+	if gtkConfig.buttonImages {
+		v = 1
+	}
+	lines = append(lines, fmt.Sprintf("gtk-button-images=%v", v))
+	if gtkConfig.menuImages {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
+	if gtkConfig.enableEventSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-event-sounds=%v", v))
+	if gtkConfig.enableInputFeedbackSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
+	lines = append(lines, fmt.Sprintf("gtk-xft-antialias=%v", gtkConfig.xftAntialias))
+	lines = append(lines, fmt.Sprintf("gtk-xft-dpi=%v", gtkConfig.xftDpi))
+	lines = append(lines, fmt.Sprintf("gtk-xft-hinting=%v", gtkConfig.xftHinting))
+	lines = append(lines, fmt.Sprintf("gtk-xft-hintstyle=%s", gtkConfig.xftHintstyle))
+	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=%s", gtkConfig.xftRgba))
+
+	// append unsupported lines / comments from the original settings.ini file
+	for _, l := range originalGtkConfig {
+		if l != "" && !isDefined(l) {
+			lines = append(lines, l)
+		}
+	}
+
+	saveTextFile(lines, configFile)
+}
+
+func isDefined(line string) bool {
+	defined := []string{
+		"gtk-theme-name",
+		"gtk-icon-theme-name",
+		"gtk-font-name",
+		"gtk-cursor-theme-name",
+		"gtk-cursor-theme-size",
+		"gtk-toolbar-style",
+		"gtk-toolbar-icon-size",
+		"gtk-button-images",
+		"gtk-menu-images",
+		"gtk-enable-event-sounds",
+		"gtk-enable-input-feedback-sounds",
+		"gtk-xft-antialias",
+		"gtk-xft-dpi",
+		"gtk-xft-hinting",
+		"gtk-xft-hintstyle",
+		"gtk-xft-rgba",
+	}
+	for _, d := range defined {
+		if strings.HasPrefix(line, d) {
+			return true
+		}
+	}
+	return false
 }
 
 func getThemeNames() []string {
@@ -368,6 +464,21 @@ func loadTextFile(path string) ([]string, error) {
 		output = append(output, line)
 	}
 	return output, nil
+}
+
+func saveTextFile(text []string, path string) {
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Fatalf("Failed creating file: %s", err)
+	}
+	datawriter := bufio.NewWriter(file)
+
+	for _, data := range text {
+		_, _ = datawriter.WriteString(data + "\n")
+	}
+
+	datawriter.Flush()
+	file.Close()
 }
 
 func listFiles(dir string) ([]fs.FileInfo, error) {
