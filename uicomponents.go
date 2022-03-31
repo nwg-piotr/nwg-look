@@ -377,11 +377,13 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 
 func setUpFontSettingsForm() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Font settings")
-	frame.SetProperty("margin", 12)
+	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
 	g.SetRowSpacing(12)
 	g.SetColumnSpacing(12)
 	g.SetProperty("margin", 6)
+	g.SetProperty("hexpand", true)
+	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
 	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable antialiasing")

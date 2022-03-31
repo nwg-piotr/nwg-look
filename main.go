@@ -74,23 +74,16 @@ func gtkConfigFieldsDefault() gtkConfigFields {
 }
 
 func displayThemes() {
-	if listBox != nil {
-		listBox.Destroy()
-	}
+	destroyContent()
+
 	listBox = setUpThemeListBox(gtkConfig.themeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
 
-	if preview != nil {
-		preview.Destroy()
-	}
 	preview = setUpWidgetsPreview()
 	grid.Attach(preview, 1, 1, 1, 1)
 
-	if fontSelector != nil {
-		fontSelector.Destroy()
-	}
 	fontSelector = setUpFontSelector(gtkConfig.fontName)
 	fontSelector.SetProperty("vexpand", true)
 	fontSelector.SetProperty("valign", gtk.ALIGN_START)
@@ -101,53 +94,46 @@ func displayThemes() {
 }
 
 func displayIconThemes() {
-	if listBox != nil {
-		listBox.Destroy()
-	}
+	destroyContent()
+
 	listBox = setUpIconThemeListBox(gtkConfig.iconThemeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
 
-	if preview != nil {
-		preview.Destroy()
-	}
 	preview = setUpIconsPreview()
 	grid.Attach(preview, 1, 1, 1, 1)
-
-	if fontSelector != nil {
-		fontSelector.Destroy()
-	}
 
 	viewport.ShowAll()
 	grid.ShowAll()
 }
 
 func displayCursorThemes() {
-	if listBox != nil {
-		listBox.Destroy()
-	}
+	destroyContent()
+
 	listBox = setUpCursorThemeListBox(gtkConfig.cursorThemeName)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
 
-	if preview != nil {
-		preview.Destroy()
-	}
-
 	preview = setUpCursorsPreview(cursorThemes[gtkConfig.cursorThemeName])
 	grid.Attach(preview, 1, 1, 1, 1)
-
-	if fontSelector != nil {
-		fontSelector.Destroy()
-	}
 
 	viewport.ShowAll()
 	grid.ShowAll()
 }
 
 func displayFontSettingsForm() {
+	destroyContent()
+
+	fontSettingsForm = setUpFontSettingsForm()
+	grid.Attach(fontSettingsForm, 0, 1, 1, 1)
+	menuBar.Deactivate()
+	grid.ShowAll()
+	scrolledWindow.Hide()
+}
+
+func destroyContent() {
 	if listBox != nil {
 		listBox.Destroy()
 	}
@@ -157,11 +143,9 @@ func displayFontSettingsForm() {
 	if fontSelector != nil {
 		fontSelector.Destroy()
 	}
-	fontSettingsForm = setUpFontSettingsForm()
-	grid.Attach(fontSettingsForm, 0, 1, 1, 1)
-	menuBar.Deactivate()
-	grid.ShowAll()
-	// scrolledWindow.SetVisible(false)
+	if fontSettingsForm != nil {
+		fontSettingsForm.Destroy()
+	}
 }
 
 func main() {
