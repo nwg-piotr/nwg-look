@@ -21,11 +21,13 @@ var (
 	cursorThemes      map[string]string // theme name to path
 	cursorThemeNames  map[string]string // theme name to theme folder name
 	viewport          *gtk.Viewport
+	scrolledWindow    *gtk.ScrolledWindow
 	listBox           *gtk.ListBox
 	menuBar           *gtk.MenuBar
 	fontSelector      *gtk.Box
 	grid              *gtk.Grid
 	preview           *gtk.Frame
+	fontSettingsForm  *gtk.Frame
 	rowToFocus        *gtk.ListBoxRow
 )
 
@@ -145,6 +147,23 @@ func displayCursorThemes() {
 	grid.ShowAll()
 }
 
+func displayFontSettingsForm() {
+	if listBox != nil {
+		listBox.Destroy()
+	}
+	if preview != nil {
+		preview.Destroy()
+	}
+	if fontSelector != nil {
+		fontSelector.Destroy()
+	}
+	fontSettingsForm = setUpFontSettingsForm()
+	grid.Attach(fontSettingsForm, 0, 1, 1, 1)
+	menuBar.Deactivate()
+	grid.ShowAll()
+	// scrolledWindow.SetVisible(false)
+}
+
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
@@ -186,6 +205,7 @@ func main() {
 	})
 
 	viewport, _ = getViewPort(builder, "viewport-list")
+	scrolledWindow, _ = getScrolledWindow(builder, "scrolled-window")
 	grid, _ = getGrid(builder, "grid")
 
 	menuBar, _ = getMenuBar(builder, "menubar")
@@ -198,6 +218,11 @@ func main() {
 
 	item3, _ := getMenuItem(builder, "item-cursors")
 	item3.Connect("button-release-event", displayCursorThemes)
+
+	item4, _ := getMenuItem(builder, "item-font")
+	item4.Connect("button-release-event", displayFontSettingsForm)
+
+	// item5, _ := getMenuItem(builder, "item-other")
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

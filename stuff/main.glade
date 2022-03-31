@@ -47,16 +47,15 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="item-font">
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can-focus">False</property>
                 <property name="label" translatable="yes">_Font</property>
                 <property name="use-underline">True</property>
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="item-other">
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">False</property>

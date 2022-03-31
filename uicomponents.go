@@ -224,6 +224,25 @@ func setUpWidgetsPreview() *gtk.Frame {
 	return frame
 }
 
+func setUpFontSelector(defaultFontName string) *gtk.Box {
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+
+	fontButton, _ := gtk.FontButtonNew()
+	fontButton.SetProperty("valign", gtk.ALIGN_CENTER)
+	fontButton.SetFont(defaultFontName)
+	fontButton.Connect("font-set", func() {
+		fontName := fontButton.GetFont()
+		gtkSettings.SetProperty("gtk-font-name", fontName)
+		gtkConfig.fontName = fontName
+	})
+	box.PackEnd(fontButton, true, true, 6)
+
+	label, _ := gtk.LabelNew("Default font:")
+	box.PackEnd(label, false, false, 6)
+
+	return box
+}
+
 func setUpIconsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Icon theme preview")
 	frame.SetProperty("margin", 6)
@@ -356,21 +375,45 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 	return frame
 }
 
-func setUpFontSelector(defaultFontName string) *gtk.Box {
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+func setUpFontSettingsForm() *gtk.Frame {
+	frame, _ := gtk.FrameNew("Font settings")
+	frame.SetProperty("margin", 12)
+	g, _ := gtk.GridNew()
+	g.SetRowSpacing(12)
+	g.SetColumnSpacing(12)
+	g.SetProperty("margin", 6)
+	frame.Add(g)
 
-	fontButton, _ := gtk.FontButtonNew()
-	fontButton.SetProperty("valign", gtk.ALIGN_CENTER)
-	fontButton.SetFont(defaultFontName)
-	fontButton.Connect("font-set", func() {
-		fontName := fontButton.GetFont()
-		gtkSettings.SetProperty("gtk-font-name", fontName)
-		gtkConfig.fontName = fontName
-	})
-	box.PackEnd(fontButton, true, true, 6)
+	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable antialiasing")
+	g.Attach(cbAntialiasing, 0, 0, 1, 1)
 
-	label, _ := gtk.LabelNew("Default font:")
-	box.PackEnd(label, false, false, 6)
+	cbHinting, _ := gtk.CheckButtonNewWithLabel("Enable hinting")
+	g.Attach(cbHinting, 0, 1, 1, 1)
 
-	return box
+	lbl, _ := gtk.LabelNew("Hinting style:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 2, 1, 1)
+
+	comboHinting, _ := gtk.ComboBoxTextNew()
+	comboHinting.Append("hintnone", "None")
+	comboHinting.Append("hintslight", "Slight")
+	comboHinting.Append("hintmedium", "Medium")
+	comboHinting.Append("hintfull", "Full")
+	comboHinting.SetActiveID(gtkConfig.xftHintstyle)
+	g.Attach(comboHinting, 1, 2, 1, 1)
+
+	lbl, _ = gtk.LabelNew("Sub-pixel geometry:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 3, 1, 1)
+
+	comboSubpixel, _ := gtk.ComboBoxTextNew()
+	comboSubpixel.Append("none", "None")
+	comboSubpixel.Append("rgb", "RGB")
+	comboSubpixel.Append("brg", "BGR")
+	comboSubpixel.Append("vrgb", "VRGB")
+	comboSubpixel.Append("vbgr", "VBGR")
+	comboSubpixel.SetActiveID(gtkConfig.xftRgba)
+	g.Attach(comboSubpixel, 1, 3, 1, 1)
+
+	return frame
 }
