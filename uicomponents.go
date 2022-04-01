@@ -388,9 +388,31 @@ func setUpFontSettingsForm() *gtk.Frame {
 
 	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable antialiasing")
 	g.Attach(cbAntialiasing, 0, 0, 1, 1)
+	cbAntialiasing.SetActive(gtkConfig.xftAntialias == 1)
+
+	cbAntialiasing.Connect("toggled", func() {
+		if cbAntialiasing.GetActive() {
+			gtkConfig.xftAntialias = 1
+			gtkSettings.SetProperty("gtk-xft-antialias", 1)
+		} else {
+			gtkConfig.xftAntialias = 0
+			gtkSettings.SetProperty("gtk-xft-antialias", 0)
+		}
+	})
 
 	cbHinting, _ := gtk.CheckButtonNewWithLabel("Enable hinting")
 	g.Attach(cbHinting, 0, 1, 1, 1)
+	cbHinting.SetActive(gtkConfig.xftHinting == 1)
+
+	cbHinting.Connect("toggled", func() {
+		if cbHinting.GetActive() {
+			gtkConfig.xftHinting = 1
+			gtkSettings.SetProperty("gtk-xft-hinting", 1)
+		} else {
+			gtkConfig.xftHinting = 0
+			gtkSettings.SetProperty("gtk-xft-hinting", 0)
+		}
+	})
 
 	lbl, _ := gtk.LabelNew("Hinting style:")
 	lbl.SetProperty("halign", gtk.ALIGN_END)
@@ -404,6 +426,12 @@ func setUpFontSettingsForm() *gtk.Frame {
 	comboHinting.SetActiveID(gtkConfig.xftHintstyle)
 	g.Attach(comboHinting, 1, 2, 1, 1)
 
+	comboHinting.Connect("changed", func() {
+		id := comboHinting.GetActiveID()
+		gtkConfig.xftHintstyle = id
+		gtkSettings.SetProperty("gtk-xft-hintstyle", id)
+	})
+
 	lbl, _ = gtk.LabelNew("Sub-pixel geometry:")
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 3, 1, 1)
@@ -411,11 +439,17 @@ func setUpFontSettingsForm() *gtk.Frame {
 	comboSubpixel, _ := gtk.ComboBoxTextNew()
 	comboSubpixel.Append("none", "None")
 	comboSubpixel.Append("rgb", "RGB")
-	comboSubpixel.Append("brg", "BGR")
+	comboSubpixel.Append("bgr", "BGR")
 	comboSubpixel.Append("vrgb", "VRGB")
 	comboSubpixel.Append("vbgr", "VBGR")
 	comboSubpixel.SetActiveID(gtkConfig.xftRgba)
 	g.Attach(comboSubpixel, 1, 3, 1, 1)
+
+	comboSubpixel.Connect("changed", func() {
+		id := comboSubpixel.GetActiveID()
+		gtkConfig.xftRgba = id
+		gtkSettings.SetProperty("gtk-xft-rgba", id)
+	})
 
 	return frame
 }

@@ -147,29 +147,70 @@ func intValue(s string) int {
 
 func applyGtkSettings() {
 	gnomeSchema := "org.gnome.desktop.interface"
+	log.Infof(">>> Applying to %s", gnomeSchema)
 
 	cmd := exec.Command("gsettings", "set", gnomeSchema, "gtk-theme", gtkConfig.themeName)
 	err := cmd.Run()
 	if err != nil {
-		log.Warn(err)
+		log.Warnf("gtk-theme: %s", err)
+	} else {
+		log.Infof("gtk-theme: %s OK", gtkConfig.themeName)
 	}
 
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "icon-theme", gtkConfig.iconThemeName)
 	err = cmd.Run()
 	if err != nil {
-		log.Warn(err)
+		log.Warnf("icon-theme: %s", err)
+	} else {
+		log.Infof("icon-theme: %s OK", gtkConfig.iconThemeName)
 	}
 
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "cursor-theme", gtkConfig.cursorThemeName)
 	err = cmd.Run()
 	if err != nil {
-		log.Warn(err)
+		log.Warnf("cursor-theme: %s", err)
+	} else {
+		log.Infof("cursor-theme: %s OK", gtkConfig.cursorThemeName)
 	}
 
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-name", gtkConfig.fontName)
 	err = cmd.Run()
 	if err != nil {
-		log.Warn(err)
+		log.Warnf("font-name: %s %s", gtkConfig.fontName, err)
+	} else {
+		log.Infof("font-name: %s OK", gtkConfig.fontName)
+	}
+
+	var hinting string
+	switch gtkConfig.xftHintstyle {
+	case "hintslight":
+		hinting = "slight"
+	case "hintmedium":
+		hinting = "medium"
+	case "hintfull":
+		hinting = "full"
+	default:
+		hinting = "none"
+	}
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-hinting", hinting)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("font-hinting: %s %s", gtkConfig.xftHintstyle, err)
+	} else {
+		log.Infof("font-hinting: %s OK", hinting)
+	}
+
+	// strconv.Itoa
+	rgbaOrder := "rgb"
+	if gtkConfig.xftRgba != "none" {
+		rgbaOrder = gtkConfig.xftRgba
+	}
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-rgba-order", rgbaOrder)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("font-rgba-order: %s %s", rgbaOrder, err)
+	} else {
+		log.Infof("font-rgba-order: %s OK", rgbaOrder)
 	}
 }
 
