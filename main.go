@@ -44,6 +44,7 @@ type gtkConfigFields struct {
 	enableEventSounds         bool
 	enableInputFeedbackSounds bool
 	xftAntialias              int
+	fontAntialiasing          string // org.gnome.desktop.interface.font-antialiasing
 	xftDpi                    int
 	xftHinting                int
 	xftHintstyle              string
@@ -65,6 +66,14 @@ func gtkConfigFieldsDefault() gtkConfigFields {
 	s.enableEventSounds = true
 	s.enableInputFeedbackSounds = true
 	s.xftAntialias = -1
+
+	val, err := gsettingsGet("font-antialiasing")
+	if err == nil {
+		s.fontAntialiasing = val
+	} else {
+		log.Warn(err)
+	}
+
 	s.xftDpi = -1
 	s.xftHinting = -1
 	s.xftHintstyle = "hintmedium"
@@ -166,6 +175,8 @@ func main() {
 	cursorThemes, cursorThemeNames = getCursorThemes()
 
 	gtk.Init(nil)
+
+	saveGsettings()
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
 	gtkConfig = gtkConfigFieldsDefault()

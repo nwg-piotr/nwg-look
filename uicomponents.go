@@ -386,7 +386,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
-	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable antialiasing")
+	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable xft antialiasing")
 	g.Attach(cbAntialiasing, 0, 0, 1, 1)
 	cbAntialiasing.SetActive(gtkConfig.xftAntialias == 1)
 
@@ -400,7 +400,25 @@ func setUpFontSettingsForm() *gtk.Frame {
 		}
 	})
 
-	cbHinting, _ := gtk.CheckButtonNewWithLabel("Enable hinting")
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+	comboAntialiasing, _ := gtk.ComboBoxTextNew()
+	comboAntialiasing.Append("none", "none")
+	comboAntialiasing.Append("grayscale", "grayscale")
+	comboAntialiasing.Append("rgba", "rgba")
+	box.PackStart(comboAntialiasing, false, false, 0)
+	img, _ := gtk.ImageNewFromIconName("gtk-dialog-info", gtk.ICON_SIZE_MENU)
+	img.SetTooltipText("org.gnome.desktop.interface.font-antialiasing")
+	box.PackStart(img, false, false, 6)
+	comboAntialiasing.SetActiveID(gtkConfig.fontAntialiasing)
+	g.Attach(box, 1, 0, 1, 1)
+
+	comboAntialiasing.Connect("changed", func() {
+		id := comboAntialiasing.GetActiveID()
+		gtkConfig.fontAntialiasing = id
+		// We have no 'gtkSettings.SetProperty' for this value
+	})
+
+	cbHinting, _ := gtk.CheckButtonNewWithLabel("Enable xft hinting")
 	g.Attach(cbHinting, 0, 1, 1, 1)
 	cbHinting.SetActive(gtkConfig.xftHinting == 1)
 
@@ -419,10 +437,10 @@ func setUpFontSettingsForm() *gtk.Frame {
 	g.Attach(lbl, 0, 2, 1, 1)
 
 	comboHinting, _ := gtk.ComboBoxTextNew()
-	comboHinting.Append("hintnone", "None")
-	comboHinting.Append("hintslight", "Slight")
-	comboHinting.Append("hintmedium", "Medium")
-	comboHinting.Append("hintfull", "Full")
+	comboHinting.Append("hintnone", "none")
+	comboHinting.Append("hintslight", "slight")
+	comboHinting.Append("hintmedium", "medium")
+	comboHinting.Append("hintfull", "full")
 	comboHinting.SetActiveID(gtkConfig.xftHintstyle)
 	g.Attach(comboHinting, 1, 2, 1, 1)
 
