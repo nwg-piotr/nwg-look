@@ -4,119 +4,148 @@
 <svg
    width="16"
    height="16"
-   viewBox="0 0 4.2333333 4.2333333"
+   viewBox="0 0 4.2333333 4.2333335"
    version="1.1"
-   id="svg5"
+   id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04, custom)"
    sodipodi:docname="nwg-look.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs2" />
   <sodipodi:namedview
-     id="namedview7"
+     id="base"
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.940166"
+     inkscape:cx="8.5221702"
+     inkscape:cy="8.3913952"
      inkscape:document-units="px"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     width="48mm"
      units="px"
-     inkscape:snap-global="true"
-     inkscape:zoom="20.15043"
-     inkscape:cx="12.431496"
-     inkscape:cy="11.339708"
      inkscape:window-width="1438"
      inkscape:window-height="862"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
+     inkscape:pagecheckerboard="0"
+     width="16px"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:snap-nodes="false">
+     inkscape:snap-nodes="true"
+     inkscape:snap-others="false">
     <sodipodi:guide
-       position="4.2333333,1.3712923"
+       position="0.26458334,5.0301644"
        orientation="-1,0"
-       id="guide35964"
+       id="guide910"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="1.7757878,0"
-       orientation="0,1"
-       id="guide35966"
-       inkscape:label=""
-       inkscape:locked="false"
-       inkscape:color="rgb(0,0,255)" />
-    <sodipodi:guide
-       position="0.33072916,-0.56758082"
+       position="3.6380209,6.1495221"
        orientation="-1,0"
-       id="guide36226"
+       id="guide912"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="0,-1.2869779"
+       position="-2.4853535,3.9687501"
+       orientation="0,1"
+       id="guide914"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="-1.9351607,0.26458334"
+       orientation="0,1"
+       id="guide916"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0.59531251,4.0519223"
        orientation="-1,0"
-       id="guide36228"
+       id="guide1230"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="0,4.2333333"
+       position="-2.6561029,1.1244792"
        orientation="0,1"
-       id="guide36344"
+       id="guide1232"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="-1.6867187,3.9026041"
+       position="-3.6047111,0"
        orientation="0,1"
-       id="guide36346"
+       id="guide1234"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="3.9026041,1.6536458"
+       position="3.9687501,4.9080916"
        orientation="-1,0"
-       id="guide36348"
+       id="guide1350"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="-1.5544271,0.99218749"
+       position="-2.2053069,3.6380209"
        orientation="0,1"
-       id="guide36350"
+       id="guide1352"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
     <sodipodi:guide
-       position="-2.0009114,3.2411458"
+       position="-2.7319473,0.79375001"
        orientation="0,1"
-       id="guide36352"
+       id="guide1354"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="-0.64184304,3.3072917"
+       orientation="0,1"
+       id="guide1582"
        inkscape:label=""
        inkscape:locked="false"
        inkscape:color="rgb(0,0,255)" />
   </sodipodi:namedview>
-  <defs
-     id="defs2" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
   <g
-     inkscape:label="Warstwa 1"
+     inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(0,-280.06665)">
     <path
-       id="rect36422"
-       style="fill:#00aad4;fill-opacity:1;stroke-width:0.399999;stroke:none"
-       d="M 1.2167969 0 C 0.53937149 0.017048119 -5.9211895e-16 0.56832027 0 1.25 L 0 12.25 C 0 12.9425 0.55749995 13.5 1.25 13.5 L 11.322266 13.5 L 10.171875 12.25 L 2.3046875 12.25 C 1.7203906 12.25 1.25 11.779609 1.25 11.195312 L 1.25 3.75 L 14.75 3.75 L 14.75 11.195312 C 14.75 11.476612 14.641164 11.731202 14.462891 11.919922 L 15.605469 13.162109 C 15.848442 12.934351 16 12.610849 16 12.25 L 16 1.25 C 16 0.55749995 15.4425 0 14.75 0 L 1.25 0 C 1.2391797 0 1.2275497 -0.00027060506 1.2167969 0 z M 14.132812 1.2617188 A 0.62500004 0.62500004 0 0 1 14.757812 1.8867188 A 0.62500004 0.62500004 0 0 1 14.132812 2.5117188 A 0.62500004 0.62500004 0 0 1 13.507812 1.8867188 A 0.62500004 0.62500004 0 0 1 14.132812 1.2617188 z "
-       transform="scale(0.26458333)" />
+       id="rect1378"
+       style="fill:#00aad4;stroke-width:0.399999"
+       d="M 2.2167969 1 C 1.5393801 1.0170484 1 1.5683295 1 2.25 L 1 11.75 C 1 12.442491 1.5575093 13 2.25 13 L 10.9375 13 L 9.7871094 11.75 L 3.5 11.75 C 2.8075111 11.75 2.25 11.192489 2.25 10.5 L 2.25 3.5 L 13.75 3.5 L 13.75 10.5 C 13.75 10.739007 13.683812 10.960914 13.568359 11.150391 L 14.777344 12.462891 C 14.917652 12.260788 15 12.015727 15 11.75 L 15 2.25 C 15 1.5575093 14.442491 1 13.75 1 L 2.25 1 C 2.2391798 1 2.2275495 0.99972939 2.2167969 1 z M 13.117188 1.6308594 A 0.62500008 0.62500008 0 0 1 13.742188 2.2558594 A 0.62500008 0.62500008 0 0 1 13.117188 2.8808594 A 0.62500008 0.62500008 0 0 1 12.492188 2.2558594 A 0.62500008 0.62500008 0 0 1 13.117188 1.6308594 z "
+       transform="matrix(0.26458334,0,0,0.26458334,0,280.06665)" />
     <g
        id="g15013"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.00265019,0.00243217,0.00273833,0.00297725,2.7889419,2.0985665)">
+       transform="matrix(-0.00231811,0.00212741,0.00239521,0.00260419,2.708182,282.16906)">
       <g
          id="g15011"
          style="fill:#00aad4;fill-opacity:1"
@@ -131,7 +160,7 @@
     <g
        id="g15019"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.00359817,0,0,0.00359509,3.7914153,1.8548064)">
+       transform="matrix(-0.00314731,0,0,0.00314461,3.5850419,281.95584)">
       <g
          id="g15017"
          style="fill:#00aad4;fill-opacity:1">
@@ -144,122 +173,122 @@
     <g
        id="g15021"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15023"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15025"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15027"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15029"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15031"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15033"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15035"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15037"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15039"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15041"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15043"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15045"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15047"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15049"
        style="fill:#00aad4;fill-opacity:1"
-       transform="matrix(-0.01750779,0,0,0.01749281,12.398892,3.479083)" />
+       transform="matrix(-0.015314,0,0,0.0153009,16.055116,283.37435)" />
     <g
        id="g15021-2"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15023-9"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15025-1"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15027-2"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15029-7"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15031-0"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15033-9"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15035-3"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15037-6"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15039-0"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15041-6"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15043-2"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15045-6"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15047-1"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
     <g
        id="g15049-8"
        style="fill:#666666"
-       transform="matrix(-0.02597202,0,0,0.02597202,14.565739,1.3149918)" />
+       transform="matrix(-0.02271763,0,0,0.02271763,17.950449,281.48143)" />
   </g>
 </svg>
