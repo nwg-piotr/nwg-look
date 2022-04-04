@@ -31,11 +31,11 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			gtkSettings.SetProperty("gtk-theme-name", n)
-			gtkConfig.themeName = n
+			gsettings.gtkTheme = n
 		})
 		row.Connect("focus-in-event", func() {
 			gtkSettings.SetProperty("gtk-theme-name", n)
-			gtkConfig.themeName = n
+			gsettings.gtkTheme = n
 		})
 		if n == currentTheme {
 			rowToSelect = row
@@ -81,11 +81,11 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gtkConfig.iconThemeName = n
+			gsettings.iconTheme = n
 		})
 		row.Connect("focus-in-event", func() {
 			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gtkConfig.iconThemeName = n
+			gsettings.iconTheme = n
 		})
 
 		if namesMap[n] == currentIconTheme || n == currentIconTheme {
@@ -130,12 +130,12 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			gtkSettings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-			gtkConfig.cursorThemeName = cursorThemeNames[n]
+			gsettings.cursorTheme = cursorThemeNames[n]
 			displayCursorThemes()
 		})
 		row.Connect("focus-in-event", func() {
 			gtkSettings.SetProperty("gtk-cursor-theme-name", cursorThemeNames[n])
-			gtkConfig.cursorThemeName = cursorThemeNames[n]
+			gsettings.cursorTheme = cursorThemeNames[n]
 		})
 		if cursorThemeNames[n] == currentCursorTheme {
 			rowToSelect = row
@@ -233,7 +233,7 @@ func setUpFontSelector(defaultFontName string) *gtk.Box {
 	fontButton.Connect("font-set", func() {
 		fontName := fontButton.GetFont()
 		gtkSettings.SetProperty("gtk-font-name", fontName)
-		gtkConfig.fontName = fontName
+		gsettings.fontName = fontName
 	})
 	box.PackEnd(fontButton, true, true, 6)
 
@@ -386,87 +386,57 @@ func setUpFontSettingsForm() *gtk.Frame {
 	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
-	cbAntialiasing, _ := gtk.CheckButtonNewWithLabel("Enable xft antialiasing")
-	g.Attach(cbAntialiasing, 0, 0, 1, 1)
-	cbAntialiasing.SetActive(gtkConfig.xftAntialias == 1)
+	lbl, _ := gtk.LabelNew("Font hinting:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 0, 1, 1)
 
-	cbAntialiasing.Connect("toggled", func() {
-		if cbAntialiasing.GetActive() {
-			gtkConfig.xftAntialias = 1
-			gtkSettings.SetProperty("gtk-xft-antialias", 1)
-		} else {
-			gtkConfig.xftAntialias = 0
-			gtkSettings.SetProperty("gtk-xft-antialias", 0)
-		}
+	comboHinting, _ := gtk.ComboBoxTextNew()
+	comboHinting.Append("none", "none")
+	comboHinting.Append("slight", "slight")
+	comboHinting.Append("medium", "medium")
+	comboHinting.Append("full", "full")
+	comboHinting.SetActiveID(gsettings.fontHinting)
+	g.Attach(comboHinting, 1, 0, 1, 1)
+
+	comboHinting.Connect("changed", func() {
+		id := comboHinting.GetActiveID()
+		gsettings.fontHinting = id
+		fmt.Println(">>>", comboHinting.GetActiveText())
 	})
 
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+	lbl, _ = gtk.LabelNew("Font antialiasing:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 1, 1, 1)
+
+	comboRgba, _ := gtk.ComboBoxTextNew()
+
 	comboAntialiasing, _ := gtk.ComboBoxTextNew()
 	comboAntialiasing.Append("none", "none")
 	comboAntialiasing.Append("grayscale", "grayscale")
 	comboAntialiasing.Append("rgba", "rgba")
-	box.PackStart(comboAntialiasing, false, false, 0)
-	img, _ := gtk.ImageNewFromIconName("gtk-dialog-info", gtk.ICON_SIZE_MENU)
-	img.SetTooltipText("org.gnome.desktop.interface.font-antialiasing")
-	box.PackStart(img, false, false, 6)
 	comboAntialiasing.SetActiveID(gtkConfig.fontAntialiasing)
-	g.Attach(box, 1, 0, 1, 1)
+	g.Attach(comboAntialiasing, 1, 1, 1, 1)
 
 	comboAntialiasing.Connect("changed", func() {
 		id := comboAntialiasing.GetActiveID()
-		gtkConfig.fontAntialiasing = id
-		// We have no 'gtkSettings.SetProperty' for this value
+		gsettings.fontAntialiasing = id
+		comboRgba.SetSensitive(id == "rgba")
 	})
 
-	cbHinting, _ := gtk.CheckButtonNewWithLabel("Enable xft hinting")
-	g.Attach(cbHinting, 0, 1, 1, 1)
-	cbHinting.SetActive(gtkConfig.xftHinting == 1)
-
-	cbHinting.Connect("toggled", func() {
-		if cbHinting.GetActive() {
-			gtkConfig.xftHinting = 1
-			gtkSettings.SetProperty("gtk-xft-hinting", 1)
-		} else {
-			gtkConfig.xftHinting = 0
-			gtkSettings.SetProperty("gtk-xft-hinting", 0)
-		}
-	})
-
-	lbl, _ := gtk.LabelNew("Hinting style:")
+	lbl, _ = gtk.LabelNew("Font RGBA order:")
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 2, 1, 1)
 
-	comboHinting, _ := gtk.ComboBoxTextNew()
-	comboHinting.Append("hintnone", "none")
-	comboHinting.Append("hintslight", "slight")
-	comboHinting.Append("hintmedium", "medium")
-	comboHinting.Append("hintfull", "full")
-	comboHinting.SetActiveID(gtkConfig.xftHintstyle)
-	g.Attach(comboHinting, 1, 2, 1, 1)
+	comboRgba.Append("rgb", "RGB")
+	comboRgba.Append("bgr", "BGR")
+	comboRgba.Append("vrgb", "VRGB")
+	comboRgba.Append("vbgr", "VBGR")
+	comboRgba.SetActiveID(gsettings.fontRgbaOrder)
+	comboRgba.SetSensitive(comboAntialiasing.GetActiveID() == "rgba")
+	g.Attach(comboRgba, 1, 2, 1, 1)
 
-	comboHinting.Connect("changed", func() {
-		id := comboHinting.GetActiveID()
-		gtkConfig.xftHintstyle = id
-		gtkSettings.SetProperty("gtk-xft-hintstyle", id)
-	})
-
-	lbl, _ = gtk.LabelNew("Sub-pixel geometry:")
-	lbl.SetProperty("halign", gtk.ALIGN_END)
-	g.Attach(lbl, 0, 3, 1, 1)
-
-	comboSubpixel, _ := gtk.ComboBoxTextNew()
-	comboSubpixel.Append("none", "None")
-	comboSubpixel.Append("rgb", "RGB")
-	comboSubpixel.Append("bgr", "BGR")
-	comboSubpixel.Append("vrgb", "VRGB")
-	comboSubpixel.Append("vbgr", "VBGR")
-	comboSubpixel.SetActiveID(gtkConfig.xftRgba)
-	g.Attach(comboSubpixel, 1, 3, 1, 1)
-
-	comboSubpixel.Connect("changed", func() {
-		id := comboSubpixel.GetActiveID()
-		gtkConfig.xftRgba = id
-		gtkSettings.SetProperty("gtk-xft-rgba", id)
+	comboRgba.Connect("changed", func() {
+		gsettings.fontRgbaOrder = comboRgba.GetActiveID()
 	})
 
 	return frame

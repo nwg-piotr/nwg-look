@@ -26,18 +26,13 @@ func configHome() string {
 }
 
 func loadGtkSettings() {
-	// settings, _ := gtk.SettingsGetDefault()
-	// prop, _ := settings.GetProperty("gtk-theme-name")
-	// gtkSettings.themeName, _ = prop.(string)
-	// log.Infof("Current theme: %s", gtkSettings.themeName)
-
 	// parse gtk settings file
 	originalGtkConfig = []string{}
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if pathExists(configFile) {
 		lines, err := loadTextFile(configFile)
 		if err == nil {
-			log.Infof("Loaded %s", configFile)
+			log.Infof("[Parsing %s]", configFile)
 		} else {
 			log.Warnf("Couldn't load %s", configFile)
 		}
@@ -84,8 +79,6 @@ func loadGtkSettings() {
 					gtkConfig.enableInputFeedbackSounds = value == "1"
 				case "gtk-xft-antialias":
 					gtkConfig.xftAntialias = intValue(value)
-				case "gtk-xft-dpi":
-					gtkConfig.xftDpi = intValue(value)
 				case "gtk-xft-hinting":
 					gtkConfig.xftHinting = intValue(value)
 				case "gtk-xft-hintstyle":
@@ -100,41 +93,21 @@ func loadGtkSettings() {
 	} else {
 		log.Warnf("Could'n find %s", configFile)
 	}
-	log.Infof("gtk-theme-name:                   %s [default: Adwaita]", gtkConfig.themeName)
-	log.Infof("gtk-icon-theme-name:              %s [default: Adwaita]", gtkConfig.iconThemeName)
-	log.Infof("gtk-font-name:                    %s [default: Sans 10]", gtkConfig.fontName)
-	log.Infof("gtk-cursor-theme-name:            %s [default: none]", gtkConfig.cursorThemeName)
-	log.Infof("gtk-cursor-theme-size:            %v [default: 0]", gtkConfig.cursorThemeSize)
-	log.Infof("gtk-toolbar-style:                %s [ignored]", gtkConfig.toolbarStyle)
-	log.Infof("gtk-toolbar-icon-size:            %s [ignored]", gtkConfig.toolbarIconSize)
-	log.Infof("gtk-button-images:                %v [default: false]", gtkConfig.buttonImages)
-	log.Infof("gtk-menu-images:                  %v [default: false]", gtkConfig.menuImages)
-	log.Infof("gtk-enable-event-sounds:          %v [default: true]", gtkConfig.enableEventSounds)
-	log.Infof("gtk-enable-input-feedback-sounds: %v [default: true]", gtkConfig.enableInputFeedbackSounds)
-	log.Infof("gtk-xft-antialias:                %v [0=no, 1=yes, -1=default]", gtkConfig.xftAntialias)
-	log.Infof("gtk-xft-dpi:                      %v [1024*dots/inch. -1 for default]", gtkConfig.xftDpi)
-	log.Infof("gtk-xft-hinting:                  %v [0=no, 1=yes, -1=default]", gtkConfig.xftHinting)
-	log.Infof("gtk-xft-hintstyle:                %v [hintnone|hintslight|hintmedium|hintfull]", gtkConfig.xftHintstyle)
-	log.Infof("gtk-xft-rgba:                     %v [none|rgb|bgr|vrgb|vbgr]", gtkConfig.xftRgba)
-
-	// Apply setting to the window
-	gtkSettings.SetProperty("gtk-theme-name", gtkConfig.themeName)
-	gtkSettings.SetProperty("gtk-icon-theme-name", gtkConfig.iconThemeName)
-	gtkSettings.SetProperty("gtk-font-name", gtkConfig.fontName)
-	gtkSettings.SetProperty("gtk-cursor-theme-name", gtkConfig.cursorThemeName)
-	// In docs 0 is default, but setting 0 prevents the cursor theme from loading!
-	if gtkConfig.cursorThemeSize > 0 {
-		gtkSettings.SetProperty("gtk-cursor-theme-size", gtkConfig.cursorThemeSize)
-	}
-	gtkSettings.SetProperty("gtk-button-images", gtkConfig.buttonImages)
-	gtkSettings.SetProperty("gtk-menu-images", gtkConfig.menuImages)
-	gtkSettings.SetProperty("gtk-enable-event-sounds", gtkConfig.enableEventSounds)
-	gtkSettings.SetProperty("gtk-enable-input-feedback-sounds", gtkConfig.enableInputFeedbackSounds)
-	gtkSettings.SetProperty("gtk-xft-antialias", gtkConfig.xftAntialias)
-	gtkSettings.SetProperty("gtk-xft-dpi", gtkConfig.xftDpi)
-	gtkSettings.SetProperty("gtk-xft-hinting", gtkConfig.xftHinting)
-	gtkSettings.SetProperty("gtk-xft-hintstyle", gtkConfig.xftHintstyle)
-	gtkSettings.SetProperty("gtk-xft-rgba", gtkConfig.xftRgba)
+	log.Infof("gtk-theme-name: %s", gtkConfig.themeName)
+	log.Infof("gtk-icon-theme-name: %s", gtkConfig.iconThemeName)
+	log.Infof("gtk-font-name: %s", gtkConfig.fontName)
+	log.Infof("gtk-cursor-theme-name: %s", gtkConfig.cursorThemeName)
+	log.Infof("gtk-cursor-theme-size: %v", gtkConfig.cursorThemeSize)
+	log.Infof("gtk-toolbar-style: %s", gtkConfig.toolbarStyle)
+	log.Infof("gtk-toolbar-icon-size: %s", gtkConfig.toolbarIconSize)
+	log.Infof("gtk-button-images: %v", gtkConfig.buttonImages)
+	log.Infof("gtk-menu-images: %v", gtkConfig.menuImages)
+	log.Infof("gtk-enable-event-sounds: %v", gtkConfig.enableEventSounds)
+	log.Infof("gtk-enable-input-feedback-sounds: %v", gtkConfig.enableInputFeedbackSounds)
+	log.Infof("gtk-xft-antialias: %v", gtkConfig.xftAntialias)
+	log.Infof("gtk-xft-hinting: %v", gtkConfig.xftHinting)
+	log.Infof("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
+	log.Infof("gtk-xft-rgba: %v", gtkConfig.xftRgba)
 }
 
 func intValue(s string) int {
@@ -145,12 +118,147 @@ func intValue(s string) int {
 	return -1
 }
 
+func readGsettings() {
+	log.Info("[Reading gsettings]")
+
+	val, err := getGsettingsValue("org.gnome.desktop.interface", "gtk-theme")
+	if err == nil {
+		gsettings.gtkTheme = val
+		log.Infof("gtk-theme: %s", gsettings.gtkTheme)
+	} else {
+		log.Warnf("Couldn't read gtk-theme, leaving default %s",
+			gsettings.gtkTheme)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "icon-theme")
+	if err == nil {
+		gsettings.iconTheme = val
+		log.Infof("icon-theme: %s", gsettings.iconTheme)
+	} else {
+		log.Warnf("Couldn't read icon-theme, leaving default %s",
+			gsettings.iconTheme)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "font-name")
+	if err == nil {
+		gsettings.fontName = val
+		log.Infof("font-name: %s", gsettings.fontName)
+	} else {
+		log.Warnf("Couldn't read font-name, leaving default %s",
+			gsettings.fontName)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "cursor-theme")
+	if err == nil {
+		gsettings.cursorTheme = val
+		log.Infof("cursor-theme: %s", gsettings.cursorTheme)
+	} else {
+		gsettings.cursorTheme = ""
+		log.Warnf("Couldn't read cursor-theme, leaving default %s",
+			gsettings.cursorTheme)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "cursor-size")
+	if err == nil {
+		v, e := strconv.Atoi(val)
+		if e == nil {
+			gsettings.cursorSize = v
+			log.Infof("cursor-size: %v", gsettings.cursorSize)
+		}
+	} else {
+		log.Warnf("Couldn't read cursorSize, leaving default %s",
+			gsettings.cursorSize)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "toolbar-style")
+	if err == nil {
+		gsettings.toolbarStyle = val
+		log.Infof("toolbar-style: %s", gsettings.toolbarStyle)
+	} else {
+		log.Warnf("Couldn't read toolbar-style, leaving default %s",
+			gsettings.toolbarStyle)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "toolbar-icons-size")
+	if err == nil {
+		gsettings.toolbarIconsSize = val
+		log.Infof("toolbar-icons-size: %s", gsettings.toolbarIconsSize)
+	} else {
+		log.Warnf("Couldn't read toolbar-icons-size, leaving default %s",
+			gsettings.toolbarIconsSize)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "font-hinting")
+	if err == nil {
+		gsettings.fontHinting = val
+		log.Infof("font-hinting: %s", gsettings.fontHinting)
+	} else {
+		log.Warnf("Couldn't read font-hinting, leaving default %s",
+			gsettings.fontHinting)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "font-antialiasing")
+	if err == nil {
+		gsettings.fontAntialiasing = val
+		log.Infof("font-antialiasing: %s", gsettings.fontAntialiasing)
+	} else {
+		log.Warnf("Couldn't read font-antialiasing, leaving default %s",
+			gsettings.fontAntialiasing)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "font-rgba-order")
+	if err == nil {
+		gsettings.fontRgbaOrder = val
+		log.Infof("font-rgba-order: %s", gsettings.fontRgbaOrder)
+	} else {
+		log.Warnf("Couldn't read font-rgba-order, leaving default %s",
+			gsettings.fontRgbaOrder)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.sound", "event-sounds")
+	if err == nil {
+		if val == "true" {
+			gsettings.eventSounds = true
+		} else {
+			gsettings.eventSounds = false
+		}
+		log.Infof("event-sounds: %v", gsettings.eventSounds)
+	} else {
+		log.Warnf("Couldn't read event-sounds, leaving default %v",
+			gsettings.eventSounds)
+	}
+
+	val, err = getGsettingsValue("org.gnome.desktop.sound", "input-feedback-sounds")
+	if err == nil {
+		if val == "true" {
+			gsettings.inputFeedbackSounds = true
+		} else {
+			gsettings.inputFeedbackSounds = false
+		}
+		log.Infof("input-feedback-sounds: %v", gsettings.inputFeedbackSounds)
+	} else {
+		log.Warnf("Couldn't read input-feedback-sounds, leaving default %v",
+			gsettings.inputFeedbackSounds)
+	}
+}
+
 func saveGsettings() {
 	gsettingsFile := filepath.Join(configHome(), "nwg-look/")
 	makeDir(gsettingsFile)
 	lines := []string{"# Generated by nwg-look, do not edit this file."}
-	for _, key := range []string{"gtk-theme", "icon-theme", "font-name", "cursor-theme"} {
-		val, err := gsettingsGet(key)
+
+	for _, key := range []string{
+		"gtk-theme",
+		"icon-theme",
+		"font-name",
+		"cursor-theme",
+		"cursor-size",
+		"toolbar-style",
+		"toolbar-icons-size",
+		"font-hinting",
+		"font-antialiasing",
+		"font-rgba-order"} {
+		val, err := getGsettingsValue("org.gnome.desktop.interface", key)
 		if err == nil {
 			line := fmt.Sprintf("%s=%s", key, val)
 			lines = append(lines, line)
@@ -159,16 +267,29 @@ func saveGsettings() {
 			log.Warnf("Couldn't get gsettings key: $s", key)
 		}
 	}
+	for _, key := range []string{"event-sounds", "input-feedback-sounds"} {
+		val, err := getGsettingsValue("org.gnome.desktop.sound", key)
+		if err == nil {
+			line := fmt.Sprintf("%s=%s", key, val)
+			lines = append(lines, line)
+		} else {
+			log.Warnf("Couldn't get gsettings key: $s", key)
+		}
+	}
+
 	saveTextFile(lines, filepath.Join(configHome(), "nwg-look/gsettings"))
 }
 
-func gsettingsGet(key string) (string, error) {
-	gnomeSchema := "org.gnome.desktop.interface"
-	cmd := exec.Command("gsettings", "get", gnomeSchema, key)
+func getGsettingsValue(schema, key string) (string, error) {
+	cmd := exec.Command("gsettings", "get", schema, key)
 	out, err := cmd.CombinedOutput()
 	if err == nil {
 		s := fmt.Sprintf("%s", strings.TrimSpace(string(out)))
-		return s[1 : len(s)-1], nil
+		if strings.HasPrefix(s, "'") {
+			return s[1 : len(s)-1], nil
+		} else {
+			return s, nil
+		}
 	} else {
 		return "", err
 	}
@@ -176,92 +297,114 @@ func gsettingsGet(key string) (string, error) {
 
 func applyGtkSettings() {
 	gnomeSchema := "org.gnome.desktop.interface"
-	log.Infof(">>> Applying to %s", gnomeSchema)
+	log.Info("[Applying gsettings]")
+	log.Infof("[-> %s]", gnomeSchema)
 
-	cmd := exec.Command("gsettings", "set", gnomeSchema, "gtk-theme", gtkConfig.themeName)
+	cmd := exec.Command("gsettings", "set", gnomeSchema, "gtk-theme", gsettings.gtkTheme)
 	err := cmd.Run()
 	if err != nil {
 		log.Warnf("gtk-theme: %s", err)
 	} else {
-		log.Infof("gtk-theme: %s OK", gtkConfig.themeName)
+		log.Infof("gtk-theme: %s OK", gsettings.gtkTheme)
 	}
 
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "icon-theme", gtkConfig.iconThemeName)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "icon-theme", gsettings.iconTheme)
 	err = cmd.Run()
 	if err != nil {
 		log.Warnf("icon-theme: %s", err)
 	} else {
-		log.Infof("icon-theme: %s OK", gtkConfig.iconThemeName)
+		log.Infof("icon-theme: %s OK", gsettings.iconTheme)
 	}
 
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "cursor-theme", gtkConfig.cursorThemeName)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "cursor-theme", gsettings.cursorTheme)
 	err = cmd.Run()
 	if err != nil {
 		log.Warnf("cursor-theme: %s", err)
 	} else {
-		log.Infof("cursor-theme: %s OK", gtkConfig.cursorThemeName)
+		log.Infof("cursor-theme: %s OK", gsettings.cursorTheme)
 	}
 
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-name", gtkConfig.fontName)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-name", gsettings.fontName)
 	err = cmd.Run()
 	if err != nil {
-		log.Warnf("font-name: %s %s", gtkConfig.fontName, err)
+		log.Warnf("font-name: %s %s", gsettings.fontName, err)
 	} else {
-		log.Infof("font-name: %s OK", gtkConfig.fontName)
+		log.Infof("font-name: %s OK", gsettings.fontName)
 	}
 
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-antialiasing", gtkConfig.fontAntialiasing)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-hinting", gsettings.fontHinting)
 	err = cmd.Run()
 	if err != nil {
-		log.Warnf("font-antialiasing: %s %s", gtkConfig.fontAntialiasing, err)
+		log.Warnf("font-hinting: %s %s", gsettings.fontHinting, err)
 	} else {
-		log.Infof("font-antialiasing: %s OK", gtkConfig.fontAntialiasing)
+		log.Infof("font-hinting: %s OK", gsettings.fontHinting)
 	}
 
-	var hinting string
-	switch gtkConfig.xftHintstyle {
-	case "hintslight":
-		hinting = "slight"
-	case "hintmedium":
-		hinting = "medium"
-	case "hintfull":
-		hinting = "full"
-	default:
-		hinting = "none"
-	}
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-hinting", hinting)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-antialiasing", gsettings.fontAntialiasing)
 	err = cmd.Run()
 	if err != nil {
-		log.Warnf("font-hinting: %s %s", gtkConfig.xftHintstyle, err)
+		log.Warnf("font-antialiasing: %s %s", gsettings.fontAntialiasing, err)
 	} else {
-		log.Infof("font-hinting: %s OK", hinting)
+		log.Infof("font-antialiasing: %s OK", gsettings.fontAntialiasing)
 	}
 
-	// strconv.Itoa
-	rgbaOrder := "rgb"
-	if gtkConfig.xftRgba != "none" {
-		rgbaOrder = gtkConfig.xftRgba
-	}
-	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-rgba-order", rgbaOrder)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-rgba-order", gsettings.fontRgbaOrder)
 	err = cmd.Run()
 	if err != nil {
-		log.Warnf("font-rgba-order: %s %s", rgbaOrder, err)
+		log.Warnf("font-rgba-order: %s %s", gsettings.fontRgbaOrder, err)
 	} else {
-		log.Infof("font-rgba-order: %s OK", rgbaOrder)
+		log.Infof("font-rgba-order: %s OK", gsettings.fontRgbaOrder)
 	}
+
+	gnomeSchema = "org.gnome.desktop.sound"
+	log.Infof("[-> %s]", gnomeSchema)
+
+	var val string
+	if gsettings.eventSounds {
+		val = "true"
+	} else {
+		val = "false"
+	}
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "event-sounds", val)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("event-sounds: %s %s", val, err)
+	} else {
+		log.Infof("event-sounds: %s OK", val)
+	}
+
+	if gsettings.inputFeedbackSounds {
+		val = "true"
+	} else {
+		val = "false"
+	}
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "input-feedback-sounds", val)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("input-feedback-sounds: %s %s", val, err)
+	} else {
+		log.Infof("input-feedback-sounds: %s OK", val)
+	}
+
+	saveGsettings()
 }
 
-func saveGtkSettings() {
+func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
+	log.Infof("[Exporting to %s]", configFile)
 	lines := []string{"[Settings]"}
 
-	lines = append(lines, fmt.Sprintf("gtk-theme-name=%s", gtkConfig.themeName))
-	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=%s", gtkConfig.iconThemeName))
-	lines = append(lines, fmt.Sprintf("gtk-font-name=%s", gtkConfig.fontName))
-	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=%s", gtkConfig.cursorThemeName))
-	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gtkConfig.cursorThemeSize))
+	lines = append(lines, fmt.Sprintf("gtk-theme-name=%s", gsettings.gtkTheme))
+	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=%s", gsettings.iconTheme))
+	lines = append(lines, fmt.Sprintf("gtk-font-name=%s", gsettings.fontName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=%s", gsettings.cursorTheme))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gsettings.cursorSize))
+
+	// Ignored
 	lines = append(lines, fmt.Sprintf("gtk-toolbar-style=%s", gtkConfig.toolbarStyle))
 	lines = append(lines, fmt.Sprintf("gtk-toolbar-icon-size=%s", gtkConfig.toolbarIconSize))
+
+	// Deprecated
 	v := 0
 	if gtkConfig.buttonImages {
 		v = 1
@@ -273,36 +416,65 @@ func saveGtkSettings() {
 		v = 0
 	}
 	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
-	if gtkConfig.enableEventSounds {
+
+	if gsettings.eventSounds {
 		v = 1
 	} else {
 		v = 0
 	}
 	lines = append(lines, fmt.Sprintf("gtk-enable-event-sounds=%v", v))
-	if gtkConfig.enableInputFeedbackSounds {
+
+	if gsettings.inputFeedbackSounds {
 		v = 1
 	} else {
 		v = 0
 	}
 	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
-	lines = append(lines, fmt.Sprintf("gtk-xft-antialias=%v", gtkConfig.xftAntialias))
-	lines = append(lines, fmt.Sprintf("gtk-xft-dpi=%v", gtkConfig.xftDpi))
-	lines = append(lines, fmt.Sprintf("gtk-xft-hinting=%v", gtkConfig.xftHinting))
-	lines = append(lines, fmt.Sprintf("gtk-xft-hintstyle=%s", gtkConfig.xftHintstyle))
-	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=%s", gtkConfig.xftRgba))
+
+	if gsettings.fontAntialiasing != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-antialias=%v", v))
+
+	if gsettings.fontHinting != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hinting=%v", v))
+
+	var fh string
+	switch gsettings.fontHinting {
+	case "slight":
+		fh = "hintslight"
+	case "medium":
+		fh = "hintmedium"
+	case "full":
+		fh = "hintfull"
+	default:
+		fh = "hintnone"
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hintstyle=%s", fh))
+
+	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=%s", gsettings.fontRgbaOrder))
 
 	// append unsupported lines / comments from the original settings.ini file
 	for _, l := range originalGtkConfig {
-		if l != "" && !isDefined(l) {
+		if l != "" && !isSupported(l) {
 			lines = append(lines, l)
 		}
 	}
 
+	for _, l := range lines {
+		log.Info(l)
+	}
 	saveTextFile(lines, configFile)
 }
 
-func isDefined(line string) bool {
-	defined := []string{
+func isSupported(line string) bool {
+	supported := []string{
 		"gtk-theme-name",
 		"gtk-icon-theme-name",
 		"gtk-font-name",
@@ -315,12 +487,11 @@ func isDefined(line string) bool {
 		"gtk-enable-event-sounds",
 		"gtk-enable-input-feedback-sounds",
 		"gtk-xft-antialias",
-		"gtk-xft-dpi",
 		"gtk-xft-hinting",
 		"gtk-xft-hintstyle",
 		"gtk-xft-rgba",
 	}
-	for _, d := range defined {
+	for _, d := range supported {
 		if strings.HasPrefix(line, d) {
 			return true
 		}

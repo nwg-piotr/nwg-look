@@ -17,6 +17,7 @@ var (
 	gtkConfig         gtkConfigFields // struct to store parsed settings.ini
 	originalGtkConfig []string        // not parsed settings.ini lines, if any
 	gtkSettings       *gtk.Settings
+	gsettings         gsettingsValues
 	dataDirs          []string
 	cursorThemes      map[string]string // theme name to path
 	cursorThemeNames  map[string]string // theme name to theme folder name
@@ -51,6 +52,41 @@ type gtkConfigFields struct {
 	xftRgba                   string
 }
 
+type gsettingsValues struct {
+	// org.gnome.desktop.interface
+	gtkTheme         string
+	iconTheme        string
+	fontName         string
+	cursorTheme      string
+	cursorSize       int
+	toolbarStyle     string
+	toolbarIconsSize string
+	fontHinting      string
+	fontAntialiasing string
+	fontRgbaOrder    string
+	// org.gnome.desktop.sound
+	eventSounds         bool
+	inputFeedbackSounds bool
+}
+
+func gsettingsNewWithDefaults() gsettingsValues {
+	g := gsettingsValues{}
+	g.gtkTheme = "Adwaita"
+	g.iconTheme = "Adwaita"
+	g.fontName = "Sans 10"
+	g.cursorTheme = ""
+	g.cursorSize = 24
+	g.toolbarStyle = "both-horiz"
+	g.toolbarIconsSize = "large"
+	g.fontHinting = "medium"
+	g.fontAntialiasing = "grayscale"
+	g.fontRgbaOrder = "rgb"
+	g.eventSounds = true
+	g.inputFeedbackSounds = false
+
+	return g
+}
+
 func gtkConfigFieldsDefault() gtkConfigFields {
 	s := gtkConfigFields{}
 	// 'ignored' and 'deprecated' values left for lxappearance compatibility
@@ -67,14 +103,13 @@ func gtkConfigFieldsDefault() gtkConfigFields {
 	s.enableInputFeedbackSounds = true
 	s.xftAntialias = -1
 
-	val, err := gsettingsGet("font-antialiasing")
+	val, err := getGsettingsValue("org.gnome.desktop.interface", "font-antialiasing")
 	if err == nil {
 		s.fontAntialiasing = val
 	} else {
 		log.Warn(err)
 	}
 
-	s.xftDpi = -1
 	s.xftHinting = -1
 	s.xftHintstyle = "hintmedium"
 	s.xftRgba = "none"
@@ -85,15 +120,17 @@ func gtkConfigFieldsDefault() gtkConfigFields {
 func displayThemes() {
 	destroyContent()
 
-	listBox = setUpThemeListBox(gtkConfig.themeName)
+	listBox = setUpThemeListBox(gsettings.gtkTheme)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
-	rowToFocus.GrabFocus()
+	if rowToFocus != nil {
+		rowToFocus.GrabFocus()
+	}
 
 	preview = setUpWidgetsPreview()
 	grid.Attach(preview, 1, 1, 1, 1)
 
-	fontSelector = setUpFontSelector(gtkConfig.fontName)
+	fontSelector = setUpFontSelector(gsettings.fontName)
 	fontSelector.SetProperty("vexpand", true)
 	fontSelector.SetProperty("valign", gtk.ALIGN_START)
 	grid.Attach(fontSelector, 1, 2, 1, 1)
@@ -105,7 +142,7 @@ func displayThemes() {
 func displayIconThemes() {
 	destroyContent()
 
-	listBox = setUpIconThemeListBox(gtkConfig.iconThemeName)
+	listBox = setUpIconThemeListBox(gsettings.iconTheme)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
@@ -120,12 +157,12 @@ func displayIconThemes() {
 func displayCursorThemes() {
 	destroyContent()
 
-	listBox = setUpCursorThemeListBox(gtkConfig.cursorThemeName)
+	listBox = setUpCursorThemeListBox(gsettings.cursorTheme)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
 	rowToFocus.GrabFocus()
 
-	preview = setUpCursorsPreview(cursorThemes[gtkConfig.cursorThemeName])
+	preview = setUpCursorsPreview(cursorThemes[gsettings.cursorTheme])
 	grid.Attach(preview, 1, 1, 1, 1)
 
 	viewport.ShowAll()
@@ -176,7 +213,8 @@ func main() {
 
 	gtk.Init(nil)
 
-	saveGsettings()
+	gsettings = gsettingsNewWithDefaults()
+	readGsettings()
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
 	gtkConfig = gtkConfigFieldsDefault()
@@ -227,7 +265,7 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
 		applyGtkSettings()
-		saveGtkSettings()
+		saveGtkIni()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
