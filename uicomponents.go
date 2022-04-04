@@ -388,7 +388,9 @@ func setUpCursorSizeSelector() *gtk.Box {
 	sb, _ := gtk.SpinButtonNewWithRange(6, 1024, 1)
 	sb.SetValue(float64(gsettings.cursorSize))
 	sb.Connect("value-changed", func() {
-		gsettings.cursorSize = int(sb.GetValue())
+		v := int(sb.GetValue())
+		gtkSettings.SetProperty("gtk-cursor-theme-size", v)
+		gsettings.cursorSize = v
 	})
 	box.PackStart(sb, false, false, 6)
 	lbl, _ = gtk.LabelNew("(default: 24)")
@@ -398,6 +400,9 @@ func setUpCursorSizeSelector() *gtk.Box {
 }
 
 func setUpFontSettingsForm() *gtk.Frame {
+	// We wont be applying these properties to gtk.Settings for preview,
+	// as they remain unchanged in once open window.
+
 	frame, _ := gtk.FrameNew("Font settings")
 	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
@@ -423,7 +428,6 @@ func setUpFontSettingsForm() *gtk.Frame {
 	comboHinting.Connect("changed", func() {
 		id := comboHinting.GetActiveID()
 		gsettings.fontHinting = id
-		fmt.Println(">>>", comboHinting.GetActiveText())
 	})
 
 	lbl, _ = gtk.LabelNew("Font antialiasing:")

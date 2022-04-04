@@ -25,8 +25,8 @@ func configHome() string {
 	return filepath.Join(os.Getenv("HOME"), ".config/")
 }
 
-func loadGtkSettings() gtkConfigFields {
-	gtkConfig := gtkConfigFieldsDefault()
+func loadGtkSettings() gtkConfigProperties {
+	gtkConfig := gtkConfigPropertiesDefault()
 
 	// parse gtk settings file
 	originalGtkConfig = []string{}

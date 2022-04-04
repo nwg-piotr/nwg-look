@@ -32,7 +32,7 @@ var (
 	rowToFocus         *gtk.ListBoxRow
 )
 
-type gtkConfigFields struct {
+type gtkConfigProperties struct {
 	themeName                 string
 	iconThemeName             string
 	fontName                  string
@@ -87,8 +87,8 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	return g
 }
 
-func gtkConfigFieldsDefault() gtkConfigFields {
-	s := gtkConfigFields{}
+func gtkConfigPropertiesDefault() gtkConfigProperties {
+	s := gtkConfigProperties{}
 	// 'ignored' and 'deprecated' values left for lxappearance compatibility
 	s.themeName = "Adwaita"
 	s.iconThemeName = "Adwaita"
