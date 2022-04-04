@@ -14,21 +14,22 @@ import (
 const version = "0.0.1"
 
 var (
-	originalGtkConfig []string // not parsed settings.ini lines, if any
-	gtkSettings       *gtk.Settings
-	gsettings         gsettingsValues
-	dataDirs          []string
-	cursorThemes      map[string]string // theme name to path
-	cursorThemeNames  map[string]string // theme name to theme folder name
-	viewport          *gtk.Viewport
-	scrolledWindow    *gtk.ScrolledWindow
-	listBox           *gtk.ListBox
-	menuBar           *gtk.MenuBar
-	fontSelector      *gtk.Box
-	grid              *gtk.Grid
-	preview           *gtk.Frame
-	fontSettingsForm  *gtk.Frame
-	rowToFocus        *gtk.ListBoxRow
+	originalGtkConfig  []string // not parsed settings.ini lines, if any
+	gtkSettings        *gtk.Settings
+	gsettings          gsettingsValues
+	dataDirs           []string
+	cursorThemes       map[string]string // theme name to path
+	cursorThemeNames   map[string]string // theme name to theme folder name
+	viewport           *gtk.Viewport
+	scrolledWindow     *gtk.ScrolledWindow
+	listBox            *gtk.ListBox
+	menuBar            *gtk.MenuBar
+	fontSelector       *gtk.Box
+	grid               *gtk.Grid
+	preview            *gtk.Frame
+	cursorSizeSelector *gtk.Box
+	fontSettingsForm   *gtk.Frame
+	rowToFocus         *gtk.ListBoxRow
 )
 
 type gtkConfigFields struct {
@@ -164,6 +165,9 @@ func displayCursorThemes() {
 	preview = setUpCursorsPreview(cursorThemes[gsettings.cursorTheme])
 	grid.Attach(preview, 1, 1, 1, 1)
 
+	cursorSizeSelector = setUpCursorSizeSelector()
+	grid.Attach(cursorSizeSelector, 1, 2, 1, 1)
+
 	viewport.ShowAll()
 	grid.ShowAll()
 }
@@ -190,6 +194,9 @@ func destroyContent() {
 	}
 	if fontSettingsForm != nil {
 		fontSettingsForm.Destroy()
+	}
+	if cursorSizeSelector != nil {
+		cursorSizeSelector.Destroy()
 	}
 }
 

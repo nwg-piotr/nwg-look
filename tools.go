@@ -328,6 +328,17 @@ func applyGsettings() {
 		log.Infof("cursor-theme: %s OK", gsettings.cursorTheme)
 	}
 
+	var val string
+
+	val = strconv.Itoa(gsettings.cursorSize)
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "cursor-size", val)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("cursor-size: %s", err)
+	} else {
+		log.Infof("cursor-size: %s OK", val)
+	}
+
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "font-name", gsettings.fontName)
 	err = cmd.Run()
 	if err != nil {
@@ -363,7 +374,6 @@ func applyGsettings() {
 	gnomeSchema = "org.gnome.desktop.sound"
 	log.Infof(">> %s", gnomeSchema)
 
-	var val string
 	if gsettings.eventSounds {
 		val = "true"
 	} else {

@@ -375,6 +375,28 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 	return frame
 }
 
+func setUpCursorSizeSelector() *gtk.Box {
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+	box.SetProperty("margin", 12)
+	box.SetProperty("hexpand", true)
+	box.SetProperty("vexpand", true)
+	box.SetProperty("valign", gtk.ALIGN_START)
+
+	lbl, _ := gtk.LabelNew("Cursor size:")
+	box.PackStart(lbl, false, false, 0)
+
+	sb, _ := gtk.SpinButtonNewWithRange(6, 1024, 1)
+	sb.SetValue(float64(gsettings.cursorSize))
+	sb.Connect("value-changed", func() {
+		gsettings.cursorSize = int(sb.GetValue())
+	})
+	box.PackStart(sb, false, false, 6)
+	lbl, _ = gtk.LabelNew("(default: 24)")
+	box.PackStart(lbl, false, false, 0)
+
+	return box
+}
+
 func setUpFontSettingsForm() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Font settings")
 	frame.SetProperty("margin", 6)
