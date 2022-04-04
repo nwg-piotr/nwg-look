@@ -14,8 +14,7 @@ import (
 const version = "0.0.1"
 
 var (
-	gtkConfig         gtkConfigFields // struct to store parsed settings.ini
-	originalGtkConfig []string        // not parsed settings.ini lines, if any
+	originalGtkConfig []string // not parsed settings.ini lines, if any
 	gtkSettings       *gtk.Settings
 	gsettings         gsettingsValues
 	dataDirs          []string
@@ -217,9 +216,6 @@ func main() {
 	readGsettings()
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
-	gtkConfig = gtkConfigFieldsDefault()
-
-	loadGtkSettings()
 
 	builder, _ := gtk.BuilderNewFromFile("/usr/share/nwg-look/main.glade")
 	win, _ := getWindow(builder, "window")
@@ -264,7 +260,7 @@ func main() {
 
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
-		applyGtkSettings()
+		applyGsettings()
 		saveGtkIni()
 	})
 

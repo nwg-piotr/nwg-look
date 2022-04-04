@@ -414,7 +414,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 	comboAntialiasing.Append("none", "none")
 	comboAntialiasing.Append("grayscale", "grayscale")
 	comboAntialiasing.Append("rgba", "rgba")
-	comboAntialiasing.SetActiveID(gtkConfig.fontAntialiasing)
+	comboAntialiasing.SetActiveID(gsettings.fontAntialiasing)
 	g.Attach(comboAntialiasing, 1, 1, 1, 1)
 
 	comboAntialiasing.Connect("changed", func() {

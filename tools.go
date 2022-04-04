@@ -25,14 +25,16 @@ func configHome() string {
 	return filepath.Join(os.Getenv("HOME"), ".config/")
 }
 
-func loadGtkSettings() {
+func loadGtkSettings() gtkConfigFields {
+	gtkConfig := gtkConfigFieldsDefault()
+
 	// parse gtk settings file
 	originalGtkConfig = []string{}
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if pathExists(configFile) {
 		lines, err := loadTextFile(configFile)
 		if err == nil {
-			log.Infof("[Parsing %s]", configFile)
+			log.Infof(">> Parsing original %s", configFile)
 		} else {
 			log.Warnf("Couldn't load %s", configFile)
 		}
@@ -93,21 +95,23 @@ func loadGtkSettings() {
 	} else {
 		log.Warnf("Could'n find %s", configFile)
 	}
-	log.Infof("gtk-theme-name: %s", gtkConfig.themeName)
-	log.Infof("gtk-icon-theme-name: %s", gtkConfig.iconThemeName)
-	log.Infof("gtk-font-name: %s", gtkConfig.fontName)
-	log.Infof("gtk-cursor-theme-name: %s", gtkConfig.cursorThemeName)
-	log.Infof("gtk-cursor-theme-size: %v", gtkConfig.cursorThemeSize)
-	log.Infof("gtk-toolbar-style: %s", gtkConfig.toolbarStyle)
-	log.Infof("gtk-toolbar-icon-size: %s", gtkConfig.toolbarIconSize)
-	log.Infof("gtk-button-images: %v", gtkConfig.buttonImages)
-	log.Infof("gtk-menu-images: %v", gtkConfig.menuImages)
-	log.Infof("gtk-enable-event-sounds: %v", gtkConfig.enableEventSounds)
-	log.Infof("gtk-enable-input-feedback-sounds: %v", gtkConfig.enableInputFeedbackSounds)
-	log.Infof("gtk-xft-antialias: %v", gtkConfig.xftAntialias)
-	log.Infof("gtk-xft-hinting: %v", gtkConfig.xftHinting)
-	log.Infof("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
-	log.Infof("gtk-xft-rgba: %v", gtkConfig.xftRgba)
+	log.Debugf("gtk-theme-name: %s", gtkConfig.themeName)
+	log.Debugf("gtk-icon-theme-name: %s", gtkConfig.iconThemeName)
+	log.Debugf("gtk-font-name: %s", gtkConfig.fontName)
+	log.Debugf("gtk-cursor-theme-name: %s", gtkConfig.cursorThemeName)
+	log.Debugf("gtk-cursor-theme-size: %v", gtkConfig.cursorThemeSize)
+	log.Debugf("gtk-toolbar-style: %s", gtkConfig.toolbarStyle)
+	log.Debugf("gtk-toolbar-icon-size: %s", gtkConfig.toolbarIconSize)
+	log.Debugf("gtk-button-images: %v", gtkConfig.buttonImages)
+	log.Debugf("gtk-menu-images: %v", gtkConfig.menuImages)
+	log.Debugf("gtk-enable-event-sounds: %v", gtkConfig.enableEventSounds)
+	log.Debugf("gtk-enable-input-feedback-sounds: %v", gtkConfig.enableInputFeedbackSounds)
+	log.Debugf("gtk-xft-antialias: %v", gtkConfig.xftAntialias)
+	log.Debugf("gtk-xft-hinting: %v", gtkConfig.xftHinting)
+	log.Debugf("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
+	log.Debugf("gtk-xft-rgba: %v", gtkConfig.xftRgba)
+
+	return gtkConfig
 }
 
 func intValue(s string) int {
@@ -119,7 +123,7 @@ func intValue(s string) int {
 }
 
 func readGsettings() {
-	log.Info("[Reading gsettings]")
+	log.Info(">>> Reading gsettings")
 
 	val, err := getGsettingsValue("org.gnome.desktop.interface", "gtk-theme")
 	if err == nil {
@@ -295,10 +299,10 @@ func getGsettingsValue(schema, key string) (string, error) {
 	}
 }
 
-func applyGtkSettings() {
+func applyGsettings() {
 	gnomeSchema := "org.gnome.desktop.interface"
-	log.Info("[Applying gsettings]")
-	log.Infof("[-> %s]", gnomeSchema)
+	log.Info(">>> Applying gsettings")
+	log.Infof(">> %s", gnomeSchema)
 
 	cmd := exec.Command("gsettings", "set", gnomeSchema, "gtk-theme", gsettings.gtkTheme)
 	err := cmd.Run()
@@ -357,7 +361,7 @@ func applyGtkSettings() {
 	}
 
 	gnomeSchema = "org.gnome.desktop.sound"
-	log.Infof("[-> %s]", gnomeSchema)
+	log.Infof(">> %s", gnomeSchema)
 
 	var val string
 	if gsettings.eventSounds {
@@ -386,12 +390,16 @@ func applyGtkSettings() {
 		log.Infof("input-feedback-sounds: %s OK", val)
 	}
 
-	saveGsettings()
+	// saveGsettings()
 }
 
 func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
-	log.Infof("[Exporting to %s]", configFile)
+	log.Info(">>> Exporting settings.ini")
+
+	// load gtk-3.0/settings.ini
+	gtkConfig := loadGtkSettings()
+
 	lines := []string{"[Settings]"}
 
 	lines = append(lines, fmt.Sprintf("gtk-theme-name=%s", gsettings.gtkTheme))
@@ -468,8 +476,9 @@ func saveGtkIni() {
 	}
 
 	for _, l := range lines {
-		log.Info(l)
+		log.Debug(l)
 	}
+	log.Infof(">> Saving to %s", configFile)
 	saveTextFile(lines, configFile)
 }
 
