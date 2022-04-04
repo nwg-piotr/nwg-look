@@ -25,9 +25,7 @@ func configHome() string {
 	return filepath.Join(os.Getenv("HOME"), ".config/")
 }
 
-func loadGtkSettings() gtkConfigProperties {
-	gtkConfig := gtkConfigPropertiesDefault()
-
+func loadGtkSettings() {
 	// parse gtk settings file
 	originalGtkConfig = []string{}
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
@@ -110,8 +108,6 @@ func loadGtkSettings() gtkConfigProperties {
 	log.Debugf("gtk-xft-hinting: %v", gtkConfig.xftHinting)
 	log.Debugf("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
 	log.Debugf("gtk-xft-rgba: %v", gtkConfig.xftRgba)
-
-	return gtkConfig
 }
 
 func intValue(s string) int {
@@ -371,6 +367,22 @@ func applyGsettings() {
 		log.Infof("font-rgba-order: %s OK", gsettings.fontRgbaOrder)
 	}
 
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "toolbar-style", gsettings.toolbarStyle)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("toolbar-style: %s %s", gsettings.toolbarStyle, err)
+	} else {
+		log.Infof("toolbar-style: %s OK", gsettings.toolbarStyle)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "toolbar-icons-size", gsettings.toolbarIconsSize)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("toolbar-icons-size: %s %s", gsettings.toolbarIconsSize, err)
+	} else {
+		log.Infof("toolbar-icons-size: %s OK", gsettings.toolbarIconsSize)
+	}
+
 	gnomeSchema = "org.gnome.desktop.sound"
 	log.Infof(">> %s", gnomeSchema)
 
@@ -406,9 +418,6 @@ func applyGsettings() {
 func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	log.Info(">>> Exporting settings.ini")
-
-	// load gtk-3.0/settings.ini
-	gtkConfig := loadGtkSettings()
 
 	lines := []string{"[Settings]"}
 

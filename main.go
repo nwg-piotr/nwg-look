@@ -15,6 +15,7 @@ const version = "0.0.1"
 
 var (
 	originalGtkConfig  []string // not parsed settings.ini lines, if any
+	gtkConfig          gtkConfigProperties
 	gtkSettings        *gtk.Settings
 	gsettings          gsettingsValues
 	dataDirs           []string
@@ -87,7 +88,7 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	return g
 }
 
-func gtkConfigPropertiesDefault() gtkConfigProperties {
+func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
 	s := gtkConfigProperties{}
 	// 'ignored' and 'deprecated' values left for lxappearance compatibility
 	s.themeName = "Adwaita"
@@ -175,8 +176,18 @@ func displayCursorThemes() {
 func displayFontSettingsForm() {
 	destroyContent()
 
-	fontSettingsForm = setUpFontSettingsForm()
-	grid.Attach(fontSettingsForm, 0, 1, 1, 1)
+	preview = setUpFontSettingsForm()
+	grid.Attach(preview, 0, 1, 1, 1)
+	menuBar.Deactivate()
+	grid.ShowAll()
+	scrolledWindow.Hide()
+}
+
+func displayOtherSettingsForm() {
+	destroyContent()
+
+	preview = setUpOtherSettingsForm()
+	grid.Attach(preview, 0, 1, 1, 1)
 	menuBar.Deactivate()
 	grid.ShowAll()
 	scrolledWindow.Hide()
@@ -191,9 +202,6 @@ func destroyContent() {
 	}
 	if fontSelector != nil {
 		fontSelector.Destroy()
-	}
-	if fontSettingsForm != nil {
-		fontSettingsForm.Destroy()
 	}
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
@@ -218,6 +226,11 @@ func main() {
 	cursorThemes, cursorThemeNames = getCursorThemes()
 
 	gtk.Init(nil)
+
+	// initialize gtkConfigProperties struct with default gtk.Settings values
+	gtkConfig = gtkConfigPropertiesNewWithDefaults()
+	// update from gtk-3.0/settings.ini
+	loadGtkSettings()
 
 	gsettings = gsettingsNewWithDefaults()
 	readGsettings()
@@ -258,7 +271,8 @@ func main() {
 	item4, _ := getMenuItem(builder, "item-font")
 	item4.Connect("button-release-event", displayFontSettingsForm)
 
-	// item5, _ := getMenuItem(builder, "item-other")
+	item5, _ := getMenuItem(builder, "item-other")
+	item5.Connect("button-release-event", displayOtherSettingsForm)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

@@ -467,3 +467,72 @@ func setUpFontSettingsForm() *gtk.Frame {
 
 	return frame
 }
+
+func setUpOtherSettingsForm() *gtk.Frame {
+	// We won't be applying these properties to gtk.Settings for preview,
+	// as they remain unchanged in once open window.
+
+	frame, _ := gtk.FrameNew("Other settings")
+	frame.SetProperty("margin", 6)
+	g, _ := gtk.GridNew()
+	g.SetRowSpacing(12)
+	g.SetColumnSpacing(12)
+	g.SetProperty("margin", 6)
+	g.SetProperty("hexpand", true)
+	g.SetProperty("vexpand", true)
+	frame.Add(g)
+
+	lbl, _ := gtk.LabelNew("")
+	lbl.SetMarkup("<b>UI settings</b>")
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	g.Attach(lbl, 0, 0, 1, 1)
+
+	lbl, _ = gtk.LabelNew("Toolbar style:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 1, 1, 1)
+
+	comboToolbarStyle, _ := gtk.ComboBoxTextNew()
+	comboToolbarStyle.Append("both", "Text below icons")
+	comboToolbarStyle.Append("both-horiz", "Text next to icons")
+	comboToolbarStyle.Append("icons", "Icons")
+	comboToolbarStyle.Append("text", "Text")
+	comboToolbarStyle.SetActiveID(gsettings.toolbarStyle)
+	g.Attach(comboToolbarStyle, 1, 1, 1, 1)
+
+	comboToolbarStyle.Connect("changed", func() {
+		gsettings.toolbarStyle = comboToolbarStyle.GetActiveID()
+
+		switch gsettings.toolbarStyle {
+		case "both":
+			gtkConfig.toolbarStyle = "GTK_TOOLBAR_BOTH"
+		case "icons":
+			gtkConfig.toolbarStyle = "GTK_TOOLBAR_ICONS"
+		case "text":
+			gtkConfig.toolbarStyle = "GTK_TOOLBAR_TEXT"
+		default:
+			gtkConfig.toolbarStyle = "GTK_TOOLBAR_BOTH_HORIZ"
+		}
+	})
+
+	lbl, _ = gtk.LabelNew("Toolbar icon size:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 2, 1, 1)
+
+	comboToolbarIconSize, _ := gtk.ComboBoxTextNew()
+	comboToolbarIconSize.Append("small", "Small")
+	comboToolbarIconSize.Append("large", "Large")
+	comboToolbarIconSize.SetActiveID(gsettings.toolbarIconsSize)
+	g.Attach(comboToolbarIconSize, 1, 2, 1, 1)
+
+	comboToolbarIconSize.Connect("changed", func() {
+		gsettings.toolbarIconsSize = comboToolbarIconSize.GetActiveID()
+
+		if gsettings.toolbarIconsSize == "small" {
+			gtkConfig.toolbarIconSize = "GTK_ICON_SIZE_SMALL_TOOLBAR"
+		} else {
+			gtkConfig.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR"
+		}
+	})
+
+	return frame
+}
