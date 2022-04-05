@@ -571,7 +571,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 		gsettings.inputFeedbackSounds = cbInputSounds.GetActive()
 		gtkConfig.enableInputFeedbackSounds = cbInputSounds.GetActive()
 	})
-	g.Attach(cbInputSounds, 0, 7, 1, 1)
+	g.Attach(cbInputSounds, 0, 7, 2, 1)
 
 	return frame
 }
