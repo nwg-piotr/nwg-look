@@ -462,6 +462,9 @@ func applyGsettingsFromFile() {
 			}
 		}
 		applyGsettings()
+	} else {
+		log.Warnf("Couldn't find file: %s", gsettingsFile)
+		os.Exit(1)
 	}
 }
 
