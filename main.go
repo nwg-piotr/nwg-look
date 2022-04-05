@@ -212,6 +212,7 @@ func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
 	var applyGs = flag.Bool("a", false, "Apply stored gsetting")
+	var doNotSave = flag.Bool("n", false, "do Not save gtk settings.ini")
 	flag.Parse()
 
 	if *displayVersion {
@@ -238,7 +239,9 @@ func main() {
 	// initialize gtkConfigProperties struct with default gtk.Settings values
 	gtkConfig = gtkConfigPropertiesNewWithDefaults()
 	// update from gtk-3.0/settings.ini
-	loadGtkConfig()
+	if !*doNotSave {
+		loadGtkConfig()
+	}
 
 	readGsettings()
 
@@ -290,7 +293,9 @@ func main() {
 	btnApply.Connect("clicked", func() {
 		applyGsettings()
 		saveGsettings()
-		saveGtkIni()
+		if !*doNotSave {
+			saveGtkIni()
+		}
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
