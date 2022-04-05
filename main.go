@@ -211,6 +211,7 @@ func destroyContent() {
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
+	var applyGs = flag.Bool("a", false, "Apply stored gsetting")
 	flag.Parse()
 
 	if *displayVersion {
@@ -222,6 +223,13 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	gsettings = gsettingsNewWithDefaults()
+
+	if *applyGs {
+		applyGsettingsFromFile()
+		os.Exit(0)
+	}
+
 	dataDirs = getDataDirs()
 	cursorThemes, cursorThemeNames = getCursorThemes()
 
@@ -230,9 +238,8 @@ func main() {
 	// initialize gtkConfigProperties struct with default gtk.Settings values
 	gtkConfig = gtkConfigPropertiesNewWithDefaults()
 	// update from gtk-3.0/settings.ini
-	loadGtkSettings()
+	loadGtkConfig()
 
-	gsettings = gsettingsNewWithDefaults()
 	readGsettings()
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
@@ -282,6 +289,7 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
 		applyGsettings()
+		saveGsettings()
 		saveGtkIni()
 	})
 
