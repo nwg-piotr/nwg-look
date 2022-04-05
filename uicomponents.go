@@ -483,7 +483,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 	frame.Add(g)
 
 	lbl, _ := gtk.LabelNew("")
-	lbl.SetMarkup("<b>UI settings</b>")
+	lbl.SetMarkup("<b>UI settings</b> (deprecated)")
 	lbl.SetProperty("halign", gtk.ALIGN_START)
 	g.Attach(lbl, 0, 0, 1, 1)
 
@@ -492,6 +492,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 	g.Attach(lbl, 0, 1, 1, 1)
 
 	comboToolbarStyle, _ := gtk.ComboBoxTextNew()
+	comboToolbarStyle.SetTooltipText("deprecated since GTK 3.10, ignored")
 	comboToolbarStyle.Append("both", "Text below icons")
 	comboToolbarStyle.Append("both-horiz", "Text next to icons")
 	comboToolbarStyle.Append("icons", "Icons")
@@ -519,6 +520,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 	g.Attach(lbl, 0, 2, 1, 1)
 
 	comboToolbarIconSize, _ := gtk.ComboBoxTextNew()
+	comboToolbarIconSize.SetTooltipText("deprecated since GTK 3.10, ignored")
 	comboToolbarIconSize.Append("small", "Small")
 	comboToolbarIconSize.Append("large", "Large")
 	comboToolbarIconSize.SetActiveID(gsettings.toolbarIconsSize)
@@ -533,6 +535,43 @@ func setUpOtherSettingsForm() *gtk.Frame {
 			gtkConfig.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR"
 		}
 	})
+
+	cbBtn, _ := gtk.CheckButtonNewWithLabel("Show button images")
+	cbBtn.SetTooltipText("deprecated since GTK 3.10")
+	cbBtn.SetActive(gtkConfig.buttonImages)
+	cbBtn.Connect("toggled", func() {
+		gtkConfig.buttonImages = cbBtn.GetActive()
+	})
+	g.Attach(cbBtn, 0, 3, 1, 1)
+
+	cbMnu, _ := gtk.CheckButtonNewWithLabel("Show menu images")
+	cbMnu.SetTooltipText("deprecated since GTK 3.10")
+	cbMnu.SetActive(gtkConfig.menuImages)
+	cbMnu.Connect("toggled", func() {
+		gtkConfig.menuImages = cbMnu.GetActive()
+	})
+	g.Attach(cbMnu, 0, 4, 1, 1)
+
+	lbl, _ = gtk.LabelNew("")
+	lbl.SetMarkup("<b>Sound effects</b>")
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	g.Attach(lbl, 0, 5, 1, 1)
+
+	cbEventSounds, _ := gtk.CheckButtonNewWithLabel("Enable event sounds")
+	cbEventSounds.SetActive(gsettings.eventSounds)
+	cbEventSounds.Connect("toggled", func() {
+		gsettings.eventSounds = cbEventSounds.GetActive()
+		gtkConfig.enableEventSounds = cbEventSounds.GetActive()
+	})
+	g.Attach(cbEventSounds, 0, 6, 1, 1)
+
+	cbInputSounds, _ := gtk.CheckButtonNewWithLabel("Enable input feedback sounds")
+	cbInputSounds.SetActive(gsettings.inputFeedbackSounds)
+	cbInputSounds.Connect("toggled", func() {
+		gsettings.inputFeedbackSounds = cbInputSounds.GetActive()
+		gtkConfig.enableInputFeedbackSounds = cbInputSounds.GetActive()
+	})
+	g.Attach(cbInputSounds, 0, 7, 1, 1)
 
 	return frame
 }
