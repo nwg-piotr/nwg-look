@@ -75,7 +75,7 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.gtkTheme = "Adwaita"
 	g.iconTheme = "Adwaita"
 	g.fontName = "Sans 10"
-	g.cursorTheme = ""
+	g.cursorTheme = "Adwaita"
 	g.cursorSize = 24
 	g.toolbarStyle = "both-horiz"
 	g.toolbarIconsSize = "large"
@@ -120,6 +120,7 @@ func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
 
 func displayThemes() {
 	destroyContent()
+	rowToFocus = nil
 
 	listBox = setUpThemeListBox(gsettings.gtkTheme)
 	viewport.Add(listBox)
@@ -142,11 +143,14 @@ func displayThemes() {
 
 func displayIconThemes() {
 	destroyContent()
+	rowToFocus = nil
 
 	listBox = setUpIconThemeListBox(gsettings.iconTheme)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
-	rowToFocus.GrabFocus()
+	if rowToFocus != nil {
+		rowToFocus.GrabFocus()
+	}
 
 	preview = setUpIconsPreview()
 	grid.Attach(preview, 1, 1, 1, 1)
@@ -157,11 +161,14 @@ func displayIconThemes() {
 
 func displayCursorThemes() {
 	destroyContent()
+	rowToFocus = nil
 
 	listBox = setUpCursorThemeListBox(gsettings.cursorTheme)
 	viewport.Add(listBox)
 	menuBar.Deactivate()
-	rowToFocus.GrabFocus()
+	if rowToFocus != nil {
+		rowToFocus.GrabFocus()
+	}
 
 	preview = setUpCursorsPreview(cursorThemes[gsettings.cursorTheme])
 	grid.Attach(preview, 1, 1, 1, 1)
