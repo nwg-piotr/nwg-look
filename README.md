@@ -17,9 +17,8 @@ Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based W
 ## Installation
 
 1. Clone the repository, cd into it.
-2. Install necessary golang libraries with `make get`.
-3. `make build`
-4. `sudo make install`
+2. `make build`
+3. `sudo make install`
 
 ## Usage
 
