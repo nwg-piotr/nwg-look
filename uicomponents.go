@@ -221,6 +221,13 @@ func setUpWidgetsPreview() *gtk.Frame {
 	combo.SetProperty("can-focus", false)
 	grid.Attach(combo, 2, 3, 1, 1)
 
+	progressBar, _ := gtk.ProgressBarNew()
+	progressBar.SetFraction(0.3)
+	progressBar.SetText("30%")
+	progressBar.SetShowText(true)
+	progressBar.SetProperty("margin-bottom", 6)
+	grid.Attach(progressBar, 0, 4, 3, 1)
+
 	return frame
 }
 
