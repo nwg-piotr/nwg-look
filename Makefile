@@ -1,7 +1,6 @@
 get:
 	go get github.com/gotk3/gotk3
 	go get github.com/gotk3/gotk3/gdk
-	go get github.com/gotk3/gotk3/glib
 	go get "github.com/sirupsen/logrus"
 
 build:
