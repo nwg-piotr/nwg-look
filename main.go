@@ -211,7 +211,7 @@ func destroyContent() {
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
-	var applyGs = flag.Bool("a", false, "Apply stored gsetting")
+	var applyGs = flag.Bool("a", false, "Apply stored gsetting and quit")
 	var doNotSave = flag.Bool("n", false, "do Not save gtk settings.ini")
 	flag.Parse()
 
