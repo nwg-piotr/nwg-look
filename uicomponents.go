@@ -472,6 +472,18 @@ func setUpFontSettingsForm() *gtk.Frame {
 		gsettings.fontRgbaOrder = comboRgba.GetActiveID()
 	})
 
+	lbl, _ = gtk.LabelNew("Text scaling factor:")
+	lbl.SetProperty("halign", gtk.ALIGN_END)
+	g.Attach(lbl, 0, 3, 1, 1)
+
+	sb, _ := gtk.SpinButtonNewWithRange(0.5, 3, 0.01)
+	sb.SetValue(gsettings.textScalingFactor)
+	sb.Connect("value-changed", func() {
+		v := sb.GetValue()
+		gsettings.textScalingFactor = v
+	})
+	g.Attach(sb, 1, 3, 1, 1)
+
 	return frame
 }
 

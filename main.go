@@ -55,16 +55,17 @@ type gtkConfigProperties struct {
 
 type gsettingsValues struct {
 	// org.gnome.desktop.interface
-	gtkTheme         string
-	iconTheme        string
-	fontName         string
-	cursorTheme      string
-	cursorSize       int
-	toolbarStyle     string
-	toolbarIconsSize string
-	fontHinting      string
-	fontAntialiasing string
-	fontRgbaOrder    string
+	gtkTheme          string
+	iconTheme         string
+	fontName          string
+	cursorTheme       string
+	cursorSize        int
+	toolbarStyle      string
+	toolbarIconsSize  string
+	fontHinting       string
+	fontAntialiasing  string
+	fontRgbaOrder     string
+	textScalingFactor float64
 	// org.gnome.desktop.sound
 	eventSounds         bool
 	inputFeedbackSounds bool
@@ -82,6 +83,7 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.fontHinting = "medium"
 	g.fontAntialiasing = "grayscale"
 	g.fontRgbaOrder = "rgb"
+	g.textScalingFactor = 1.0
 	g.eventSounds = true
 	g.inputFeedbackSounds = false
 

@@ -215,6 +215,18 @@ func readGsettings() {
 			gsettings.fontRgbaOrder)
 	}
 
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "text-scaling-factor")
+	if err == nil {
+		v, e := strconv.ParseFloat(val, 32)
+		if e == nil {
+			gsettings.textScalingFactor = v
+			log.Infof("text-scaling-factor: %v", gsettings.textScalingFactor)
+		}
+	} else {
+		log.Warnf("Couldn't read textScalingFactor, leaving default %s",
+			gsettings.textScalingFactor)
+	}
+
 	val, err = getGsettingsValue("org.gnome.desktop.sound", "event-sounds")
 	if err == nil {
 		if val == "true" {
@@ -259,7 +271,8 @@ func saveGsettings() {
 		"toolbar-icons-size",
 		"font-hinting",
 		"font-antialiasing",
-		"font-rgba-order"} {
+		"font-rgba-order",
+		"text-scaling-factor"} {
 		val, err := getGsettingsValue("org.gnome.desktop.interface", key)
 		if err == nil {
 			line := fmt.Sprintf("%s=%s", key, val)
@@ -367,6 +380,14 @@ func applyGsettings() {
 		log.Warnf("font-rgba-order: %s %s", gsettings.fontRgbaOrder, err)
 	} else {
 		log.Infof("font-rgba-order: %s OK", gsettings.fontRgbaOrder)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "text-scaling-factor", fmt.Sprintf("%f", gsettings.textScalingFactor))
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("text-scaling-factor: %s %s", gsettings.textScalingFactor, err)
+	} else {
+		log.Infof("text-scaling-factor: %s OK", gsettings.textScalingFactor)
 	}
 
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "toolbar-style", gsettings.toolbarStyle)
