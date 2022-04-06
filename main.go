@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -222,6 +223,7 @@ func main() {
 	var displayVersion = flag.Bool("v", false, "display Version information")
 	var applyGs = flag.Bool("a", false, "Apply stored gsetting and quit")
 	var doNotSave = flag.Bool("n", false, "do Not save gtk settings.ini")
+	var restoreDefaults = flag.Bool("r", false, "Restore default values and quit")
 	flag.Parse()
 
 	if *displayVersion {
@@ -233,7 +235,26 @@ func main() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	// initialize gsettings type with default gtk values
 	gsettings = gsettingsNewWithDefaults()
+
+	// initialize gtkConfigProperties type with default gtk.Settings values
+	gtkConfig = gtkConfigPropertiesNewWithDefaults()
+
+	if *restoreDefaults {
+		fmt.Print("Restore default gtk settings? y/N ")
+		var input string
+		fmt.Scanln(&input)
+		fmt.Println(input)
+		if strings.ToUpper(input) == "Y" {
+			applyGsettings()
+			saveGsettings()
+			if !*doNotSave {
+				saveGtkIni()
+			}
+		}
+		os.Exit(0)
+	}
 
 	if *applyGs {
 		applyGsettingsFromFile()
@@ -245,9 +266,7 @@ func main() {
 
 	gtk.Init(nil)
 
-	// initialize gtkConfigProperties struct with default gtk.Settings values
-	gtkConfig = gtkConfigPropertiesNewWithDefaults()
-	// update from gtk-3.0/settings.ini
+	// update gtkConfig from gtk-3.0/settings.ini
 	if !*doNotSave {
 		loadGtkConfig()
 	}
