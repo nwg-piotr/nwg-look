@@ -8,6 +8,8 @@ Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based W
 
 ![screenshot](https://user-images.githubusercontent.com/20579136/161869170-ef1abcfd-c72c-4da9-8cee-1f9560d2b5af.png)
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/nwg-look.svg)](https://repology.org/project/nwg-look/versions)
+
 ## Dependencies
 
 - go (just to build)
