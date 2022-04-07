@@ -25,13 +25,43 @@ Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based W
 ```text
 $ nwg-look -h
 Usage of nwg-look:
-  -a	Apply stored gsettings and quit
-  -d	turn on Debug messages
-  -n	do Not save gtk settings.ini
-  -v	display Version information
+  -a		Apply stored gsetting and quit
+  -d		turn on Debug messages
+  -n		do Not save gtk settings.ini
+  -r		Restore default values and quit
+  -v		display Version information
 ```
 
 The `-a` flag has been added just in case. When you press the "Apply" button, in addition to applying the changes, a backup file is also created. You may apply gsetting again w/o running the GUI, by just `nwg-look -a`. No idea if it's going to be useful in real life. ;)
+
+### Usage in sway
+
+The default way to apply GTK setting on [sway](https://github.com/swaywm/sway) Wayland compositor has been
+described in the [GTK 3 settings on Wayland](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland)
+Wiki section. **You no longer need it**. Nwg-look loads and saves gsettings values directly, and does not
+care about the `~/.config/gtk-3.0/settings.ini` values. It only exports your settings to it, unless you use
+the `-n` flag.
+
+Therefore, if your sway config file contains either
+
+```text
+set $gnome-schema org.gnome.desktop.interface
+
+exec_always {
+    gsettings set $gnome-schema gtk-theme 'Your theme'
+    gsettings set $gnome-schema icon-theme 'Your icon theme'
+    gsettings set $gnome-schema cursor-theme 'Your cursor Theme'
+    gsettings set $gnome-schema font-name 'Your font name'
+}
+```
+
+or if you use the `import-gsettings` script:
+
+```text
+exec_always import-gsettings
+```
+
+to parse and apply the settings.ini file, **remove these lines**.
 
 ## Development status
 
