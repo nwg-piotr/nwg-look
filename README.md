@@ -39,7 +39,7 @@ The `-a` flag has been added just in case. When you press the "Apply" button, in
 The default way to apply GTK setting on [sway](https://github.com/swaywm/sway) Wayland compositor has been
 described in the [GTK 3 settings on Wayland](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland)
 Wiki section. **You no longer need it**. Nwg-look loads and saves gsettings values directly, and does not
-care about the `~/.config/gtk-3.0/settings.ini` values. It only exports your settings to it, unless you use
+care about the `~/.config/gtk-3.0/settings.ini` file. It only exports your settings to it, unless you use
 the `-n` flag.
 
 Therefore, if your sway config file contains either
