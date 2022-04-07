@@ -327,7 +327,7 @@ func main() {
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
-	verLabel.SetMarkup(fmt.Sprintf("nwg-look v%s <a href='https://github.com/nwg-piotr/nwg-look'>GitHub</a>", version))
+	verLabel.SetMarkup(fmt.Sprintf("<b>nwg-look</b> v%s <a href='https://github.com/nwg-piotr/nwg-look'>GitHub</a>", version))
 
 	displayThemes()
 
