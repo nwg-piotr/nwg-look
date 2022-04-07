@@ -277,7 +277,6 @@ func saveGsettings() {
 		if err == nil {
 			line := fmt.Sprintf("%s=%s", key, val)
 			lines = append(lines, line)
-			log.Info(line)
 		} else {
 			log.Warnf("Couldn't get gsettings key: $s", key)
 		}
@@ -387,7 +386,7 @@ func applyGsettings() {
 	if err != nil {
 		log.Warnf("text-scaling-factor: %s %s", gsettings.textScalingFactor, err)
 	} else {
-		log.Infof("text-scaling-factor: %s OK", gsettings.textScalingFactor)
+		log.Infof("text-scaling-factor: %v OK", gsettings.textScalingFactor)
 	}
 
 	cmd = exec.Command("gsettings", "set", gnomeSchema, "toolbar-style", gsettings.toolbarStyle)
