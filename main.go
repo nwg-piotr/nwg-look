@@ -1,3 +1,11 @@
+/*
+GTK3 settings editor adapted to work in the sway / wlroots environment
+Project: https://github.com/nwg-piotr/nwg-look
+Author's email: nwg.piotr@gmail.com
+Copyright (c) 2022 Piotr Miller
+License: MIT
+*/
+
 package main
 
 import (
@@ -12,10 +20,10 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.0.1"
+const version = "0.1.0"
 
 var (
-	originalGtkConfig  []string // not parsed settings.ini lines, if any
+	originalGtkConfig  []string // we will append not parsed settings.ini lines from here
 	gtkConfig          gtkConfigProperties
 	gtkSettings        *gtk.Settings
 	gsettings          gsettingsValues
@@ -47,7 +55,7 @@ type gtkConfigProperties struct {
 	enableEventSounds         bool
 	enableInputFeedbackSounds bool
 	xftAntialias              int
-	fontAntialiasing          string // org.gnome.desktop.interface.font-antialiasing
+	fontAntialiasing          string
 	xftDpi                    int
 	xftHinting                int
 	xftHintstyle              string
