@@ -63,6 +63,35 @@ exec_always import-gsettings
 
 to parse and apply the settings.ini file, **remove these lines**.
 
+## Backward compatibility
+
+Some gsetting keys have no direct counterparts in the Gtk.Settings type. While exporting
+the settings.ini file, nwg-look uses the most similar values:
+
+| gsettings | Gtk.Settings |
+| --------- | ------------ |
+| `font-hinting` | `gtk-xft-hintstyle` |
+| `font-antialiasing` | `gtk-xft-antialias` |
+| `font-rgba-order` | `gtk-xft-rgba` |
+
+Some **Other** settings have been left just for LXAppearance compatibility, and possible
+use of your settings.ini file elsewhere:
+
+- Toolbar style
+- Toolbar icon size
+
+have been deprecated since GTK 3.10, and the values are ignored.
+
+- Show button images
+- Show menu images
+
+have been deprecated since GTK 3.10, and have no corresponding gsettings values.
+
+- Enable event sounds
+- Enable input feedback sounds
+
+don't seem to change anything in non-GNOME environment.
+
 ## Development status
 
 This is the very first public release. Bugs and missing features are expected. Thanks in advance for reporting them.
