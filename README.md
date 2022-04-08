@@ -6,7 +6,7 @@ Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based W
 - It works natively on Wayland. You no longer need Xwayland, nor strange env variables for it to run.
 - It applies gsettings directly, with no need to use [workarounds](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland). You don't need to set gsettings in the sway config file. You don't need the `import-gsettings` script.
 
-![v0 1 0](https://user-images.githubusercontent.com/20579136/162339277-370d7a6e-f81a-4734-93fd-4b2568597a1f.png)
+![v0 1 0-1](https://user-images.githubusercontent.com/20579136/162352058-4a6d8668-5f18-4928-9e2f-6dc365381fed.png)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/nwg-look.svg)](https://repology.org/project/nwg-look/versions)
 
