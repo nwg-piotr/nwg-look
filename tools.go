@@ -115,6 +115,7 @@ func intValue(s string) int {
 	if err == nil {
 		return i
 	}
+	// -1 is default
 	return -1
 }
 
@@ -301,12 +302,10 @@ func getGsettingsValue(schema, key string) (string, error) {
 		s := fmt.Sprintf("%s", strings.TrimSpace(string(out)))
 		if strings.HasPrefix(s, "'") {
 			return s[1 : len(s)-1], nil
-		} else {
-			return s, nil
 		}
-	} else {
-		return "", err
+		return s, nil
 	}
+	return "", err
 }
 
 func applyGsettings() {

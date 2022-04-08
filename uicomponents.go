@@ -61,7 +61,7 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 	// map[displayName]folderName
 	namesMap := getIconThemeNames()
 	var displayNames []string
-	for name, _ := range namesMap {
+	for name := range namesMap {
 		displayNames = append(displayNames, name)
 	}
 	sort.Slice(displayNames, func(i, j int) bool {
@@ -110,7 +110,7 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 	var rowToSelect *gtk.ListBoxRow
 
 	var names []string
-	for name, _ := range cursorThemeNames {
+	for name := range cursorThemeNames {
 		names = append(names, name)
 	}
 	sort.Slice(names, func(i, j int) bool {

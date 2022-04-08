@@ -20,7 +20,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.1.0"
+const version = "0.1.1"
 
 var (
 	originalGtkConfig  []string // we will append not parsed settings.ini lines from here
