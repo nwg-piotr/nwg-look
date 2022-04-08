@@ -23,43 +23,44 @@ import (
 const version = "0.1.1"
 
 var (
-	originalGtkConfig  []string // we will append not parsed settings.ini lines from here
-	gtkConfig          gtkConfigProperties
-	gtkSettings        *gtk.Settings
-	gsettings          gsettingsValues
-	dataDirs           []string
-	cursorThemes       map[string]string // theme name to path
-	cursorThemeNames   map[string]string // theme name to theme folder name
-	viewport           *gtk.Viewport
-	scrolledWindow     *gtk.ScrolledWindow
-	listBox            *gtk.ListBox
-	menuBar            *gtk.MenuBar
-	fontSelector       *gtk.Box
-	grid               *gtk.Grid
-	preview            *gtk.Frame
-	cursorSizeSelector *gtk.Box
-	fontSettingsForm   *gtk.Frame
-	rowToFocus         *gtk.ListBoxRow
+	originalGtkConfig     []string // we will append not parsed settings.ini lines from here
+	gtkConfig             gtkConfigProperties
+	gtkSettings           *gtk.Settings
+	gsettings             gsettingsValues
+	dataDirs              []string
+	cursorThemes          map[string]string // theme name to path
+	cursorThemeNames      map[string]string // theme name to theme folder name
+	viewport              *gtk.Viewport
+	scrolledWindow        *gtk.ScrolledWindow
+	listBox               *gtk.ListBox
+	menuBar               *gtk.MenuBar
+	themeSettingsSelector *gtk.Grid
+	grid                  *gtk.Grid
+	preview               *gtk.Frame
+	cursorSizeSelector    *gtk.Box
+	fontSettingsForm      *gtk.Frame
+	rowToFocus            *gtk.ListBoxRow
 )
 
 type gtkConfigProperties struct {
-	themeName                 string
-	iconThemeName             string
-	fontName                  string
-	cursorThemeName           string
-	cursorThemeSize           int
-	toolbarStyle              string
-	toolbarIconSize           string
-	buttonImages              bool
-	menuImages                bool
-	enableEventSounds         bool
-	enableInputFeedbackSounds bool
-	xftAntialias              int
-	fontAntialiasing          string
-	xftDpi                    int
-	xftHinting                int
-	xftHintstyle              string
-	xftRgba                   string
+	themeName                  string
+	iconThemeName              string
+	fontName                   string
+	cursorThemeName            string
+	cursorThemeSize            int
+	toolbarStyle               string
+	toolbarIconSize            string
+	buttonImages               bool
+	menuImages                 bool
+	enableEventSounds          bool
+	enableInputFeedbackSounds  bool
+	xftAntialias               int
+	fontAntialiasing           string
+	xftDpi                     int
+	xftHinting                 int
+	xftHintstyle               string
+	xftRgba                    string
+	applicationPreferDarkTheme bool
 }
 
 type gsettingsValues struct {
@@ -75,6 +76,7 @@ type gsettingsValues struct {
 	fontAntialiasing  string
 	fontRgbaOrder     string
 	textScalingFactor float64
+	colorScheme       string
 	// org.gnome.desktop.sound
 	eventSounds         bool
 	inputFeedbackSounds bool
@@ -95,6 +97,7 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.textScalingFactor = 1.0
 	g.eventSounds = true
 	g.inputFeedbackSounds = false
+	g.colorScheme = "default"
 
 	return g
 }
@@ -114,6 +117,7 @@ func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
 	s.enableEventSounds = true
 	s.enableInputFeedbackSounds = true
 	s.xftAntialias = -1
+	s.applicationPreferDarkTheme = false
 
 	val, err := getGsettingsValue("org.gnome.desktop.interface", "font-antialiasing")
 	if err == nil {
@@ -143,10 +147,10 @@ func displayThemes() {
 	preview = setUpWidgetsPreview()
 	grid.Attach(preview, 1, 1, 1, 1)
 
-	fontSelector = setUpFontSelector(gsettings.fontName)
-	fontSelector.SetProperty("vexpand", true)
-	fontSelector.SetProperty("valign", gtk.ALIGN_START)
-	grid.Attach(fontSelector, 1, 2, 1, 1)
+	themeSettingsSelector = setUpThemeSettingsForm(gsettings.fontName)
+	themeSettingsSelector.SetProperty("vexpand", true)
+	themeSettingsSelector.SetProperty("valign", gtk.ALIGN_START)
+	grid.Attach(themeSettingsSelector, 1, 2, 1, 1)
 
 	viewport.ShowAll()
 	grid.ShowAll()
@@ -218,8 +222,8 @@ func destroyContent() {
 	if preview != nil {
 		preview.Destroy()
 	}
-	if fontSelector != nil {
-		fontSelector.Destroy()
+	if themeSettingsSelector != nil {
+		themeSettingsSelector.Destroy()
 	}
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
