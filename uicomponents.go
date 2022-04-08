@@ -268,8 +268,10 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 		gsettings.colorScheme = id
 		if id == "prefer-dark" {
 			gtkConfig.applicationPreferDarkTheme = true
+			gtkSettings.SetProperty("gtk-application-prefer-dark-theme", true)
 		} else {
 			gtkConfig.applicationPreferDarkTheme = false
+			gtkSettings.SetProperty("gtk-application-prefer-dark-theme", false)
 		}
 	})
 	grid.Attach(combo, 1, 1, 1, 1)
