@@ -7,17 +7,17 @@ build:
 	go build -o nwg-look .
 
 install:
-	mkdir -p /usr/share/nwg-look
-	cp stuff/main.glade /usr/share/nwg-look/
-	cp stuff/nwg-look.desktop /usr/share/applications/
-	cp stuff/nwg-look.svg /usr/share/pixmaps/
-	cp nwg-look /usr/bin
+	mkdir -p $(DESTDIR)/usr/share/nwg-look
+	cp stuff/main.glade $(DESTDIR)/usr/share/nwg-look/
+	cp stuff/nwg-look.desktop $(DESTDIR)/usr/share/applications/
+	cp stuff/nwg-look.svg $(DESTDIR)/usr/share/pixmaps/
+	cp nwg-look $(DESTDIR)/usr/bin
 
 uninstall:
-	rm -r /usr/share/nwg-look
-	rm /usr/share/applications/nwg-look.desktop
-	rm /usr/share/pixmaps/nwg-look.svg
-	rm /usr/bin/nwg-look
+	rm -r $(DESTDIR)/usr/share/nwg-look
+	rm $(DESTDIR)/usr/share/applications/nwg-look.desktop
+	rm $(DESTDIR)/usr/share/pixmaps/nwg-look.svg
+	rm $(DESTDIR)/usr/bin/nwg-look
 
 run:
 	go run .
