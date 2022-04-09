@@ -231,6 +231,15 @@ func readGsettings() {
 			gsettings.textScalingFactor)
 	}
 
+	val, err = getGsettingsValue("org.gnome.desktop.interface", "color-scheme")
+	if err == nil {
+		gsettings.colorScheme = val
+		log.Infof("color-scheme: %s", gsettings.colorScheme)
+	} else {
+		log.Warnf("Couldn't read color-scheme, leaving default %s",
+			gsettings.colorScheme)
+	}
+
 	val, err = getGsettingsValue("org.gnome.desktop.sound", "event-sounds")
 	if err == nil {
 		if val == "true" {
