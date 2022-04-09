@@ -85,6 +85,8 @@ func loadGtkConfig() {
 					gtkConfig.xftHintstyle = value
 				case "gtk-xft-rgba":
 					gtkConfig.xftRgba = value
+				case "gtk-application-prefer-dark-theme":
+					gtkConfig.applicationPreferDarkTheme = value == "1"
 				default:
 					log.Warnf("Unsupported config key: %s", key)
 				}
@@ -108,6 +110,7 @@ func loadGtkConfig() {
 	log.Debugf("gtk-xft-hinting: %v", gtkConfig.xftHinting)
 	log.Debugf("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
 	log.Debugf("gtk-xft-rgba: %v", gtkConfig.xftRgba)
+	log.Debugf("gtk-application-prefer-dark-theme: %v", gtkConfig.applicationPreferDarkTheme)
 }
 
 func intValue(s string) int {
