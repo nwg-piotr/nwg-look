@@ -231,8 +231,14 @@ func setUpWidgetsPreview() *gtk.Frame {
 	return frame
 }
 
-func setUpFontSelector(defaultFontName string) *gtk.Box {
-	box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
+	grid, _ := gtk.GridNew()
+	grid.SetColumnSpacing(12)
+	grid.SetRowSpacing(6)
+	grid.SetProperty("margin", 12)
+	label, _ := gtk.LabelNew("Default font:")
+	label.SetProperty("halign", gtk.ALIGN_END)
+	grid.Attach(label, 0, 0, 1, 1)
 
 	fontButton, _ := gtk.FontButtonNew()
 	fontButton.SetProperty("valign", gtk.ALIGN_CENTER)
@@ -242,12 +248,35 @@ func setUpFontSelector(defaultFontName string) *gtk.Box {
 		gtkSettings.SetProperty("gtk-font-name", fontName)
 		gsettings.fontName = fontName
 	})
-	box.PackEnd(fontButton, true, true, 6)
+	grid.Attach(fontButton, 1, 0, 1, 1)
 
-	label, _ := gtk.LabelNew("Default font:")
-	box.PackEnd(label, false, false, 6)
+	label, _ = gtk.LabelNew("Default font:")
+	label.SetProperty("halign", gtk.ALIGN_END)
+	grid.Attach(label, 1, 0, 1, 1)
 
-	return box
+	label, _ = gtk.LabelNew("Color scheme:")
+	grid.Attach(label, 0, 1, 1, 1)
+
+	combo, _ := gtk.ComboBoxTextNew()
+	combo.Append("default", "default")
+	combo.Append("prefer-dark", "prefer dark")
+	combo.Append("prefer-light", "prefer light")
+	combo.SetActiveID(gsettings.colorScheme)
+	combo.SetProperty("can-focus", false)
+	combo.Connect("changed", func() {
+		id := combo.GetActiveID()
+		gsettings.colorScheme = id
+		if id == "prefer-dark" {
+			gtkConfig.applicationPreferDarkTheme = true
+			gtkSettings.SetProperty("gtk-application-prefer-dark-theme", true)
+		} else {
+			gtkConfig.applicationPreferDarkTheme = false
+			gtkSettings.SetProperty("gtk-application-prefer-dark-theme", false)
+		}
+	})
+	grid.Attach(combo, 1, 1, 1, 1)
+
+	return grid
 }
 
 func setUpIconsPreview() *gtk.Frame {

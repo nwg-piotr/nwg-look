@@ -273,7 +273,8 @@ func saveGsettings() {
 		"font-hinting",
 		"font-antialiasing",
 		"font-rgba-order",
-		"text-scaling-factor"} {
+		"text-scaling-factor",
+		"color-scheme"} {
 		val, err := getGsettingsValue("org.gnome.desktop.interface", key)
 		if err == nil {
 			line := fmt.Sprintf("%s=%s", key, val)
@@ -402,6 +403,14 @@ func applyGsettings() {
 		log.Warnf("toolbar-icons-size: %s %s", gsettings.toolbarIconsSize, err)
 	} else {
 		log.Infof("toolbar-icons-size: %s OK", gsettings.toolbarIconsSize)
+	}
+
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "color-scheme", gsettings.colorScheme)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("color-scheme: %s %s", gsettings.colorScheme, err)
+	} else {
+		log.Infof("color-scheme: %s OK", gsettings.colorScheme)
 	}
 
 	gnomeSchema = "org.gnome.desktop.sound"
@@ -561,6 +570,13 @@ func saveGtkIni() {
 
 	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=%s", gsettings.fontRgbaOrder))
 
+	if gtkConfig.applicationPreferDarkTheme {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-application-prefer-dark-theme=%v", v))
+
 	// append unsupported lines / comments from the original settings.ini file
 	for _, l := range originalGtkConfig {
 		if l != "" && !isSupported(l) {
@@ -592,6 +608,7 @@ func isSupported(line string) bool {
 		"gtk-xft-hinting",
 		"gtk-xft-hintstyle",
 		"gtk-xft-rgba",
+		"gtk-application-prefer-dark-theme",
 	}
 	for _, d := range supported {
 		if strings.HasPrefix(line, d) {
