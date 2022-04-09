@@ -12,11 +12,11 @@ Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based W
 
 ## Dependencies
 
-- go (just to build)
+- go 1.18 (just to build)
 - gtk3
 - [xcur2png](https://github.com/eworm-de/xcur2png)
 
-Depending on your distro, may also need to install
+Depending on your distro, you may also need to install
 [gotk3 dependencies](https://github.com/gotk3/gotk3#installation).
 
 ## Installation
