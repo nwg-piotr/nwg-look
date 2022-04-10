@@ -1,10 +1,14 @@
 # nwg-look
 This application is a part of the [nwg-shell](https://github.com/nwg-piotr/nwg-shell) project.
 
-Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment. The look and feel is strongly influenced by [LXAppearance](https://wiki.lxde.org/en/LXAppearance), but nwg-look is intended to free the user from a few inconveniences:
+Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.
+The look and feel is strongly influenced by [LXAppearance](https://wiki.lxde.org/en/LXAppearance),
+but nwg-look is intended to free the user from a few inconveniences:
 
 - It works natively on Wayland. You no longer need Xwayland, nor strange env variables for it to run.
-- It applies gsettings directly, with no need to use [workarounds](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland). You don't need to set gsettings in the sway config file. You don't need the `import-gsettings` script.
+- It applies gsettings directly, with no need to use
+[workarounds](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland). You don't need to set
+ gsettings in the sway config file. You don't need the `import-gsettings` script.
 
 ![v0 1 0-1](https://user-images.githubusercontent.com/20579136/162352058-4a6d8668-5f18-4928-9e2f-6dc365381fed.png)
 
@@ -30,11 +34,10 @@ Depending on your distro, you may also need to install
 ```text
 $ nwg-look -h
 Usage of nwg-look:
-  -a		Apply stored gsetting and quit
-  -d		turn on Debug messages
-  -n		do Not save gtk settings.ini
-  -r		Restore default values and quit
-  -v		display Version information
+  -a    Apply stored gsetting and quit
+  -d    turn on Debug messages
+  -r    Restore default values and quit
+  -v    display Version information
 ```
 
 The `-a` flag has been added just in case. When you press the "Apply" button, in addition to applying the changes, a backup file is also created. You may apply gsetting again w/o running the GUI, by just `nwg-look -a`. No idea if it's going to be useful in real life. ;)
@@ -96,7 +99,3 @@ have been deprecated since GTK 3.10, and have no corresponding gsettings values.
 - Enable input feedback sounds
 
 don't seem to change anything in non-GNOME environment.
-
-## Development status
-
-This is the very first public release. Bugs and missing features are expected. Thanks in advance for reporting them.
