@@ -760,6 +760,70 @@ func saveGtkRc20() {
 	saveTextFile(lines, configFile)
 }
 
+func saveXsettingsd() {
+	configFile := filepath.Join(configHome(), "xsettingsd/xsettingsd.conf")
+	if !pathExists(configFile) {
+		makeDir(filepath.Join(configHome(), "xsettingsd/"))
+	}
+	log.Infof(">>> Exporting %s", configFile)
+
+	lines := []string{}
+
+	lines = append(lines, fmt.Sprintf("Net/ThemeName \"%s\"", gsettings.gtkTheme))
+	lines = append(lines, fmt.Sprintf("Net/IconThemeName \"%s\"", gsettings.iconTheme))
+	lines = append(lines, fmt.Sprintf("Gtk/CursorThemeName \"%s\"", gsettings.cursorTheme))
+
+	var v int
+	if gsettings.eventSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("Net/EnableEventSounds %v", v))
+
+	if gsettings.inputFeedbackSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("EnableInputFeedbackSounds %v", v))
+
+	if gsettings.fontAntialiasing != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("Xft/Antialias %v", v))
+
+	if gsettings.fontHinting != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("Xft/Hinting %v", v))
+
+	var fh string
+	switch gsettings.fontHinting {
+	case "slight":
+		fh = "hintslight"
+	case "medium":
+		fh = "hintmedium"
+	case "full":
+		fh = "hintfull"
+	default:
+		fh = "hintnone"
+	}
+	lines = append(lines, fmt.Sprintf("Xft/HintStyle \"%s\"", fh))
+
+	lines = append(lines, fmt.Sprintf("Xft/RGBA \"%s\"", gsettings.fontRgbaOrder))
+
+	for _, l := range lines {
+		log.Debug(l)
+	}
+
+	saveTextFile(lines, configFile)
+}
+
 func saveIndexTheme() {
 	home := os.Getenv("HOME")
 	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
