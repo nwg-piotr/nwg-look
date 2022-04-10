@@ -250,10 +250,6 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 	})
 	grid.Attach(fontButton, 1, 0, 1, 1)
 
-	label, _ = gtk.LabelNew("Default font:")
-	label.SetProperty("halign", gtk.ALIGN_END)
-	grid.Attach(label, 1, 0, 1, 1)
-
 	label, _ = gtk.LabelNew("Color scheme:")
 	grid.Attach(label, 0, 1, 1, 1)
 
