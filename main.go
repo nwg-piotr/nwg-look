@@ -20,7 +20,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.1.1"
+const version = "0.1.2"
 
 var (
 	originalGtkConfig     []string // we will append not parsed settings.ini lines from here
@@ -260,7 +260,7 @@ func main() {
 		fmt.Println(input)
 		if strings.ToUpper(input) == "Y" {
 			applyGsettings()
-			saveGsettings()
+			saveGsettingsBackup()
 			if !*doNotSave {
 				saveGtkIni()
 			}
@@ -332,10 +332,11 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
 		applyGsettings()
-		saveGsettings()
+		saveGsettingsBackup()
 		if !*doNotSave {
 			saveGtkIni()
 		}
+		saveIndexTheme()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
