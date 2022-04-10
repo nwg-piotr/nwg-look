@@ -250,10 +250,6 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 	})
 	grid.Attach(fontButton, 1, 0, 1, 1)
 
-	label, _ = gtk.LabelNew("Default font:")
-	label.SetProperty("halign", gtk.ALIGN_END)
-	grid.Attach(label, 1, 0, 1, 1)
-
 	label, _ = gtk.LabelNew("Color scheme:")
 	grid.Attach(label, 0, 1, 1, 1)
 
@@ -620,6 +616,53 @@ func setUpOtherSettingsForm() *gtk.Frame {
 		gtkConfig.enableInputFeedbackSounds = cbInputSounds.GetActive()
 	})
 	g.Attach(cbInputSounds, 0, 7, 2, 1)
+
+	return frame
+}
+
+func setUpProgramSettingsForm() *gtk.Frame {
+	frame, _ := gtk.FrameNew("Program settings")
+	frame.SetProperty("margin", 6)
+	g, _ := gtk.GridNew()
+	g.SetRowSpacing(12)
+	g.SetColumnSpacing(12)
+	g.SetProperty("margin", 6)
+	g.SetProperty("hexpand", true)
+	g.SetProperty("vexpand", true)
+	frame.Add(g)
+
+	lbl, _ := gtk.LabelNew("")
+	lbl.SetMarkup("<b>Files to export</b>")
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	g.Attach(lbl, 0, 0, 1, 1)
+
+	cb1, _ := gtk.CheckButtonNewWithLabel("~/.config/gtk-3.0/settings.ini")
+	cb1.SetActive(preferences.ExportSettingsIni)
+	cb1.Connect("toggled", func() {
+		preferences.ExportSettingsIni = cb1.GetActive()
+	})
+	g.Attach(cb1, 0, 1, 1, 1)
+
+	cb2, _ := gtk.CheckButtonNewWithLabel("~/.config/gtkrc-2.0")
+	cb2.SetActive(preferences.ExportGtkRc20)
+	cb2.Connect("toggled", func() {
+		preferences.ExportGtkRc20 = cb2.GetActive()
+	})
+	g.Attach(cb2, 0, 2, 1, 1)
+
+	cb3, _ := gtk.CheckButtonNewWithLabel("~/.icons/default/index.theme")
+	cb3.SetActive(preferences.ExportIndexTheme)
+	cb3.Connect("toggled", func() {
+		preferences.ExportIndexTheme = cb3.GetActive()
+	})
+	g.Attach(cb3, 0, 3, 1, 1)
+
+	cb4, _ := gtk.CheckButtonNewWithLabel("~/.config/xsettingsd/xsettingsd.conf")
+	cb4.SetActive(preferences.ExportXsettingsd)
+	cb4.Connect("toggled", func() {
+		preferences.ExportXsettingsd = cb4.GetActive()
+	})
+	g.Attach(cb4, 0, 4, 1, 1)
 
 	return frame
 }

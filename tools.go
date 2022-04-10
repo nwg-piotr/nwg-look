@@ -3,6 +3,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -23,6 +24,43 @@ func configHome() string {
 		return cHome
 	}
 	return filepath.Join(os.Getenv("HOME"), ".config/")
+}
+
+func loadPreferences() {
+	cH := configHome()
+	preferencesFile := filepath.Join(cH, "/nwg-look/config")
+	if !pathExists(preferencesFile) {
+		log.Infof("%s file not found, creating", preferencesFile)
+		makeDir(filepath.Join(cH, "/nwg-look/"))
+		preferences = programSettingsNewWithDefaults()
+		savePreferences()
+	} else {
+		file, err := os.Open(preferencesFile)
+		defer file.Close()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		log.Info(">>> Loading preferences")
+		jsonParser := json.NewDecoder(file)
+		jsonParser.Decode(&preferences)
+		jsonData, err := json.Marshal(preferences)
+		if err == nil {
+			log.Debugf("Loaded preferences: %s", string(jsonData))
+		}
+	}
+}
+
+func savePreferences() {
+	preferencesFile := filepath.Join(configHome(), "/nwg-look/config")
+	jsonData, err := json.MarshalIndent(preferences, "", " ")
+	if err != nil {
+		log.Warn(err)
+		return
+	}
+	err = ioutil.WriteFile(preferencesFile, jsonData, 0644)
+	if err == nil {
+		log.Debugf("Saved config: %s", string(jsonData))
+	}
 }
 
 func loadGtkConfig() {
@@ -510,24 +548,6 @@ func applyGsettingsFromFile() {
 	}
 }
 
-func saveIndexTheme() {
-	home := os.Getenv("HOME")
-	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
-	if !pathExists(indexThemeFile) {
-		makeDir(filepath.Join(home, ".icons/default/"))
-	}
-	log.Infof(">>> Exporting %s", indexThemeFile)
-	lines := []string{
-		"# This file is written by nwg-look. Do not edit.",
-		"[Icon Theme]",
-		"Name=Default",
-		"Comment=Default Cursor Theme",
-	}
-	lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
-
-	saveTextFile(lines, indexThemeFile)
-}
-
 func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if !pathExists(configFile) {
@@ -649,6 +669,113 @@ func isSupported(line string) bool {
 		}
 	}
 	return false
+}
+
+func saveGtkRc20() {
+	home := os.Getenv("HOME")
+	configFile := filepath.Join(home, ".gtkrc-2.0")
+	log.Infof(">>> Exporting %s", configFile)
+
+	lines := []string{
+		"# DO NOT EDIT! This file will be overwritten by nwg-look.",
+		"# Any customization should be done in ~/.gtkrc-2.0.mine instead.",
+		"",
+	}
+	lines = append(lines, fmt.Sprintf("include \"%s/.gtkrc-2.0.mine\"", home))
+
+	lines = append(lines, fmt.Sprintf("gtk-theme-name=\"%s\"", gsettings.gtkTheme))
+	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=\"%s\"", gsettings.iconTheme))
+	lines = append(lines, fmt.Sprintf("gtk-font-name=\"%s\"", gsettings.fontName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=\"%s\"", gsettings.cursorTheme))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gsettings.cursorSize))
+
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-style=%s", gtkConfig.toolbarStyle))
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-icon-size=%s", gtkConfig.toolbarIconSize))
+
+	v := 0
+	if gtkConfig.buttonImages {
+		v = 1
+	}
+	lines = append(lines, fmt.Sprintf("gtk-button-images=%v", v))
+	if gtkConfig.menuImages {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
+
+	if gsettings.eventSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-event-sounds=%v", v))
+
+	if gsettings.inputFeedbackSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
+
+	if gsettings.fontAntialiasing != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-antialias=%v", v))
+
+	if gsettings.fontHinting != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hinting=%v", v))
+
+	var fh string
+	switch gsettings.fontHinting {
+	case "slight":
+		fh = "hintslight"
+	case "medium":
+		fh = "hintmedium"
+	case "full":
+		fh = "hintfull"
+	default:
+		fh = "hintnone"
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hintstyle=\"%s\"", fh))
+
+	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=\"%s\"", gsettings.fontRgbaOrder))
+
+	if gtkConfig.applicationPreferDarkTheme {
+		v = 1
+	} else {
+		v = 0
+	}
+
+	for _, l := range lines {
+		log.Debug(l)
+	}
+
+	saveTextFile(lines, configFile)
+}
+
+func saveIndexTheme() {
+	home := os.Getenv("HOME")
+	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
+	if !pathExists(indexThemeFile) {
+		makeDir(filepath.Join(home, ".icons/default/"))
+	}
+	log.Infof(">>> Exporting %s", indexThemeFile)
+	lines := []string{
+		"# This file is written by nwg-look. Do not edit.",
+		"[Icon Theme]",
+		"Name=Default",
+		"Comment=Default Cursor Theme",
+	}
+	lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
+
+	saveTextFile(lines, indexThemeFile)
 }
 
 func getThemeNames() []string {
