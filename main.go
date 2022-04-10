@@ -215,6 +215,16 @@ func displayOtherSettingsForm() {
 	scrolledWindow.Hide()
 }
 
+func displayProgramSettingsForm() {
+	destroyContent()
+
+	preview = setUpProgramSettingsForm()
+	grid.Attach(preview, 0, 1, 1, 1)
+	menuBar.Deactivate()
+	grid.ShowAll()
+	scrolledWindow.Hide()
+}
+
 func destroyContent() {
 	if listBox != nil {
 		listBox.Destroy()
@@ -323,6 +333,11 @@ func main() {
 
 	item5, _ := getMenuItem(builder, "item-other")
 	item5.Connect("button-release-event", displayOtherSettingsForm)
+
+	btnSettings, _ := getButton(builder, "btn-settings")
+	btnSettings.Connect("clicked", func() {
+		displayProgramSettingsForm()
+	})
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {

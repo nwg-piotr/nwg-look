@@ -623,3 +623,26 @@ func setUpOtherSettingsForm() *gtk.Frame {
 
 	return frame
 }
+
+func setUpProgramSettingsForm() *gtk.Frame {
+	frame, _ := gtk.FrameNew("Program settings")
+	frame.SetProperty("margin", 6)
+	g, _ := gtk.GridNew()
+	g.SetRowSpacing(12)
+	g.SetColumnSpacing(12)
+	g.SetProperty("margin", 6)
+	g.SetProperty("hexpand", true)
+	g.SetProperty("vexpand", true)
+	frame.Add(g)
+
+	cb1, _ := gtk.CheckButtonNewWithLabel("Export '~/.config/gtk-3.0/settings.ini'")
+	g.Attach(cb1, 0, 0, 1, 1)
+
+	cb2, _ := gtk.CheckButtonNewWithLabel("Export '~/.config/gtkrc-2.0'")
+	g.Attach(cb2, 0, 1, 1, 1)
+
+	cb3, _ := gtk.CheckButtonNewWithLabel("Export '~/.icons/default/index.theme'")
+	g.Attach(cb3, 0, 2, 1, 1)
+
+	return frame
+}

@@ -510,24 +510,6 @@ func applyGsettingsFromFile() {
 	}
 }
 
-func saveIndexTheme() {
-	home := os.Getenv("HOME")
-	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
-	if !pathExists(indexThemeFile) {
-		makeDir(filepath.Join(home, ".icons/default/"))
-	}
-	log.Infof(">>> Exporting %s", indexThemeFile)
-	lines := []string{
-		"# This file is written by nwg-look. Do not edit.",
-		"[Icon Theme]",
-		"Name=Default",
-		"Comment=Default Cursor Theme",
-	}
-	lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
-
-	saveTextFile(lines, indexThemeFile)
-}
-
 func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if !pathExists(configFile) {
@@ -649,6 +631,24 @@ func isSupported(line string) bool {
 		}
 	}
 	return false
+}
+
+func saveIndexTheme() {
+	home := os.Getenv("HOME")
+	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
+	if !pathExists(indexThemeFile) {
+		makeDir(filepath.Join(home, ".icons/default/"))
+	}
+	log.Infof(">>> Exporting %s", indexThemeFile)
+	lines := []string{
+		"# This file is written by nwg-look. Do not edit.",
+		"[Icon Theme]",
+		"Name=Default",
+		"Comment=Default Cursor Theme",
+	}
+	lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
+
+	saveTextFile(lines, indexThemeFile)
 }
 
 func getThemeNames() []string {
