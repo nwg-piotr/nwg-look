@@ -334,10 +334,8 @@ func main() {
 	item5, _ := getMenuItem(builder, "item-other")
 	item5.Connect("button-release-event", displayOtherSettingsForm)
 
-	btnSettings, _ := getButton(builder, "btn-settings")
-	btnSettings.Connect("clicked", func() {
-		displayProgramSettingsForm()
-	})
+	item6, _ := getMenuItem(builder, "item-preferences")
+	item6.Connect("button-release-event", displayProgramSettingsForm)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.Connect("clicked", func() {
