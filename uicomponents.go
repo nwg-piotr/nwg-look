@@ -631,26 +631,38 @@ func setUpProgramSettingsForm() *gtk.Frame {
 	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
-	cb1, _ := gtk.CheckButtonNewWithLabel("Export '~/.config/gtk-3.0/settings.ini'")
+	lbl, _ := gtk.LabelNew("")
+	lbl.SetMarkup("<b>Files to export</b>")
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	g.Attach(lbl, 0, 0, 1, 1)
+
+	cb1, _ := gtk.CheckButtonNewWithLabel("~/.config/gtk-3.0/settings.ini")
 	cb1.SetActive(preferences.ExportSettingsIni)
 	cb1.Connect("toggled", func() {
 		preferences.ExportSettingsIni = cb1.GetActive()
 	})
-	g.Attach(cb1, 0, 0, 1, 1)
+	g.Attach(cb1, 0, 1, 1, 1)
 
-	cb2, _ := gtk.CheckButtonNewWithLabel("Export '~/.config/gtkrc-2.0'")
+	cb2, _ := gtk.CheckButtonNewWithLabel("~/.config/gtkrc-2.0")
 	cb2.SetActive(preferences.ExportGtkRc20)
 	cb2.Connect("toggled", func() {
 		preferences.ExportGtkRc20 = cb2.GetActive()
 	})
-	g.Attach(cb2, 0, 1, 1, 1)
+	g.Attach(cb2, 0, 2, 1, 1)
 
-	cb3, _ := gtk.CheckButtonNewWithLabel("Export '~/.icons/default/index.theme'")
+	cb3, _ := gtk.CheckButtonNewWithLabel("~/.icons/default/index.theme")
 	cb3.SetActive(preferences.ExportIndexTheme)
 	cb3.Connect("toggled", func() {
 		preferences.ExportIndexTheme = cb3.GetActive()
 	})
-	g.Attach(cb3, 0, 2, 1, 1)
+	g.Attach(cb3, 0, 3, 1, 1)
+
+	cb4, _ := gtk.CheckButtonNewWithLabel("~/.config/xsettingsd/xsettingsd.conf")
+	cb4.SetActive(preferences.ExportXsettingsd)
+	cb4.Connect("toggled", func() {
+		preferences.ExportXsettingsd = cb4.GetActive()
+	})
+	g.Attach(cb4, 0, 4, 1, 1)
 
 	return frame
 }

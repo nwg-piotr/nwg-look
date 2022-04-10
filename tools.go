@@ -671,6 +671,95 @@ func isSupported(line string) bool {
 	return false
 }
 
+func saveGtkRc20() {
+	home := os.Getenv("HOME")
+	configFile := filepath.Join(home, ".gtkrc-2.0")
+	log.Infof(">>> Exporting %s", configFile)
+
+	lines := []string{
+		"# DO NOT EDIT! This file will be overwritten by nwg-look.",
+		"# Any customization should be done in ~/.gtkrc-2.0.mine instead.",
+		"",
+	}
+	lines = append(lines, fmt.Sprintf("include \"%s/.gtkrc-2.0.mine\"", home))
+
+	lines = append(lines, fmt.Sprintf("gtk-theme-name=\"%s\"", gsettings.gtkTheme))
+	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=\"%s\"", gsettings.iconTheme))
+	lines = append(lines, fmt.Sprintf("gtk-font-name=\"%s\"", gsettings.fontName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=\"%s\"", gsettings.cursorTheme))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gsettings.cursorSize))
+
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-style=%s", gtkConfig.toolbarStyle))
+	lines = append(lines, fmt.Sprintf("gtk-toolbar-icon-size=%s", gtkConfig.toolbarIconSize))
+
+	v := 0
+	if gtkConfig.buttonImages {
+		v = 1
+	}
+	lines = append(lines, fmt.Sprintf("gtk-button-images=%v", v))
+	if gtkConfig.menuImages {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
+
+	if gsettings.eventSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-event-sounds=%v", v))
+
+	if gsettings.inputFeedbackSounds {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
+
+	if gsettings.fontAntialiasing != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-antialias=%v", v))
+
+	if gsettings.fontHinting != "none" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hinting=%v", v))
+
+	var fh string
+	switch gsettings.fontHinting {
+	case "slight":
+		fh = "hintslight"
+	case "medium":
+		fh = "hintmedium"
+	case "full":
+		fh = "hintfull"
+	default:
+		fh = "hintnone"
+	}
+	lines = append(lines, fmt.Sprintf("gtk-xft-hintstyle=\"%s\"", fh))
+
+	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=\"%s\"", gsettings.fontRgbaOrder))
+
+	if gtkConfig.applicationPreferDarkTheme {
+		v = 1
+	} else {
+		v = 0
+	}
+
+	for _, l := range lines {
+		log.Debug(l)
+	}
+
+	saveTextFile(lines, configFile)
+}
+
 func saveIndexTheme() {
 	home := os.Getenv("HOME")
 	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")

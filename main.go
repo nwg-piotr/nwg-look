@@ -48,6 +48,7 @@ type programSettings struct {
 	ExportSettingsIni bool `json:"export-settings-ini"`
 	ExportGtkRc20     bool `json:"export-gtkrc-20"`
 	ExportIndexTheme  bool `json:"export-index-theme"`
+	ExportXsettingsd  bool `json:"export-xsettingsd"`
 }
 
 func programSettingsNewWithDefaults() programSettings {
@@ -55,6 +56,7 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportSettingsIni = true
 	p.ExportGtkRc20 = true
 	p.ExportIndexTheme = true
+	p.ExportXsettingsd = true
 
 	return p
 }
@@ -375,6 +377,9 @@ func main() {
 
 			if preferences.ExportSettingsIni {
 				saveGtkIni()
+			}
+			if preferences.ExportGtkRc20 {
+				saveGtkRc20()
 			}
 			if preferences.ExportIndexTheme {
 				saveIndexTheme()
