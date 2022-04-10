@@ -298,8 +298,14 @@ func main() {
 			if preferences.ExportSettingsIni {
 				saveGtkIni()
 			}
+			if preferences.ExportGtkRc20 {
+				saveGtkRc20()
+			}
 			if preferences.ExportIndexTheme {
 				saveIndexTheme()
+			}
+			if preferences.ExportXsettingsd {
+				saveXsettingsd()
 			}
 		}
 		os.Exit(0)
@@ -383,6 +389,9 @@ func main() {
 			}
 			if preferences.ExportIndexTheme {
 				saveIndexTheme()
+			}
+			if preferences.ExportXsettingsd {
+				saveXsettingsd()
 			}
 
 		} else {
