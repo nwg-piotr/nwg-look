@@ -643,7 +643,7 @@ func setUpProgramSettingsForm() *gtk.Frame {
 	})
 	g.Attach(cb1, 0, 1, 1, 1)
 
-	cb2, _ := gtk.CheckButtonNewWithLabel("~/.config/gtkrc-2.0")
+	cb2, _ := gtk.CheckButtonNewWithLabel("~/.gtkrc-2.0")
 	cb2.SetActive(preferences.ExportGtkRc20)
 	cb2.Connect("toggled", func() {
 		preferences.ExportGtkRc20 = cb2.GetActive()
