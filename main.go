@@ -336,6 +336,7 @@ func main() {
 		if !*doNotSave {
 			saveGtkIni()
 		}
+		saveIndexTheme()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
