@@ -260,7 +260,7 @@ func main() {
 		fmt.Println(input)
 		if strings.ToUpper(input) == "Y" {
 			applyGsettings()
-			saveGsettings()
+			saveGsettingsBackup()
 			if !*doNotSave {
 				saveGtkIni()
 			}
@@ -332,7 +332,7 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
 		applyGsettings()
-		saveGsettings()
+		saveGsettingsBackup()
 		if !*doNotSave {
 			saveGtkIni()
 		}

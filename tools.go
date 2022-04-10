@@ -267,7 +267,7 @@ func readGsettings() {
 	}
 }
 
-func saveGsettings() {
+func saveGsettingsBackup() {
 	gsettingsFile := filepath.Join(dataHome(), "nwg-look/")
 	makeDir(gsettingsFile)
 	log.Infof(">>> Backing up gsettings to %s", gsettingsFile)
@@ -512,6 +512,9 @@ func applyGsettingsFromFile() {
 
 func saveGtkIni() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
+	if !pathExists(configFile) {
+		makeDir(filepath.Join(configHome(), "gtk-3.0/"))
+	}
 	log.Info(">>> Exporting settings.ini")
 
 	lines := []string{"[Settings]"}
