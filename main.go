@@ -41,6 +41,7 @@ var (
 	cursorSizeSelector    *gtk.Box
 	fontSettingsForm      *gtk.Frame
 	rowToFocus            *gtk.ListBoxRow
+	editingPreferences    bool
 )
 
 type programSettings struct {
@@ -233,6 +234,7 @@ func displayOtherSettingsForm() {
 
 func displayProgramSettingsForm() {
 	destroyContent()
+	editingPreferences = true
 
 	preview = setUpProgramSettingsForm()
 	grid.Attach(preview, 0, 1, 1, 1)
@@ -254,13 +256,14 @@ func destroyContent() {
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
 	}
+
+	editingPreferences = false
 }
 
 func main() {
 	var debug = flag.Bool("d", false, "turn on Debug messages")
 	var displayVersion = flag.Bool("v", false, "display Version information")
 	var applyGs = flag.Bool("a", false, "Apply stored gsetting and quit")
-	var doNotSave = flag.Bool("n", false, "do Not save gtk settings.ini")
 	var restoreDefaults = flag.Bool("r", false, "Restore default values and quit")
 	flag.Parse()
 
@@ -289,8 +292,12 @@ func main() {
 		if strings.ToUpper(input) == "Y" {
 			applyGsettings()
 			saveGsettingsBackup()
-			if !*doNotSave {
+
+			if preferences.ExportSettingsIni {
 				saveGtkIni()
+			}
+			if preferences.ExportIndexTheme {
+				saveIndexTheme()
 			}
 		}
 		os.Exit(0)
@@ -307,7 +314,7 @@ func main() {
 	gtk.Init(nil)
 
 	// update gtkConfig from gtk-3.0/settings.ini
-	if !*doNotSave {
+	if preferences.ExportSettingsIni {
 		loadGtkConfig()
 	}
 
@@ -362,12 +369,20 @@ func main() {
 
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.Connect("clicked", func() {
-		applyGsettings()
-		saveGsettingsBackup()
-		if !*doNotSave {
-			saveGtkIni()
+		if !editingPreferences {
+			applyGsettings()
+			saveGsettingsBackup()
+
+			if preferences.ExportSettingsIni {
+				saveGtkIni()
+			}
+			if preferences.ExportIndexTheme {
+				saveIndexTheme()
+			}
+
+		} else {
+			savePreferences()
 		}
-		saveIndexTheme()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")

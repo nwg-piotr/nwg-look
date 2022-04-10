@@ -40,6 +40,7 @@ func loadPreferences() {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
+		log.Info(">>> Loading preferences")
 		jsonParser := json.NewDecoder(file)
 		jsonParser.Decode(&preferences)
 		jsonData, err := json.Marshal(preferences)
@@ -56,7 +57,6 @@ func savePreferences() {
 		log.Warn(err)
 		return
 	}
-	defer preferencesFile.Close()
 	err = ioutil.WriteFile(preferencesFile, jsonData, 0644)
 	if err == nil {
 		log.Debugf("Saved config: %s", string(jsonData))
