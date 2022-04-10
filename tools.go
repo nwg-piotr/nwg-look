@@ -3,6 +3,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -23,6 +24,43 @@ func configHome() string {
 		return cHome
 	}
 	return filepath.Join(os.Getenv("HOME"), ".config/")
+}
+
+func loadPreferences() {
+	cH := configHome()
+	preferencesFile := filepath.Join(cH, "/nwg-look/config")
+	if !pathExists(preferencesFile) {
+		log.Infof("%s file not found, creating", preferencesFile)
+		makeDir(filepath.Join(cH, "/nwg-look/"))
+		preferences = programSettingsNewWithDefaults()
+		savePreferences()
+	} else {
+		file, err := os.Open(preferencesFile)
+		defer file.Close()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		jsonParser := json.NewDecoder(file)
+		jsonParser.Decode(&preferences)
+		jsonData, err := json.Marshal(preferences)
+		if err == nil {
+			log.Debugf("Loaded preferences: %s", string(jsonData))
+		}
+	}
+}
+
+func savePreferences() {
+	preferencesFile := filepath.Join(configHome(), "/nwg-look/config")
+	jsonData, err := json.MarshalIndent(preferences, "", " ")
+	if err != nil {
+		log.Warn(err)
+		return
+	}
+	defer preferencesFile.Close()
+	err = ioutil.WriteFile(preferencesFile, jsonData, 0644)
+	if err == nil {
+		log.Debugf("Saved config: %s", string(jsonData))
+	}
 }
 
 func loadGtkConfig() {

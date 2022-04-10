@@ -23,6 +23,7 @@ import (
 const version = "0.1.2"
 
 var (
+	preferences           programSettings
 	originalGtkConfig     []string // we will append not parsed settings.ini lines from here
 	gtkConfig             gtkConfigProperties
 	gtkSettings           *gtk.Settings
@@ -41,6 +42,21 @@ var (
 	fontSettingsForm      *gtk.Frame
 	rowToFocus            *gtk.ListBoxRow
 )
+
+type programSettings struct {
+	ExportSettingsIni bool `json:"export-settings-ini"`
+	ExportGtkRc20     bool `json:"export-gtkrc-20"`
+	ExportIndexTheme  bool `json:"export-index-theme"`
+}
+
+func programSettingsNewWithDefaults() programSettings {
+	p := programSettings{}
+	p.ExportSettingsIni = true
+	p.ExportGtkRc20 = true
+	p.ExportIndexTheme = true
+
+	return p
+}
 
 type gtkConfigProperties struct {
 	themeName                  string
@@ -61,6 +77,37 @@ type gtkConfigProperties struct {
 	xftHintstyle               string
 	xftRgba                    string
 	applicationPreferDarkTheme bool
+}
+
+func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
+	s := gtkConfigProperties{}
+	// 'ignored' and 'deprecated' values left for lxappearance compatibility
+	s.themeName = "Adwaita"
+	s.iconThemeName = "Adwaita"
+	s.fontName = "Sans 10"
+	s.cursorThemeName = ""
+	s.cursorThemeSize = 0
+	s.toolbarStyle = "GTK_TOOLBAR_ICONS"              // ignored
+	s.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR" // ignored
+	s.buttonImages = false                            // deprecated
+	s.menuImages = false                              // deprecated
+	s.enableEventSounds = true
+	s.enableInputFeedbackSounds = true
+	s.xftAntialias = -1
+	s.applicationPreferDarkTheme = false
+
+	val, err := getGsettingsValue("org.gnome.desktop.interface", "font-antialiasing")
+	if err == nil {
+		s.fontAntialiasing = val
+	} else {
+		log.Warn(err)
+	}
+
+	s.xftHinting = -1
+	s.xftHintstyle = "hintmedium"
+	s.xftRgba = "none"
+
+	return s
 }
 
 type gsettingsValues struct {
@@ -100,37 +147,6 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.colorScheme = "default"
 
 	return g
-}
-
-func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
-	s := gtkConfigProperties{}
-	// 'ignored' and 'deprecated' values left for lxappearance compatibility
-	s.themeName = "Adwaita"
-	s.iconThemeName = "Adwaita"
-	s.fontName = "Sans 10"
-	s.cursorThemeName = ""
-	s.cursorThemeSize = 0
-	s.toolbarStyle = "GTK_TOOLBAR_ICONS"              // ignored
-	s.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR" // ignored
-	s.buttonImages = false                            // deprecated
-	s.menuImages = false                              // deprecated
-	s.enableEventSounds = true
-	s.enableInputFeedbackSounds = true
-	s.xftAntialias = -1
-	s.applicationPreferDarkTheme = false
-
-	val, err := getGsettingsValue("org.gnome.desktop.interface", "font-antialiasing")
-	if err == nil {
-		s.fontAntialiasing = val
-	} else {
-		log.Warn(err)
-	}
-
-	s.xftHinting = -1
-	s.xftHintstyle = "hintmedium"
-	s.xftRgba = "none"
-
-	return s
 }
 
 func displayThemes() {
@@ -256,6 +272,8 @@ func main() {
 	if *debug {
 		log.SetLevel(log.DebugLevel)
 	}
+
+	loadPreferences()
 
 	// initialize gsettings type with default gtk values
 	gsettings = gsettingsNewWithDefaults()
