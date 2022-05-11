@@ -156,6 +156,7 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 
 func setUpWidgetsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Widget style preview")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	frame.SetProperty("valign", gtk.ALIGN_START)
 
@@ -277,6 +278,7 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 
 func setUpIconsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Icon theme preview")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	frame.SetProperty("valign", gtk.ALIGN_START)
 
@@ -339,6 +341,7 @@ func setUpIconsPreview() *gtk.Frame {
 
 func setUpCursorsPreview(path string) *gtk.Frame {
 	frame, _ := gtk.FrameNew("Cursor theme preview")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 
 	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
@@ -436,6 +439,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 	// as they remain unchanged in once open window.
 
 	frame, _ := gtk.FrameNew("Font settings")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
 	g.SetRowSpacing(12)
@@ -517,6 +521,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 	// as they remain unchanged in once open window.
 
 	frame, _ := gtk.FrameNew("Other settings")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
 	g.SetRowSpacing(12)
@@ -622,6 +627,7 @@ func setUpOtherSettingsForm() *gtk.Frame {
 
 func setUpProgramSettingsForm() *gtk.Frame {
 	frame, _ := gtk.FrameNew("Program settings")
+	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
 	g.SetRowSpacing(12)
