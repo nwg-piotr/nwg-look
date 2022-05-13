@@ -10,7 +10,7 @@ but nwg-look is intended to free the user from a few inconveniences:
 [workarounds](https://github.com/swaywm/sway/wiki/GTK-3-settings-on-Wayland). You don't need to set
  gsettings in the sway config file. You don't need the `import-gsettings` script.
 
-![nwg-look](https://raw.githubusercontent.com/nwg-piotr/nwg-shell-resources/master/images/nwg-look/nwg-look.png)
+![nwg-look](https://raw.githubusercontent.com/nwg-piotr/nwg-shell-resources/master/images/nwg-look/nwg-look-0.1.3.png)
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/nwg-look.svg)](https://repology.org/project/nwg-look/versions)
 
