@@ -673,7 +673,12 @@ func isSupported(line string) bool {
 
 func saveGtkRc20() {
 	home := os.Getenv("HOME")
-	configFile := filepath.Join(home, ".gtkrc-2.0")
+	var configFile string
+	if os.Getenv("GTK2_RC_FILES") != "" {
+		configFile = os.Getenv("GTK2_RC_FILES")
+	} else {
+		configFile = filepath.Join(home, ".gtkrc-2.0")
+	}
 	log.Infof(">>> Exporting %s", configFile)
 
 	lines := []string{
