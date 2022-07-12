@@ -831,20 +831,38 @@ func saveXsettingsd() {
 
 func saveIndexTheme() {
 	home := os.Getenv("HOME")
-	indexThemeFile := filepath.Join(home, ".icons/default/index.theme")
-	if !pathExists(indexThemeFile) {
-		makeDir(filepath.Join(home, ".icons/default/"))
+	iconsFolder := ""
+	if pathExists(filepath.Join(home, ".icons")) {
+		iconsFolder = filepath.Join(home, ".icons")
+	} else {
+		if os.Getenv("XDG_DATA_HOME") != "" {
+			if pathExists(filepath.Join(os.Getenv("XDG_DATA_HOME"), "icons")) {
+				iconsFolder = filepath.Join(os.Getenv("XDG_DATA_HOME"), "icons")
+			}
+		} else {
+			if pathExists(filepath.Join(home, ".local/share/icons")) {
+				iconsFolder = filepath.Join(home, ".local/share/icons")
+			}
+		}
 	}
-	log.Infof(">>> Exporting %s", indexThemeFile)
-	lines := []string{
-		"# This file is written by nwg-look. Do not edit.",
-		"[Icon Theme]",
-		"Name=Default",
-		"Comment=Default Cursor Theme",
-	}
-	lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
 
-	saveTextFile(lines, indexThemeFile)
+	if iconsFolder != "" {
+		indexThemeFile := filepath.Join(iconsFolder, "/default/index.theme")
+		if !pathExists(filepath.Join(iconsFolder, "default")) {
+			makeDir(filepath.Join(iconsFolder, "default"))
+		}
+		log.Infof(">>> Exporting %s", indexThemeFile)
+		lines := []string{
+			"# This file is written by nwg-look. Do not edit.",
+			"[Icon Theme]",
+			"Name=Default",
+			"Comment=Default Cursor Theme",
+		}
+		lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
+		saveTextFile(lines, indexThemeFile)
+	} else {
+		log.Warn("Couldn't find icons folder")
+	}
 }
 
 func getThemeNames() []string {
