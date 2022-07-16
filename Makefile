@@ -4,7 +4,7 @@ get:
 	go get "github.com/sirupsen/logrus"
 
 build:
-	go build -o nwg-look .
+	go build -o bin/nwg-look .
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/nwg-look
@@ -14,7 +14,7 @@ install:
 	cp stuff/main.glade $(DESTDIR)/usr/share/nwg-look/
 	cp stuff/nwg-look.desktop $(DESTDIR)/usr/share/applications/
 	cp stuff/nwg-look.svg $(DESTDIR)/usr/share/pixmaps/
-	cp nwg-look $(DESTDIR)/usr/bin
+	cp bin/nwg-look $(DESTDIR)/usr/bin
 
 uninstall:
 	rm -r $(DESTDIR)/usr/share/nwg-look

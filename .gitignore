@@ -14,6 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+.idea/
+bin/
 nwg-look
 *.glade~
 stuff/#main.glade#
