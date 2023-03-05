@@ -537,8 +537,8 @@ func applyGsettingsFromFile() {
 						gsettings.eventSounds = value == "true"
 					case "input-feedback-sounds":
 						gsettings.inputFeedbackSounds = value == "true"
-                                        case "color-scheme":
-                                                gsettings.colorScheme = value
+					case "color-scheme":
+						gsettings.colorScheme = value
 					}
 				}
 			}
