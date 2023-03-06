@@ -20,7 +20,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.1.5"
+const version = "0.2.0"
 
 var (
 	preferences           programSettings
@@ -42,6 +42,7 @@ var (
 	fontSettingsForm      *gtk.Frame
 	rowToFocus            *gtk.ListBoxRow
 	editingPreferences    bool
+	voc                   map[string]string
 )
 
 type programSettings struct {
@@ -280,6 +281,11 @@ func main() {
 
 	loadPreferences()
 
+	lang := detectLang()
+	log.Infof("lang: %s", lang)
+
+	voc = loadVocabulary(lang)
+
 	// initialize gsettings type with default gtk values
 	gsettings = gsettingsNewWithDefaults()
 
@@ -353,29 +359,37 @@ func main() {
 	menuBar, _ = getMenuBar(builder, "menubar")
 
 	item1, _ := getMenuItem(builder, "item-widgets")
+	item1.SetLabel(voc["widgets"])
 	item1.Connect("button-release-event", displayThemes)
 
 	item2, _ := getMenuItem(builder, "item-icons")
+	item2.SetLabel(voc["icon-theme"])
 	item2.Connect("button-release-event", displayIconThemes)
 
 	item3, _ := getMenuItem(builder, "item-cursors")
+	item3.SetLabel(voc["mouse-cursor"])
 	item3.Connect("button-release-event", displayCursorThemes)
 
 	item4, _ := getMenuItem(builder, "item-font")
+	item4.SetLabel(voc["font"])
 	item4.Connect("button-release-event", displayFontSettingsForm)
 
 	item5, _ := getMenuItem(builder, "item-other")
+	item5.SetLabel(voc["other"])
 	item5.Connect("button-release-event", displayOtherSettingsForm)
 
 	item6, _ := getMenuItem(builder, "item-preferences")
+	item6.SetLabel(voc["preferences"])
 	item6.Connect("button-release-event", displayProgramSettingsForm)
 
 	btnClose, _ := getButton(builder, "btn-close")
+	btnClose.SetLabel(voc["close"])
 	btnClose.Connect("clicked", func() {
 		gtk.MainQuit()
 	})
 
 	btnApply, _ := getButton(builder, "btn-apply")
+	btnApply.SetLabel(voc["apply"])
 	btnApply.Connect("clicked", func() {
 		if !editingPreferences {
 			applyGsettings()
