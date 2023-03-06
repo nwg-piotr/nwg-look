@@ -8,10 +8,12 @@ build:
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/nwg-look
+	mkdir -p $(DESTDIR)/usr/share/nwg-look/langs
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/applications
 	mkdir -p $(DESTDIR)/usr/share/pixmaps
 	cp stuff/main.glade $(DESTDIR)/usr/share/nwg-look/
+	cp langs/* $(DESTDIR)/usr/share/nwg-look/langs/
 	cp stuff/nwg-look.desktop $(DESTDIR)/usr/share/applications/
 	cp stuff/nwg-look.svg $(DESTDIR)/usr/share/pixmaps/
 	cp bin/nwg-look $(DESTDIR)/usr/bin

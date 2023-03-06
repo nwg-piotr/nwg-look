@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -155,7 +154,7 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 }
 
 func setUpWidgetsPreview() *gtk.Frame {
-	frame, _ := gtk.FrameNew("Widget style preview")
+	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["widget-style-preview"]))
 	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	frame.SetProperty("valign", gtk.ALIGN_START)
@@ -188,12 +187,12 @@ func setUpWidgetsPreview() *gtk.Frame {
 
 	checkButton, _ := gtk.CheckButtonNew()
 	checkButton.SetProperty("can-focus", false)
-	checkButton.SetLabel("Check Button")
+	checkButton.SetLabel(voc["check-button"])
 	grid.Attach(checkButton, 0, 1, 1, 1)
 
 	radioButton, _ := gtk.RadioButtonNew(nil)
 	radioButton.SetProperty("can-focus", false)
-	radioButton.SetLabel("Radio Button")
+	radioButton.SetLabel(voc["radio-button"])
 	grid.Attach(radioButton, 0, 2, 1, 1)
 
 	spinButton, _ := gtk.SpinButtonNewWithRange(0, 1000, 10)
@@ -202,7 +201,7 @@ func setUpWidgetsPreview() *gtk.Frame {
 
 	button, _ := gtk.ButtonNewFromIconName("search", gtk.ICON_SIZE_BUTTON)
 	button.SetProperty("can-focus", false)
-	button.SetLabel("Button")
+	button.SetLabel(voc["button"])
 	grid.Attach(button, 1, 3, 1, 1)
 
 	scale, _ := gtk.ScaleNewWithRange(gtk.ORIENTATION_HORIZONTAL, 0, 100, 1)
@@ -217,8 +216,8 @@ func setUpWidgetsPreview() *gtk.Frame {
 	grid.Attach(separator, 1, 2, 2, 1)
 
 	combo, _ := gtk.ComboBoxTextNew()
-	combo.Append("entry #1", "entry #1")
-	combo.Append("entry #2", "entry #2")
+	combo.Append("entry #1", fmt.Sprintf("%s 1", voc["entry"]))
+	combo.Append("entry #2", fmt.Sprintf("%s 1", voc["entry"]))
 	combo.SetProperty("can-focus", false)
 	grid.Attach(combo, 2, 3, 1, 1)
 
@@ -237,7 +236,7 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 	grid.SetColumnSpacing(12)
 	grid.SetRowSpacing(6)
 	grid.SetProperty("margin", 12)
-	label, _ := gtk.LabelNew("Default font:")
+	label, _ := gtk.LabelNew(fmt.Sprintf("%s:", voc["default-font"]))
 	label.SetProperty("halign", gtk.ALIGN_END)
 	grid.Attach(label, 0, 0, 1, 1)
 
@@ -251,13 +250,14 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 	})
 	grid.Attach(fontButton, 1, 0, 1, 1)
 
-	label, _ = gtk.LabelNew("Color scheme:")
+	label, _ = gtk.LabelNew(fmt.Sprintf("%s:", voc["color-scheme"]))
+	label.SetProperty("halign", gtk.ALIGN_END)
 	grid.Attach(label, 0, 1, 1, 1)
 
 	combo, _ := gtk.ComboBoxTextNew()
-	combo.Append("default", "default")
-	combo.Append("prefer-dark", "prefer dark")
-	combo.Append("prefer-light", "prefer light")
+	combo.Append("default", voc["default"])
+	combo.Append("prefer-dark", voc["prefer-dark"])
+	combo.Append("prefer-light", voc["prefer-light"])
 	combo.SetActiveID(gsettings.colorScheme)
 	combo.SetProperty("can-focus", false)
 	combo.Connect("changed", func() {
@@ -277,7 +277,7 @@ func setUpThemeSettingsForm(defaultFontName string) *gtk.Grid {
 }
 
 func setUpIconsPreview() *gtk.Frame {
-	frame, _ := gtk.FrameNew("Icon theme preview")
+	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["icon-theme-preview"]))
 	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	frame.SetProperty("valign", gtk.ALIGN_START)
@@ -340,7 +340,7 @@ func setUpIconsPreview() *gtk.Frame {
 }
 
 func setUpCursorsPreview(path string) *gtk.Frame {
-	frame, _ := gtk.FrameNew("Cursor theme preview")
+	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["cursor-theme-preview"]))
 	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 
@@ -369,7 +369,7 @@ func setUpCursorsPreview(path string) *gtk.Frame {
 		// to extract images from xcursor files, and save them to tmp dir.
 		cursorsDir := filepath.Join(tempDir(), "nwg-look-cursors")
 
-		dir, err := ioutil.ReadDir(cursorsDir)
+		dir, err := os.ReadDir(cursorsDir)
 		if err == nil {
 			for _, d := range dir {
 				os.RemoveAll(filepath.Join([]string{cursorsDir, d.Name()}...))
@@ -417,7 +417,7 @@ func setUpCursorSizeSelector() *gtk.Box {
 	box.SetProperty("vexpand", true)
 	box.SetProperty("valign", gtk.ALIGN_START)
 
-	lbl, _ := gtk.LabelNew("Cursor size:")
+	lbl, _ := gtk.LabelNew(fmt.Sprintf("%s:", voc["cursor-size"]))
 	box.PackStart(lbl, false, false, 0)
 
 	sb, _ := gtk.SpinButtonNewWithRange(6, 1024, 1)
@@ -428,7 +428,7 @@ func setUpCursorSizeSelector() *gtk.Box {
 		gsettings.cursorSize = v
 	})
 	box.PackStart(sb, false, false, 6)
-	lbl, _ = gtk.LabelNew("(default: 24)")
+	lbl, _ = gtk.LabelNew(fmt.Sprintf("(%s: 24)", voc["default"]))
 	box.PackStart(lbl, false, false, 0)
 
 	return box
@@ -438,7 +438,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 	// We wont be applying these properties to gtk.Settings for preview,
 	// as they remain unchanged in once open window.
 
-	frame, _ := gtk.FrameNew("Font settings")
+	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["font-settings"]))
 	frame.SetLabelAlign(0.5, 0.5)
 	frame.SetProperty("margin", 6)
 	g, _ := gtk.GridNew()
@@ -449,15 +449,15 @@ func setUpFontSettingsForm() *gtk.Frame {
 	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
-	lbl, _ := gtk.LabelNew("Font hinting:")
+	lbl, _ := gtk.LabelNew(fmt.Sprintf("%s:", voc["font-hinting"]))
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 0, 1, 1)
 
 	comboHinting, _ := gtk.ComboBoxTextNew()
-	comboHinting.Append("none", "none")
-	comboHinting.Append("slight", "slight")
-	comboHinting.Append("medium", "medium")
-	comboHinting.Append("full", "full")
+	comboHinting.Append("none", voc["none"])
+	comboHinting.Append("slight", voc["slight"])
+	comboHinting.Append("medium", voc["medium"])
+	comboHinting.Append("full", voc["full"])
 	comboHinting.SetActiveID(gsettings.fontHinting)
 	g.Attach(comboHinting, 1, 0, 1, 1)
 
@@ -466,15 +466,15 @@ func setUpFontSettingsForm() *gtk.Frame {
 		gsettings.fontHinting = id
 	})
 
-	lbl, _ = gtk.LabelNew("Font antialiasing:")
+	lbl, _ = gtk.LabelNew(fmt.Sprintf("%s:", voc["font-antialiasing"]))
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 1, 1, 1)
 
 	comboRgba, _ := gtk.ComboBoxTextNew()
 
 	comboAntialiasing, _ := gtk.ComboBoxTextNew()
-	comboAntialiasing.Append("none", "none")
-	comboAntialiasing.Append("grayscale", "grayscale")
+	comboAntialiasing.Append("none", voc["none"])
+	comboAntialiasing.Append("grayscale", voc["grayscale"])
 	comboAntialiasing.Append("rgba", "rgba")
 	comboAntialiasing.SetActiveID(gsettings.fontAntialiasing)
 	g.Attach(comboAntialiasing, 1, 1, 1, 1)
@@ -485,7 +485,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 		comboRgba.SetSensitive(id == "rgba")
 	})
 
-	lbl, _ = gtk.LabelNew("Font RGBA order:")
+	lbl, _ = gtk.LabelNew(fmt.Sprintf("%s", voc["font-rgba-order"]))
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 2, 1, 1)
 
@@ -501,7 +501,7 @@ func setUpFontSettingsForm() *gtk.Frame {
 		gsettings.fontRgbaOrder = comboRgba.GetActiveID()
 	})
 
-	lbl, _ = gtk.LabelNew("Text scaling factor:")
+	lbl, _ = gtk.LabelNew(fmt.Sprintf("%s:", voc["text-scaling-factor"]))
 	lbl.SetProperty("halign", gtk.ALIGN_END)
 	g.Attach(lbl, 0, 3, 1, 1)
 

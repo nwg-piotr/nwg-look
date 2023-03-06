@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -57,7 +58,7 @@ func savePreferences() {
 		log.Warn(err)
 		return
 	}
-	err = ioutil.WriteFile(preferencesFile, jsonData, 0644)
+	err = os.WriteFile(preferencesFile, jsonData, 0644)
 	if err == nil {
 		log.Debugf("Saved config: %s", string(jsonData))
 	}
@@ -1243,4 +1244,89 @@ func getMenuItem(b *gtk.Builder, id string) (*gtk.MenuItem, error) {
 		return nil, err
 	}
 	return item, nil
+}
+
+func detectLang() string {
+	lang := ""
+	shellDataFile := filepath.Join(dataHome(), "/nwg-shell/data")
+	if pathExists(shellDataFile) {
+		jsonFile, err := os.Open(shellDataFile)
+		if err == nil {
+			byteValue, _ := io.ReadAll(jsonFile)
+			var result map[string]interface{}
+			err = json.Unmarshal([]byte(byteValue), &result)
+			if err == nil {
+				if result["interface-locale"] != "" {
+					lang = fmt.Sprintf("%s", result["interface-locale"])
+					log.Infof("lang '%s' set from nwg-shell settings", lang)
+				}
+			}
+		}
+		defer jsonFile.Close()
+	}
+	if lang == "" {
+		if os.Getenv("LANG") != "" {
+			lang = strings.Split(os.Getenv("LANG"), ".")[0]
+			log.Debugf("lang '%s' set from the $LANG variable", lang)
+		} else {
+			lang = "en_US"
+			log.Warn("Couldn't determine your lang")
+		}
+	}
+	return lang
+}
+
+func loadVocabulary(lang string) map[string]string {
+	langsDir := "/usr/share/nwg-look/langs/"
+	enUSFile := filepath.Join(langsDir, "en_US.json")
+	if pathExists(enUSFile) {
+		log.Infof(">>> Loading basic lang from '%s'", enUSFile)
+		jsonFile, err := os.Open(enUSFile)
+		if err != nil {
+			log.Errorf("Error loading basic lang: %s", err)
+			os.Exit(1)
+		} else {
+			byteValue, _ := io.ReadAll(jsonFile)
+			var result map[string]string
+			err = json.Unmarshal([]byte(byteValue), &result)
+			if err != nil {
+				log.Errorf("Error unmarshalling '%s': %s", enUSFile, err)
+				// We can't continue w/o the basic dictionary!
+				os.Exit(1)
+			} else {
+				translationFile := filepath.Join(langsDir, fmt.Sprintf("%s.json", lang))
+				if lang == "en_US" || !pathExists(translationFile) {
+					// Users lang is en_US, or we have no translation into users lang
+					return result
+				} else {
+					log.Infof(">>> Loading translation from '%s'", translationFile)
+					jsonFile, err = os.Open(translationFile)
+					if err != nil {
+						log.Errorf("Error loading translation: %s", err)
+					} else {
+						byteValue, _ = io.ReadAll(jsonFile)
+						var result1 map[string]string
+						err = json.Unmarshal([]byte(byteValue), &result1)
+						if err != nil {
+							log.Errorf("Error unmarshalling '%s': %s", translationFile, err)
+							// We can continue, we just have no translation
+							return result
+						} else {
+							// Translate
+							for key, _ := range result1 {
+								if _, ok := result[key]; ok {
+									result[key] = result1[key]
+								}
+							}
+							return result
+						}
+					}
+				}
+			}
+		}
+	} else {
+		log.Errorf("Couldn't load the basic lang file: '%s'", enUSFile)
+		os.Exit(1)
+	}
+	return nil
 }
