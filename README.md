@@ -1,5 +1,8 @@
 # nwg-look
-This application is a part of the [nwg-shell](https://github.com/nwg-piotr/nwg-shell) project.
+
+This application is a part of the [nwg-shell](https://nwg-piotr.github.io/nwg-shell) project.
+
+**Contributing:** please read the [general contributing rules for the nwg-shell project](https://nwg-piotr.github.io/nwg-shell/contribution).
 
 Nwg-look is a GTK3 settings editor, designed to work properly in wlroots-based Wayland environment.
 The look and feel is strongly influenced by [LXAppearance](https://wiki.lxde.org/en/LXAppearance),
