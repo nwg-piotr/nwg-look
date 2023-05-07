@@ -80,11 +80,11 @@ func setUpIconThemeListBox(currentIconTheme string) *gtk.ListBox {
 		n := name
 		eventBox.Connect("button-press-event", func() {
 			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gsettings.iconTheme = n
+			gsettings.iconTheme = namesMap[n]
 		})
 		row.Connect("focus-in-event", func() {
 			gtkSettings.SetProperty("gtk-icon-theme-name", namesMap[n])
-			gsettings.iconTheme = n
+			gsettings.iconTheme = namesMap[n]
 		})
 
 		if namesMap[n] == currentIconTheme || n == currentIconTheme {
