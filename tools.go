@@ -534,6 +534,11 @@ func applyGsettingsFromFile() {
 						gsettings.fontAntialiasing = value
 					case "font-rgba-order":
 						gsettings.fontRgbaOrder = value
+					case "text-scaling-factor":
+						v, err := strconv.ParseFloat(value, 64)
+						if err == nil {
+							gsettings.textScalingFactor = v
+						}
 					case "event-sounds":
 						gsettings.eventSounds = value == "true"
 					case "input-feedback-sounds":
