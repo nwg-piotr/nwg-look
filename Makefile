@@ -4,7 +4,7 @@ get:
 	go get "github.com/sirupsen/logrus"
 
 build:
-	go build -o bin/nwg-look .
+	go build -v -o bin/nwg-look .
 
 install:
 	mkdir -p $(DESTDIR)/usr/share/nwg-look

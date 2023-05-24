@@ -20,7 +20,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.2.2"
+const version = "0.2.3"
 
 var (
 	preferences           programSettings
@@ -39,7 +39,6 @@ var (
 	grid                  *gtk.Grid
 	preview               *gtk.Frame
 	cursorSizeSelector    *gtk.Box
-	fontSettingsForm      *gtk.Frame
 	rowToFocus            *gtk.ListBoxRow
 	editingPreferences    bool
 	voc                   map[string]string
