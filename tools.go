@@ -1092,7 +1092,7 @@ func loadTextFile(path string) ([]string, error) {
 func saveTextFile(text []string, path string) {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Fatalf("Failed creating file: %s", err)
+		log.Warnf("Failed creating file: %s", err)
 	}
 	datawriter := bufio.NewWriter(file)
 
