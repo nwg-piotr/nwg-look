@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/fs"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -1078,7 +1076,7 @@ func iconThemeName(path string) (string, bool, error) {
 }
 
 func loadTextFile(path string) ([]string, error) {
-	bytes, err := ioutil.ReadFile(path)
+	bytes, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -1094,7 +1092,7 @@ func loadTextFile(path string) ([]string, error) {
 func saveTextFile(text []string, path string) {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Fatalf("Failed creating file: %s", err)
+		log.Warnf("Failed creating file: %s", err)
 	}
 	datawriter := bufio.NewWriter(file)
 
@@ -1106,8 +1104,8 @@ func saveTextFile(text []string, path string) {
 	file.Close()
 }
 
-func listFiles(dir string) ([]fs.FileInfo, error) {
-	files, err := ioutil.ReadDir(dir)
+func listFiles(dir string) ([]os.DirEntry, error) {
+	files, err := os.ReadDir(dir)
 	if err == nil {
 		return files, nil
 	}
