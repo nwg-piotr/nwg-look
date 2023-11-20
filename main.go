@@ -2,7 +2,7 @@
 GTK3 settings editor adapted to work in the sway / wlroots environment
 Project: https://github.com/nwg-piotr/nwg-look
 Author's email: nwg.piotr@gmail.com
-Copyright (c) 2022 Piotr Miller
+Copyright (c) 2022-2023 Piotr Miller & Contributors
 License: MIT
 */
 
@@ -267,6 +267,7 @@ func main() {
 	var displayVersion = flag.Bool("v", false, "display Version information")
 	var applyGs = flag.Bool("a", false, "Apply stored gsetting and quit")
 	var restoreDefaults = flag.Bool("r", false, "Restore default values and quit")
+	var exportConfigs = flag.Bool("x", false, "eXport config files and quit")
 	flag.Parse()
 
 	if *displayVersion {
@@ -334,6 +335,22 @@ func main() {
 	readGsettings()
 
 	gtkSettings, _ = gtk.SettingsGetDefault()
+
+	if *exportConfigs {
+		if preferences.ExportSettingsIni {
+			saveGtkIni()
+		}
+		if preferences.ExportGtkRc20 {
+			saveGtkRc20()
+		}
+		if preferences.ExportIndexTheme {
+			saveIndexTheme()
+		}
+		if preferences.ExportXsettingsd {
+			saveXsettingsd()
+		}
+		os.Exit(0)
+	}
 
 	builder, _ := gtk.BuilderNewFromFile("/usr/share/nwg-look/main.glade")
 	win, _ := getWindow(builder, "window")
