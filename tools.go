@@ -629,7 +629,7 @@ func saveGtkIni() {
 
 	lines = append(lines, fmt.Sprintf("gtk-xft-rgba=%s", gsettings.fontRgbaOrder))
 
-	if gtkConfig.applicationPreferDarkTheme {
+	if gsettings.colorScheme == "prefer-dark" {
 		v = 1
 	} else {
 		v = 0
