@@ -1,4 +1,5 @@
-# nwg-look
+<img src="https://github.com/nwg-piotr/nwg-look/assets/20579136/c2a6244b-4eae-489e-b9bc-272347238be8" width="90" style="margin-right:10px" align=left alt="logo">
+<H1>nwg-look</H1><br>
 
 This application is a part of the [nwg-shell](https://nwg-piotr.github.io/nwg-shell) project.
 
