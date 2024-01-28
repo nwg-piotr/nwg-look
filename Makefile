@@ -12,11 +12,18 @@ install:
 	mkdir -p $(DESTDIR)/usr/bin
 	mkdir -p $(DESTDIR)/usr/share/applications
 	mkdir -p $(DESTDIR)/usr/share/pixmaps
+
+	mkdir -p $(DESTDIR)/usr/share/doc/nwg-look
+	mkdir -p $(DESTDIR)/usr/share/licenses/nwg-look
+
 	cp stuff/main.glade $(DESTDIR)/usr/share/nwg-look/
 	cp langs/* $(DESTDIR)/usr/share/nwg-look/langs/
 	cp stuff/nwg-look.desktop $(DESTDIR)/usr/share/applications/
 	cp stuff/nwg-look.svg $(DESTDIR)/usr/share/pixmaps/
 	cp bin/nwg-look $(DESTDIR)/usr/bin
+
+	cp README.md $(DESTDIR)/usr/share/doc/nwg-look
+	cp LICENSE $(DESTDIR)/usr/share/licenses/nwg-look
 
 uninstall:
 	rm -r $(DESTDIR)/usr/share/nwg-look
