@@ -14,8 +14,6 @@ but nwg-look is intended to free the user from a few inconveniences:
 
 ![nwg-look](https://raw.githubusercontent.com/nwg-piotr/nwg-shell-resources/master/images/nwg-look/nwg-look-0.1.3.png)
 
-[![Packaging status](https://repology.org/badge/vertical-allrepos/nwg-look.svg)](https://repology.org/project/nwg-look/versions)
-
 ## Dependencies
 
 - go 1.18 (just to build)
@@ -26,6 +24,10 @@ Depending on your distro, you may also need to install
 [gotk3 dependencies](https://github.com/gotk3/gotk3#installation).
 
 ## Installation
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/nwg-look.svg)](https://repology.org/project/nwg-look/versions)
+
+If nwg-look has not yet been packaged for your Linux distribution:
 
 1. Clone the repository, cd into it.
 2. `make build`
