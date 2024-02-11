@@ -1280,56 +1280,59 @@ func detectLang() string {
 }
 
 func loadVocabulary(lang string) map[string]string {
-	langsDir := "/usr/share/nwg-look/langs/"
-	enUSFile := filepath.Join(langsDir, "en_US.json")
-	if pathExists(enUSFile) {
-		log.Infof(">>> Loading basic lang from '%s'", enUSFile)
-		jsonFile, err := os.Open(enUSFile)
-		if err != nil {
-			log.Errorf("Error loading basic lang: %s", err)
-			os.Exit(1)
-		} else {
-			byteValue, _ := io.ReadAll(jsonFile)
-			var result map[string]string
-			err = json.Unmarshal([]byte(byteValue), &result)
+	var dataDirs []string
+	dataDirs = getDataDirs()
+	for _, d := range dataDirs {
+		langsDir := filepath.Join(d, "/nwg-look/langs/")
+		enUSFile := filepath.Join(langsDir, "en_US.json")
+		if pathExists(enUSFile) {
+			log.Infof(">>> Loading basic lang from '%s'", enUSFile)
+			jsonFile, err := os.Open(enUSFile)
 			if err != nil {
-				log.Errorf("Error unmarshalling '%s': %s", enUSFile, err)
-				// We can't continue w/o the basic dictionary!
+				log.Errorf("Error loading basic lang: %s", err)
 				os.Exit(1)
 			} else {
-				translationFile := filepath.Join(langsDir, fmt.Sprintf("%s.json", lang))
-				if lang == "en_US" || !pathExists(translationFile) {
-					// Users lang is en_US, or we have no translation into users lang
-					return result
+				byteValue, _ := io.ReadAll(jsonFile)
+				var result map[string]string
+				err = json.Unmarshal([]byte(byteValue), &result)
+				if err != nil {
+					log.Errorf("Error unmarshalling '%s': %s", enUSFile, err)
+					// We can't continue w/o the basic dictionary!
+					os.Exit(1)
 				} else {
-					log.Infof(">>> Loading translation from '%s'", translationFile)
-					jsonFile, err = os.Open(translationFile)
-					if err != nil {
-						log.Errorf("Error loading translation: %s", err)
+					translationFile := filepath.Join(langsDir, fmt.Sprintf("%s.json", lang))
+					if lang == "en_US" || !pathExists(translationFile) {
+						// Users lang is en_US, or we have no translation into users lang
+						return result
 					} else {
-						byteValue, _ = io.ReadAll(jsonFile)
-						var result1 map[string]string
-						err = json.Unmarshal([]byte(byteValue), &result1)
+						log.Infof(">>> Loading translation from '%s'", translationFile)
+						jsonFile, err = os.Open(translationFile)
 						if err != nil {
-							log.Errorf("Error unmarshalling '%s': %s", translationFile, err)
-							// We can continue, we just have no translation
-							return result
+							log.Errorf("Error loading translation: %s", err)
 						} else {
-							// Translate
-							for key, _ := range result1 {
-								if _, ok := result[key]; ok {
-									result[key] = result1[key]
+							byteValue, _ = io.ReadAll(jsonFile)
+							var result1 map[string]string
+							err = json.Unmarshal([]byte(byteValue), &result1)
+							if err != nil {
+								log.Errorf("Error unmarshalling '%s': %s", translationFile, err)
+								// We can continue, we just have no translation
+								return result
+							} else {
+								// Translate
+								for key, _ := range result1 {
+									if _, ok := result[key]; ok {
+										result[key] = result1[key]
+									}
 								}
+								return result
 							}
-							return result
 						}
 					}
 				}
 			}
 		}
-	} else {
-		log.Errorf("Couldn't load the basic lang file: '%s'", enUSFile)
-		os.Exit(1)
 	}
+	log.Errorf("Couldn't load the basic lang file")
+	os.Exit(1)
 	return nil
 }

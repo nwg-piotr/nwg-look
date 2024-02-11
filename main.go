@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 
@@ -352,7 +353,15 @@ func main() {
 		os.Exit(0)
 	}
 
-	builder, _ := gtk.BuilderNewFromFile("/usr/share/nwg-look/main.glade")
+	gladeFile := ""
+	for _, d := range dataDirs {
+		gladeFile = filepath.Join(d, "/nwg-look/main.glade")
+		if pathExists(gladeFile) {
+			break
+		}
+	}
+
+	builder, _ := gtk.BuilderNewFromFile(gladeFile)
 	win, _ := getWindow(builder, "window")
 
 	win.Connect("destroy", func() {
