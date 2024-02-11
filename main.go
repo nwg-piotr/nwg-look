@@ -2,7 +2,7 @@
 GTK3 settings editor adapted to work in the sway / wlroots environment
 Project: https://github.com/nwg-piotr/nwg-look
 Author's email: nwg.piotr@gmail.com
-Copyright (c) 2022-2023 Piotr Miller & Contributors
+Copyright (c) 2022-2024 Piotr Miller & Contributors
 License: MIT
 */
 
@@ -12,8 +12,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"path/filepath"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.2.6"
+const version = "0.2.7"
 
 var (
 	preferences           programSettings
