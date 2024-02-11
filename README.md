@@ -16,7 +16,7 @@ but nwg-look is intended to free the user from a few inconveniences:
 
 ## Dependencies
 
-- go 1.18 (just to build)
+- go (build dependency)
 - gtk3
 - [xcur2png](https://github.com/eworm-de/xcur2png)
 
@@ -38,10 +38,11 @@ If nwg-look has not yet been packaged for your Linux distribution:
 ```text
 $ nwg-look -h
 Usage of nwg-look:
-  -a    Apply stored gsetting and quit
-  -d    turn on Debug messages
-  -r    Restore default values and quit
-  -v    display Version information
+  -a	Apply stored gsetting and quit
+  -d	turn on Debug messages
+  -r	Restore default values and quit
+  -v	display Version information
+  -x	eXport config files and quit
 ```
 
 The `-a` flag has been added just in case. When you press the "Apply" button, in addition to applying the changes, a backup file is also created. You may apply gsetting again w/o running the GUI, by just `nwg-look -a`. No idea if it's going to be useful in real life. ;)
