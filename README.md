@@ -19,6 +19,7 @@ but nwg-look is intended to free the user from a few inconveniences:
 - go (build dependency)
 - gtk3
 - [xcur2png](https://github.com/eworm-de/xcur2png)
+- gsettings
 
 Depending on your distro, you may also need to install
 [gotk3 dependencies](https://github.com/gotk3/gotk3#installation).
