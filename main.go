@@ -41,15 +41,16 @@ var (
 	preview               *gtk.Frame
 	cursorSizeSelector    *gtk.Box
 	rowToFocus            *gtk.ListBoxRow
-	editingPreferences    bool
 	voc                   map[string]string
+	gtkThemePaths         map[string]string // theme name to path
 )
 
 type programSettings struct {
-	ExportSettingsIni bool `json:"export-settings-ini"`
-	ExportGtkRc20     bool `json:"export-gtkrc-20"`
-	ExportIndexTheme  bool `json:"export-index-theme"`
-	ExportXsettingsd  bool `json:"export-xsettingsd"`
+	ExportSettingsIni  bool `json:"export-settings-ini"`
+	ExportGtkRc20      bool `json:"export-gtkrc-20"`
+	ExportIndexTheme   bool `json:"export-index-theme"`
+	ExportXsettingsd   bool `json:"export-xsettingsd"`
+	ExportGtk4Symlinks bool `json:"export-gtk4-symlinks"`
 }
 
 func programSettingsNewWithDefaults() programSettings {
@@ -58,6 +59,7 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportGtkRc20 = true
 	p.ExportIndexTheme = true
 	p.ExportXsettingsd = true
+	p.ExportGtk4Symlinks = true
 
 	return p
 }
@@ -237,7 +239,6 @@ func displayOtherSettingsForm() {
 
 func displayProgramSettingsForm() {
 	destroyContent()
-	editingPreferences = true
 
 	preview = setUpProgramSettingsForm()
 	grid.Attach(preview, 0, 1, 1, 1)
@@ -259,8 +260,6 @@ func destroyContent() {
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
 	}
-
-	editingPreferences = false
 }
 
 func main() {
@@ -314,6 +313,11 @@ func main() {
 			if preferences.ExportXsettingsd {
 				saveXsettingsd()
 			}
+			if preferences.ExportGtk4Symlinks {
+				linkGtk4Stuff()
+			} else {
+				clearGtk4Symlinks()
+			}
 		}
 		os.Exit(0)
 	}
@@ -349,6 +353,11 @@ func main() {
 		}
 		if preferences.ExportXsettingsd {
 			saveXsettingsd()
+		}
+		if preferences.ExportGtk4Symlinks {
+			linkGtk4Stuff()
+		} else {
+			clearGtk4Symlinks()
 		}
 		os.Exit(0)
 	}
@@ -416,26 +425,27 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.SetLabel(voc["apply"])
 	btnApply.Connect("clicked", func() {
-		if !editingPreferences {
-			applyGsettings()
-			saveGsettingsBackup()
+		applyGsettings()
+		saveGsettingsBackup()
 
-			if preferences.ExportSettingsIni {
-				saveGtkIni()
-			}
-			if preferences.ExportGtkRc20 {
-				saveGtkRc20()
-			}
-			if preferences.ExportIndexTheme {
-				saveIndexTheme()
-			}
-			if preferences.ExportXsettingsd {
-				saveXsettingsd()
-			}
-
-		} else {
-			savePreferences()
+		if preferences.ExportSettingsIni {
+			saveGtkIni()
 		}
+		if preferences.ExportGtkRc20 {
+			saveGtkRc20()
+		}
+		if preferences.ExportIndexTheme {
+			saveIndexTheme()
+		}
+		if preferences.ExportXsettingsd {
+			saveXsettingsd()
+		}
+		if preferences.ExportGtk4Symlinks {
+			linkGtk4Stuff()
+		} else {
+			clearGtk4Symlinks()
+		}
+		savePreferences()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")
