@@ -356,8 +356,6 @@ func main() {
 		}
 		if preferences.ExportGtk4Symlinks {
 			linkGtk4Stuff()
-		} else {
-			clearGtk4Symlinks()
 		}
 		os.Exit(0)
 	}
@@ -442,8 +440,6 @@ func main() {
 		}
 		if preferences.ExportGtk4Symlinks {
 			linkGtk4Stuff()
-		} else {
-			clearGtk4Symlinks()
 		}
 		savePreferences()
 	})
