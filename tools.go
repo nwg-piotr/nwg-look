@@ -835,6 +835,100 @@ func saveXsettingsd() {
 	saveTextFile(lines, configFile)
 }
 
+func linkGtk4Stuff() {
+	home := os.Getenv("HOME")
+	configPath := filepath.Join(home, ".config")
+	themeName := gsettings.gtkTheme
+
+	if gsettings.gtkTheme != "" {
+		log.Infof(">>> Symlinking files in %s", filepath.Join(configPath, "/gtk-4.0"))
+		log.Debugf("GTK Theme: '%s' at '%s'", themeName, gtkThemePaths[themeName])
+		log.Debugf("Config path: '%s'", configPath)
+		themePath := gtkThemePaths[themeName]
+		log.Debugf("Theme path: '%s'", gtkThemePaths[gsettings.gtkTheme])
+		if themePath == "" {
+			log.Warnf("Unknown theme path: '%s'", themePath)
+			return
+		}
+		if !pathExists(filepath.Join(themePath, "gtk-4.0")) {
+			log.Warnf("%s theme has no gtk-4.0 directory", themePath)
+			return
+		}
+
+		clearGtk4Symlinks()
+
+		// Create symlinks
+		if pathExists(filepath.Join(themePath, "gtk-4.0/gtk.css")) {
+			cmd := exec.Command("ln", "-s", filepath.Join(themePath, "gtk-4.0/gtk.css"), filepath.Join(configPath, "gtk-4.0/gtk.css"))
+			err := cmd.Run()
+			if err != nil {
+				log.Warnf("Couldn't symlink '%s': %s", filepath.Join(themePath, "gtk-4.0/gtk.css"), err)
+			} else {
+				log.Debugf("Created symlink to '%s'", filepath.Join(themePath, "gtk-4.0/gtk.css"))
+			}
+		}
+
+		if pathExists(filepath.Join(themePath, "gtk-4.0/gtk-dark.css")) {
+			cmd := exec.Command("ln", "-s", filepath.Join(themePath, "gtk-4.0/gtk-dark.css"), filepath.Join(configPath, "gtk-4.0/gtk-dark.css"))
+			err := cmd.Run()
+			if err != nil {
+				log.Warnf("Couldn't symlink '%s': %s", filepath.Join(themePath, "gtk-4.0/gtk-dark.css"), err)
+			} else {
+				log.Debugf("Created symlink to '%s'", filepath.Join(themePath, "gtk-4.0/gtk-dark.css"))
+			}
+		}
+
+		if pathExists(filepath.Join(themePath, "gtk-4.0/assets")) {
+			cmd := exec.Command("ln", "-s", filepath.Join(themePath, "gtk-4.0/assets"), filepath.Join(configPath, "gtk-4.0/assets"))
+			err := cmd.Run()
+			if err != nil {
+				log.Warnf("Couldn't symlink '%s': %s", filepath.Join(themePath, "gtk-4.0/assets"), err)
+			} else {
+				log.Debugf("Created symlink to '%s'", filepath.Join(themePath, "gtk-4.0/assets"))
+			}
+		}
+
+		if pathExists(filepath.Join(themePath, "assets")) {
+			cmd := exec.Command("ln", "-s", filepath.Join(themePath, "assets"), filepath.Join(configPath, "assets"))
+			err := cmd.Run()
+			if err != nil {
+				log.Warnf("Couldn't symlink '%s': %s", filepath.Join(themePath, "assets"), err)
+			} else {
+				log.Debugf("Created symlink to '%s'", filepath.Join(themePath, "assets"))
+			}
+		}
+
+	} else {
+		log.Warnf("GTK theme name unknown")
+	}
+}
+
+func clearGtk4Symlinks() {
+	home := os.Getenv("HOME")
+	configPath := filepath.Join(home, ".config")
+	items := []string{"gtk-4.0/gtk.css", "gtk-4.0/gtk-dark.css", "gtk-4.0/assets", "assets"}
+	for _, item := range items {
+		p := filepath.Join(configPath, item)
+		if pathExists(p) {
+			log.Debugf("Removing '%s'", p)
+			info, _ := os.Stat(p)
+			if info.IsDir() {
+				cmd := exec.Command("rm", "-r", p)
+				err := cmd.Run()
+				if err != nil {
+					log.Warnf("Couldn't remove '%s': %s", p, err)
+				}
+			} else {
+				cmd := exec.Command("rm", p)
+				err := cmd.Run()
+				if err != nil {
+					log.Warnf("Couldn't remove '%s': %s", p, err)
+				}
+			}
+		}
+	}
+}
+
 func saveIndexTheme() {
 	home := os.Getenv("HOME")
 	iconsFolder := ""
@@ -871,8 +965,9 @@ func saveIndexTheme() {
 	}
 }
 
-func getThemeNames() []string {
+func getThemeNames() ([]string, map[string]string) {
 	var dirs []string
+	themePaths := make(map[string]string) // theme name 2 theme path
 
 	// get theme dirs
 	for _, dir := range dataDirs {
@@ -902,7 +997,8 @@ func getThemeNames() []string {
 								if !isIn(names, f.Name()) {
 									if !isIn(exclusions, f.Name()) {
 										names = append(names, f.Name())
-										log.Debugf("Theme found: %s", f.Name())
+										themePaths[f.Name()] = filepath.Join(d, f.Name())
+										log.Debugf("Theme found: '%s' at '%s'", f.Name(), filepath.Join(d, f.Name()))
 									} else {
 										log.Debugf("Excluded theme: %s", f.Name())
 									}
@@ -919,7 +1015,7 @@ func getThemeNames() []string {
 		return names[i] < names[j]
 	})
 
-	return names
+	return names, themePaths
 }
 
 // returns map[displayName]folderName

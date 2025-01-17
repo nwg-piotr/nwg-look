@@ -1,8 +1,8 @@
 /*
-GTK3 settings editor adapted to work in the sway / wlroots environment
+GTK settings editor adapted to work in the sway / wlroots environment
 Project: https://github.com/nwg-piotr/nwg-look
 Author's email: nwg.piotr@gmail.com
-Copyright (c) 2022-2024 Piotr Miller & Contributors
+Copyright (c) 2022-2025 Piotr Miller & Contributors
 License: MIT
 */
 
@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.2.7"
+const version = "1.0.0"
 
 var (
 	preferences           programSettings
@@ -41,15 +41,16 @@ var (
 	preview               *gtk.Frame
 	cursorSizeSelector    *gtk.Box
 	rowToFocus            *gtk.ListBoxRow
-	editingPreferences    bool
 	voc                   map[string]string
+	gtkThemePaths         map[string]string // theme name to path
 )
 
 type programSettings struct {
-	ExportSettingsIni bool `json:"export-settings-ini"`
-	ExportGtkRc20     bool `json:"export-gtkrc-20"`
-	ExportIndexTheme  bool `json:"export-index-theme"`
-	ExportXsettingsd  bool `json:"export-xsettingsd"`
+	ExportSettingsIni  bool `json:"export-settings-ini"`
+	ExportGtkRc20      bool `json:"export-gtkrc-20"`
+	ExportIndexTheme   bool `json:"export-index-theme"`
+	ExportXsettingsd   bool `json:"export-xsettingsd"`
+	ExportGtk4Symlinks bool `json:"export-gtk4-symlinks"`
 }
 
 func programSettingsNewWithDefaults() programSettings {
@@ -58,6 +59,7 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportGtkRc20 = true
 	p.ExportIndexTheme = true
 	p.ExportXsettingsd = true
+	p.ExportGtk4Symlinks = true
 
 	return p
 }
@@ -237,7 +239,6 @@ func displayOtherSettingsForm() {
 
 func displayProgramSettingsForm() {
 	destroyContent()
-	editingPreferences = true
 
 	preview = setUpProgramSettingsForm()
 	grid.Attach(preview, 0, 1, 1, 1)
@@ -259,8 +260,6 @@ func destroyContent() {
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
 	}
-
-	editingPreferences = false
 }
 
 func main() {
@@ -314,6 +313,11 @@ func main() {
 			if preferences.ExportXsettingsd {
 				saveXsettingsd()
 			}
+			if preferences.ExportGtk4Symlinks {
+				linkGtk4Stuff()
+			} else {
+				clearGtk4Symlinks()
+			}
 		}
 		os.Exit(0)
 	}
@@ -349,6 +353,9 @@ func main() {
 		}
 		if preferences.ExportXsettingsd {
 			saveXsettingsd()
+		}
+		if preferences.ExportGtk4Symlinks {
+			linkGtk4Stuff()
 		}
 		os.Exit(0)
 	}
@@ -416,26 +423,25 @@ func main() {
 	btnApply, _ := getButton(builder, "btn-apply")
 	btnApply.SetLabel(voc["apply"])
 	btnApply.Connect("clicked", func() {
-		if !editingPreferences {
-			applyGsettings()
-			saveGsettingsBackup()
+		applyGsettings()
+		saveGsettingsBackup()
 
-			if preferences.ExportSettingsIni {
-				saveGtkIni()
-			}
-			if preferences.ExportGtkRc20 {
-				saveGtkRc20()
-			}
-			if preferences.ExportIndexTheme {
-				saveIndexTheme()
-			}
-			if preferences.ExportXsettingsd {
-				saveXsettingsd()
-			}
-
-		} else {
-			savePreferences()
+		if preferences.ExportSettingsIni {
+			saveGtkIni()
 		}
+		if preferences.ExportGtkRc20 {
+			saveGtkRc20()
+		}
+		if preferences.ExportIndexTheme {
+			saveIndexTheme()
+		}
+		if preferences.ExportXsettingsd {
+			saveXsettingsd()
+		}
+		if preferences.ExportGtk4Symlinks {
+			linkGtk4Stuff()
+		}
+		savePreferences()
 	})
 
 	verLabel, _ := getLabel(builder, "version-label")

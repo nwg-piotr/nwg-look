@@ -17,7 +17,10 @@ func setUpThemeListBox(currentTheme string) *gtk.ListBox {
 	listBox, _ := gtk.ListBoxNew()
 	var rowToSelect *gtk.ListBoxRow
 
-	for _, name := range getThemeNames() {
+	themeNames, themePaths := getThemeNames()
+	gtkThemePaths = themePaths
+
+	for _, name := range themeNames {
 		row, _ := gtk.ListBoxRowNew()
 
 		eventBox, _ := gtk.EventBoxNew()
@@ -669,6 +672,13 @@ func setUpProgramSettingsForm() *gtk.Frame {
 		preferences.ExportXsettingsd = cb4.GetActive()
 	})
 	g.Attach(cb4, 0, 4, 1, 1)
+
+	cb5, _ := gtk.CheckButtonNewWithLabel("~/.config/gtk-4.0/*")
+	cb5.SetActive(preferences.ExportGtk4Symlinks)
+	cb5.Connect("toggled", func() {
+		preferences.ExportGtk4Symlinks = cb5.GetActive()
+	})
+	g.Attach(cb5, 0, 5, 1, 1)
 
 	return frame
 }
