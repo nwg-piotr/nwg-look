@@ -1,8 +1,8 @@
 /*
-GTK3 settings editor adapted to work in the sway / wlroots environment
+GTK settings editor adapted to work in the sway / wlroots environment
 Project: https://github.com/nwg-piotr/nwg-look
 Author's email: nwg.piotr@gmail.com
-Copyright (c) 2022-2024 Piotr Miller & Contributors
+Copyright (c) 2022-2025 Piotr Miller & Contributors
 License: MIT
 */
 
@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "0.2.7"
+const version = "1.0.0"
 
 var (
 	preferences           programSettings
