@@ -680,5 +680,9 @@ func setUpProgramSettingsForm() *gtk.Frame {
 	})
 	g.Attach(cb5, 0, 5, 1, 1)
 
+	btn, _ := gtk.ButtonNewWithLabel(voc["clear"])
+	btn.Connect("clicked", clearGtk4Symlinks)
+	g.Attach(btn, 1, 5, 1, 1)
+
 	return frame
 }
