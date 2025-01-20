@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "1.0.0"
+const version = "1.0.1"
 
 var (
 	preferences           programSettings
@@ -322,8 +322,30 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *applyGs {
-		applyGsettingsFromFile()
+	readGsettings()
+
+	if *applyGs || *exportConfigs {
+		if *applyGs {
+			applyGsettingsFromFile()
+		}
+		if *exportConfigs {
+			if preferences.ExportSettingsIni {
+				saveGtkIni()
+			}
+			if preferences.ExportGtkRc20 {
+				saveGtkRc20()
+			}
+			if preferences.ExportIndexTheme {
+				saveIndexTheme()
+			}
+			if preferences.ExportXsettingsd {
+				saveXsettingsd()
+			}
+			if preferences.ExportGtk4Symlinks {
+				_, gtkThemePaths = getThemeNames()
+				linkGtk4Stuff()
+			}
+		}
 		os.Exit(0)
 	}
 
@@ -337,28 +359,7 @@ func main() {
 		loadGtkConfig()
 	}
 
-	readGsettings()
-
 	gtkSettings, _ = gtk.SettingsGetDefault()
-
-	if *exportConfigs {
-		if preferences.ExportSettingsIni {
-			saveGtkIni()
-		}
-		if preferences.ExportGtkRc20 {
-			saveGtkRc20()
-		}
-		if preferences.ExportIndexTheme {
-			saveIndexTheme()
-		}
-		if preferences.ExportXsettingsd {
-			saveXsettingsd()
-		}
-		if preferences.ExportGtk4Symlinks {
-			linkGtk4Stuff()
-		}
-		os.Exit(0)
-	}
 
 	gladeFile := ""
 	for _, d := range dataDirs {
