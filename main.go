@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "1.0.2"
+const version = "1.0.3"
 
 var (
 	preferences           programSettings
