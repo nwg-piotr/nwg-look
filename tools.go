@@ -958,6 +958,7 @@ func saveIndexTheme() {
 			"Name=Default",
 			"Comment=Default Cursor Theme",
 		}
+		// in hope to fix #90
 		if gsettings.cursorTheme != "default" {
 			lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
 		}
