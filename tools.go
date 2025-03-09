@@ -958,7 +958,9 @@ func saveIndexTheme() {
 			"Name=Default",
 			"Comment=Default Cursor Theme",
 		}
-		lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
+		if gsettings.cursorTheme != "default" {
+			lines = append(lines, fmt.Sprintf("Inherits=%s", gsettings.cursorTheme))
+		}
 		saveTextFile(lines, indexThemeFile)
 	} else {
 		log.Warn("Couldn't find icons folder")
