@@ -858,6 +858,11 @@ func linkGtk4Stuff() {
 		clearGtk4Symlinks()
 
 		// Create symlinks
+		gtk4Dir := filepath.Join(configPath, "gtk-4.0")
+		if !pathExists(gtk4Dir) {
+			makeDir(gtk4Dir)
+		}
+
 		if pathExists(filepath.Join(themePath, "gtk-4.0/gtk.css")) {
 			cmd := exec.Command("ln", "-s", filepath.Join(themePath, "gtk-4.0/gtk.css"), filepath.Join(configPath, "gtk-4.0/gtk.css"))
 			err := cmd.Run()
