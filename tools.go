@@ -130,7 +130,7 @@ func loadGtkConfig() {
 			}
 		}
 	} else {
-		log.Warnf("Could'n find %s", configFile)
+		log.Warnf("Could'nt find %s", configFile)
 	}
 	log.Debugf("gtk-theme-name: %s", gtkConfig.themeName)
 	log.Debugf("gtk-icon-theme-name: %s", gtkConfig.iconThemeName)
