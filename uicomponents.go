@@ -682,6 +682,8 @@ func setUpProgramSettingsForm() *gtk.Frame {
 
 	btn, _ := gtk.ButtonNewWithLabel(voc["clear"])
 	btn.Connect("clicked", clearGtk4Symlinks)
+	fmt.Println(voc)
+	btn.SetTooltipText(voc["clear-gtk4-tooltip"])
 	g.Attach(btn, 1, 5, 1, 1)
 
 	return frame

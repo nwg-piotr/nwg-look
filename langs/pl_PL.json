@@ -3,6 +3,7 @@
   "button": "Przycisk",
   "check-button": "Przycisk wyboru",
   "clear": "Wyczyść",
+  "clear-gtk4-tooltip": "Usuń linki symboliczne i plik settings.ini dla GTK 4.0",
   "close": "Zamknij",
   "color-scheme": "Schemat kolorów",
   "cursor-size": "Rozmiar kursora",

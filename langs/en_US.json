@@ -3,6 +3,7 @@
   "button": "Button",
   "check-button": "Check button",
   "clear": "Clear",
+  "clear-gtk4-tooltip": "Clear GTK4 symlinks and settings.ini",
   "close": "Close",
   "color-scheme": "Color scheme",
   "cursor-size": "Cursor size",
