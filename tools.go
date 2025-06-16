@@ -941,7 +941,7 @@ func linkGtk4Stuff() {
 func clearGtk4Symlinks() {
 	home := os.Getenv("HOME")
 	configPath := filepath.Join(home, ".config")
-	items := []string{"gtk-4.0/gtk.css", "gtk-4.0/gtk-dark.css", "gtk-4.0/assets", "assets"}
+	items := []string{"gtk-4.0/gtk.css", "gtk-4.0/gtk-dark.css", "gtk-4.0/assets", "assets", "gtk-4.0/settings.ini"}
 	for _, item := range items {
 		p := filepath.Join(configPath, item)
 		if pathExists(p) {
