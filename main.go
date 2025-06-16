@@ -21,7 +21,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 )
 
-const version = "1.0.5"
+const version = "1.0.6"
 
 var (
 	preferences           programSettings
@@ -302,7 +302,7 @@ func main() {
 			saveGsettingsBackup()
 
 			if preferences.ExportSettingsIni {
-				saveGtkIni()
+				saveGtkIni3()
 			}
 			if preferences.ExportGtkRc20 {
 				saveGtkRc20()
@@ -315,6 +315,7 @@ func main() {
 			}
 			if preferences.ExportGtk4Symlinks {
 				linkGtk4Stuff()
+				saveGtkIni4()
 			} else {
 				clearGtk4Symlinks()
 			}
@@ -330,7 +331,7 @@ func main() {
 		}
 		if *exportConfigs {
 			if preferences.ExportSettingsIni {
-				saveGtkIni()
+				saveGtkIni3()
 			}
 			if preferences.ExportGtkRc20 {
 				saveGtkRc20()
@@ -344,6 +345,7 @@ func main() {
 			if preferences.ExportGtk4Symlinks {
 				_, gtkThemePaths = getThemeNames()
 				linkGtk4Stuff()
+				saveGtkIni4()
 			}
 		}
 		os.Exit(0)
@@ -428,7 +430,7 @@ func main() {
 		saveGsettingsBackup()
 
 		if preferences.ExportSettingsIni {
-			saveGtkIni()
+			saveGtkIni3()
 		}
 		if preferences.ExportGtkRc20 {
 			saveGtkRc20()
@@ -441,6 +443,7 @@ func main() {
 		}
 		if preferences.ExportGtk4Symlinks {
 			linkGtk4Stuff()
+			saveGtkIni4()
 		}
 		savePreferences()
 	})
