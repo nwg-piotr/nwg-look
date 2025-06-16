@@ -554,7 +554,7 @@ func applyGsettingsFromFile() {
 	}
 }
 
-func saveGtkIni() {
+func saveGtkIni3() {
 	configFile := filepath.Join(configHome(), "gtk-3.0/settings.ini")
 	if !pathExists(configFile) {
 		makeDir(filepath.Join(configHome(), "gtk-3.0/"))
@@ -642,6 +642,36 @@ func saveGtkIni() {
 			lines = append(lines, l)
 		}
 	}
+
+	for _, l := range lines {
+		log.Debug(l)
+	}
+
+	saveTextFile(lines, configFile)
+}
+
+func saveGtkIni4() {
+	configFile := filepath.Join(configHome(), "gtk-4.0/settings.ini")
+	if !pathExists(configFile) {
+		makeDir(filepath.Join(configHome(), "gtk-4.0/"))
+	}
+	log.Infof(">>> Exporting %s", configFile)
+
+	lines := []string{"[Settings]"}
+
+	lines = append(lines, fmt.Sprintf("gtk-theme-name=%s", gsettings.gtkTheme))
+	lines = append(lines, fmt.Sprintf("gtk-icon-theme-name=%s", gsettings.iconTheme))
+	lines = append(lines, fmt.Sprintf("gtk-font-name=%s", gsettings.fontName))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=%s", gsettings.cursorTheme))
+	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gsettings.cursorSize))
+
+	v := 0
+	if gsettings.colorScheme == "prefer-dark" {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-application-prefer-dark-theme=%v", v))
 
 	for _, l := range lines {
 		log.Debug(l)
