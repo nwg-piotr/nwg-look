@@ -1422,8 +1422,6 @@ func detectLang() string {
 }
 
 func loadVocabulary(lang string) map[string]string {
-	var dataDirs []string
-	dataDirs = getDataDirs()
 	for _, d := range dataDirs {
 		langsDir := filepath.Join(d, "/nwg-look/langs/")
 		enUSFile := filepath.Join(langsDir, "en_US.json")

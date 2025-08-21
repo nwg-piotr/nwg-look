@@ -284,6 +284,7 @@ func main() {
 	lang := detectLang()
 	log.Infof("lang: %s", lang)
 
+	dataDirs = getDataDirs()
 	voc = loadVocabulary(lang)
 
 	// initialize gsettings type with default gtk values
@@ -314,6 +315,7 @@ func main() {
 				saveXsettingsd()
 			}
 			if preferences.ExportGtk4Symlinks {
+				_, gtkThemePaths = getThemeNames()
 				linkGtk4Stuff()
 				saveGtkIni4()
 			} else {
@@ -351,7 +353,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	dataDirs = getDataDirs()
 	cursorThemes, cursorThemeNames = getCursorThemes()
 
 	gtk.Init(nil)
