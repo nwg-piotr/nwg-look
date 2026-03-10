@@ -51,6 +51,8 @@ type programSettings struct {
 	ExportIndexTheme   bool `json:"export-index-theme"`
 	ExportXsettingsd   bool `json:"export-xsettingsd"`
 	ExportGtk4Symlinks bool `json:"export-gtk4-symlinks"`
+	ExportFlatpakGTKThemeOverride bool `json:"export-flatpak-gtk-theme-override"`
+	ExportFlatpakIconThemeOverride bool `json:"export-flatpak-icon-theme-override"`
 }
 
 func programSettingsNewWithDefaults() programSettings {
@@ -60,6 +62,9 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportIndexTheme = true
 	p.ExportXsettingsd = true
 	p.ExportGtk4Symlinks = true
+
+	p.ExportFlatpakGTKThemeOverride = false
+    p.ExportFlatpakIconThemeOverride = false
 
 	return p
 }
@@ -445,6 +450,16 @@ func main() {
 		if preferences.ExportGtk4Symlinks {
 			linkGtk4Stuff()
 			saveGtkIni4()
+		}
+		if preferences.ExportFlatpakGTKThemeOverride {
+			overrideFlatpakGTKTheme()
+		} else {
+			unsetFlatpakGTKTheme()
+		}
+		if preferences.ExportFlatpakIconThemeOverride {
+			overrideFlatpakIconTheme()
+		} else {
+			unsetFlatpakIconTheme()
 		}
 		savePreferences()
 	})

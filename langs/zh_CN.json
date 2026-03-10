@@ -50,5 +50,8 @@
     "toolbar-style": "工具栏样式",
     "ui-settings": "界面设置",
     "widgets": "组件",
-    "widget-style-preview": "组件风格预览"
+    "widget-style-preview": "组件风格预览",
+    "flatpak-settings": "Flatpak 设置",
+    "override-flatpak-gtk-theme": "覆盖 Flatpak GTK 主题",
+    "override-flatpak-icon-theme": "覆盖 Flatpak 图标主题"
   }

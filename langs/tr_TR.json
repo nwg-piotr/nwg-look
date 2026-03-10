@@ -50,5 +50,8 @@
     "toolbar-style": "Araç çubuğu tarzı",
     "ui-settings": "UI ayarları",
     "widgets": "Widgetlar",
-    "widget-style-preview": "Widget tarzı önizlemesi"
+    "widget-style-preview": "Widget tarzı önizlemesi",
+    "flatpak-settings": "Flatpak ayarları",
+    "override-flatpak-gtk-theme": "Flatpak GTK Temasını Geçersiz Kıl",
+    "override-flatpak-icon-theme": "Flatpak Simge Temasını Geçersiz Kıl"
 }

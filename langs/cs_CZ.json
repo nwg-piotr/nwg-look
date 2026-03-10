@@ -50,5 +50,8 @@
   "toolbar-style": "Styl panelu nástrojů",
   "ui-settings": "Nastevení uživatelského rozhranní",
   "widgets": "Nástroje",
-  "widget-style-preview": "Náhled stylu nástroje"
+  "widget-style-preview": "Náhled stylu nástroje",
+  "flatpak-settings": "Nastavení Flatpaku",
+  "override-flatpak-gtk-theme": "Přebít GTK motiv Flatpaku",
+  "override-flatpak-icon-theme": "Přebít motiv ikon Flatpaku"
 }

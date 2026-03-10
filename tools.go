@@ -963,6 +963,39 @@ func clearGtk4Symlinks() {
 		}
 	}
 }
+func overrideFlatpakGTKTheme() {
+	theme := gsettings.gtkTheme
+	log.Infof("Overriding flatpak GTK theme to %s...", theme)
+	cmd := exec.Command("flatpak", "override", "--user", "--env", fmt.Sprintf("GTK_THEME=%s", theme))
+	if _, err := cmd.CombinedOutput(); err != nil {
+		log.Warnf("failed to override flatpak gtk theme to %s: %s", theme, err)
+	}
+}
+
+func unsetFlatpakGTKTheme() {
+	log.Info("Removing Flatpak GTK Theme override...")
+	cmd := exec.Command("flatpak", "override", "--user", "--unset-env", "GTK_THEME")
+	if _, err := cmd.CombinedOutput(); err != nil {
+		log.Warnf("failed to unset flatpak gtk theme override: %s", err)
+	}
+}
+
+func overrideFlatpakIconTheme() {
+	theme := gsettings.iconTheme
+	log.Infof("Overriding flatpak Icon theme to %s...", theme)
+	cmd := exec.Command("flatpak", "override", "--user", "--env", fmt.Sprintf("ICON_THEME=%s", theme))
+	if _, err := cmd.CombinedOutput(); err != nil {
+		log.Warnf("failed to override flatpak icon theme to %s: %s", theme, err)
+	}
+}
+
+func unsetFlatpakIconTheme() {
+	log.Info("Removing Flatpak Icon Theme override...")
+	cmd := exec.Command("flatpak", "override", "--user", "--unset-env", "ICON_THEME")
+	if _, err := cmd.CombinedOutput(); err != nil {
+		log.Warnf("failed to unset flatpak icon theme override: %s", err)
+	}
+}
 
 func saveIndexTheme() {
 	home := os.Getenv("HOME")

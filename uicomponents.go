@@ -682,9 +682,30 @@ func setUpProgramSettingsForm() *gtk.Frame {
 
 	btn, _ := gtk.ButtonNewWithLabel(voc["clear"])
 	btn.Connect("clicked", clearGtk4Symlinks)
-	fmt.Println(voc)
 	btn.SetTooltipText(voc["clear-gtk4-tooltip"])
 	g.Attach(btn, 1, 5, 1, 1)
+
+
+	lbl2, _ := gtk.LabelNew("")
+	lbl2.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["flatpak-settings"]))
+	lbl2.SetProperty("halign", gtk.ALIGN_START)
+	g.Attach(lbl2, 0, 6, 1, 1)
+
+
+	cb6, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-gtk-theme"])
+	cb6.SetActive(preferences.ExportFlatpakGTKThemeOverride)
+	cb6.Connect("toggled", func() {
+		preferences.ExportFlatpakGTKThemeOverride = cb6.GetActive()
+	})
+	g.Attach(cb6, 0, 7, 1, 1)
+
+
+	cb7, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-icon-theme"])
+	cb7.SetActive(preferences.ExportFlatpakIconThemeOverride)
+	cb7.Connect("toggled", func() {
+		preferences.ExportFlatpakIconThemeOverride = cb7.GetActive()
+	})
+	g.Attach(cb7, 0, 8, 1, 1)
 
 	return frame
 }

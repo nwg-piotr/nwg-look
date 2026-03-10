@@ -51,5 +51,8 @@
   "toolbar-style": "Styl paska narzędzi",
   "ui-settings": "Ustawienia interfejsu użytkownika",
   "widgets": "Widżety",
-  "widget-style-preview": "Podgląd stylu widżetów"
+  "widget-style-preview": "Podgląd stylu widżetów",
+  "flatpak-settings": "Ustawienia Flatpak",
+  "override-flatpak-gtk-theme": "Zastąp motyw GTK Flatpak",
+  "override-flatpak-icon-theme": "Zastąp motyw ikon Flatpak"
 }

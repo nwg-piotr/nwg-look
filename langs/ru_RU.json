@@ -50,5 +50,8 @@
   "toolbar-style": "Стиль панели инструментов",
   "ui-settings": "Настройки интерфейса",
   "widgets": "Виджеты",
-  "widget-style-preview": "Предпросмотр стиля виджетов"
+  "widget-style-preview": "Предпросмотр стиля виджетов",
+  "flatpak-settings": "Настройки Flatpak",
+  "override-flatpak-gtk-theme": "Переопределить тему GTK Flatpak",
+  "override-flatpak-icon-theme": "Переопределить тему иконок Flatpak"
 }
