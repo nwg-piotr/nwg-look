@@ -1454,6 +1454,13 @@ func detectLang() string {
 	return lang
 }
 
+func flatpakAvailable() bool {
+	if _, err := exec.LookPath("flatpak"); err != nil {
+		return false
+	}
+	return true
+}
+
 func loadVocabulary(lang string) map[string]string {
 	for _, d := range dataDirs {
 		langsDir := filepath.Join(d, "/nwg-look/langs/")

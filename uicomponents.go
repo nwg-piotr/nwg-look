@@ -640,72 +640,84 @@ func setUpProgramSettingsForm() *gtk.Frame {
 	g.SetProperty("vexpand", true)
 	frame.Add(g)
 
+	var row int
+
 	lbl, _ := gtk.LabelNew("")
 	lbl.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["files-to-export"]))
 	lbl.SetProperty("halign", gtk.ALIGN_START)
-	g.Attach(lbl, 0, 0, 1, 1)
+	g.Attach(lbl, 0, row, 1, 1)
+	row++
 
 	cb1, _ := gtk.CheckButtonNewWithLabel("~/.config/gtk-3.0/settings.ini")
 	cb1.SetActive(preferences.ExportSettingsIni)
 	cb1.Connect("toggled", func() {
 		preferences.ExportSettingsIni = cb1.GetActive()
 	})
-	g.Attach(cb1, 0, 1, 1, 1)
+	g.Attach(cb1, 0, row, 1, 1)
+	row++
 
 	cb2, _ := gtk.CheckButtonNewWithLabel("~/.gtkrc-2.0")
 	cb2.SetActive(preferences.ExportGtkRc20)
 	cb2.Connect("toggled", func() {
 		preferences.ExportGtkRc20 = cb2.GetActive()
 	})
-	g.Attach(cb2, 0, 2, 1, 1)
+	g.Attach(cb2, 0, row, 1, 1)
+	row++
 
 	cb3, _ := gtk.CheckButtonNewWithLabel("~/.icons/default/index.theme")
 	cb3.SetActive(preferences.ExportIndexTheme)
 	cb3.Connect("toggled", func() {
 		preferences.ExportIndexTheme = cb3.GetActive()
 	})
-	g.Attach(cb3, 0, 3, 1, 1)
+	g.Attach(cb3, 0, row, 1, 1)
+	row++
 
 	cb4, _ := gtk.CheckButtonNewWithLabel("~/.config/xsettingsd/xsettingsd.conf")
 	cb4.SetActive(preferences.ExportXsettingsd)
 	cb4.Connect("toggled", func() {
 		preferences.ExportXsettingsd = cb4.GetActive()
 	})
-	g.Attach(cb4, 0, 4, 1, 1)
+	g.Attach(cb4, 0, row, 1, 1)
+	row++
 
 	cb5, _ := gtk.CheckButtonNewWithLabel("~/.config/gtk-4.0/*")
 	cb5.SetActive(preferences.ExportGtk4Symlinks)
 	cb5.Connect("toggled", func() {
 		preferences.ExportGtk4Symlinks = cb5.GetActive()
 	})
-	g.Attach(cb5, 0, 5, 1, 1)
+	g.Attach(cb5, 0, row, 1, 1)
 
 	btn, _ := gtk.ButtonNewWithLabel(voc["clear"])
 	btn.Connect("clicked", clearGtk4Symlinks)
 	btn.SetTooltipText(voc["clear-gtk4-tooltip"])
-	g.Attach(btn, 1, 5, 1, 1)
+	g.Attach(btn, 1, row, 1, 1)
+	row++
+
+	if flatpakAvailable() {
+		lbl2, _ := gtk.LabelNew("")
+		lbl2.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["flatpak-settings"]))
+		lbl2.SetProperty("halign", gtk.ALIGN_START)
+		g.Attach(lbl2, 0, row, 1, 1)
+		row++
 
 
-	lbl2, _ := gtk.LabelNew("")
-	lbl2.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["flatpak-settings"]))
-	lbl2.SetProperty("halign", gtk.ALIGN_START)
-	g.Attach(lbl2, 0, 6, 1, 1)
+		cb6, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-gtk-theme"])
+		cb6.SetActive(preferences.ExportFlatpakGTKThemeOverride)
+		cb6.Connect("toggled", func() {
+			preferences.ExportFlatpakGTKThemeOverride = cb6.GetActive()
+		})
+		g.Attach(cb6, 0, row, 1, 1)
+		row++
 
 
-	cb6, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-gtk-theme"])
-	cb6.SetActive(preferences.ExportFlatpakGTKThemeOverride)
-	cb6.Connect("toggled", func() {
-		preferences.ExportFlatpakGTKThemeOverride = cb6.GetActive()
-	})
-	g.Attach(cb6, 0, 7, 1, 1)
-
-
-	cb7, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-icon-theme"])
-	cb7.SetActive(preferences.ExportFlatpakIconThemeOverride)
-	cb7.Connect("toggled", func() {
-		preferences.ExportFlatpakIconThemeOverride = cb7.GetActive()
-	})
-	g.Attach(cb7, 0, 8, 1, 1)
+		cb7, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-icon-theme"])
+		cb7.SetActive(preferences.ExportFlatpakIconThemeOverride)
+		cb7.Connect("toggled", func() {
+			preferences.ExportFlatpakIconThemeOverride = cb7.GetActive()
+		})
+		g.Attach(cb7, 0, row, 1, 1)
+		row++
+	}
 
 	return frame
 }

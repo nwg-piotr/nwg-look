@@ -453,12 +453,12 @@ func main() {
 		}
 		if preferences.ExportFlatpakGTKThemeOverride {
 			overrideFlatpakGTKTheme()
-		} else {
+		} else if flatpakAvailable() {
 			unsetFlatpakGTKTheme()
 		}
 		if preferences.ExportFlatpakIconThemeOverride {
 			overrideFlatpakIconTheme()
-		} else {
+		} else if flatpakAvailable() {
 			unsetFlatpakIconTheme()
 		}
 		savePreferences()
