@@ -53,6 +53,7 @@
   "widgets": "Widgets",
   "widget-style-preview": "Widget style preview",
   "flatpak-settings": "Flatpak settings",
-  "override-flatpak-gtk-theme": "Override flatpak GTK theme",
-  "override-flatpak-icon-theme": "Override flatpak icon theme"
+  "flatpak-override-flatpak-gtk-theme": "Override flatpak GTK theme",
+  "flatpak-override-flatpak-icon-theme": "Override flatpak icon theme",
+  "flatpak-install-current-gtk-theme": "Install current GTK theme"
 }

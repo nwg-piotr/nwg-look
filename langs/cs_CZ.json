@@ -52,6 +52,7 @@
   "widgets": "Nástroje",
   "widget-style-preview": "Náhled stylu nástroje",
   "flatpak-settings": "Nastavení Flatpaku",
-  "override-flatpak-gtk-theme": "Přebít GTK motiv Flatpaku",
-  "override-flatpak-icon-theme": "Přebít motiv ikon Flatpaku"
+  "flatpak-override-flatpak-gtk-theme": "Přepsat GTK motiv Flatpaku",
+  "flatpak-override-flatpak-icon-theme": "Přepsat motiv ikon Flatpaku",
+  "flatpak-install-current-gtk-theme": "Nainstalovat aktuální GTK motiv"
 }

@@ -700,22 +700,28 @@ func setUpProgramSettingsForm() *gtk.Frame {
 		g.Attach(lbl2, 0, row, 1, 1)
 		row++
 
-
-		cb6, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-gtk-theme"])
-		cb6.SetActive(preferences.ExportFlatpakGTKThemeOverride)
+		cb6, _ := gtk.CheckButtonNewWithLabel(voc["flatpak-override-flatpak-gtk-theme"])
+		cb6.SetActive(preferences.FlatpakExportGTKThemeOverride)
 		cb6.Connect("toggled", func() {
-			preferences.ExportFlatpakGTKThemeOverride = cb6.GetActive()
+			preferences.FlatpakExportGTKThemeOverride = cb6.GetActive()
 		})
 		g.Attach(cb6, 0, row, 1, 1)
 		row++
 
-
-		cb7, _ := gtk.CheckButtonNewWithLabel(voc["override-flatpak-icon-theme"])
-		cb7.SetActive(preferences.ExportFlatpakIconThemeOverride)
+		cb7, _ := gtk.CheckButtonNewWithLabel(voc["flatpak-override-flatpak-icon-theme"])
+		cb7.SetActive(preferences.FlatpakExportIconThemeOverride)
 		cb7.Connect("toggled", func() {
-			preferences.ExportFlatpakIconThemeOverride = cb7.GetActive()
+			preferences.FlatpakExportIconThemeOverride = cb7.GetActive()
 		})
 		g.Attach(cb7, 0, row, 1, 1)
+		row++
+
+		cb8, _ := gtk.CheckButtonNewWithLabel(voc["flatpak-install-current-gtk-theme"])
+		cb8.SetActive(preferences.FlatpakInstallCurrentGTKTheme)
+		cb8.Connect("toggled", func() {
+			preferences.FlatpakInstallCurrentGTKTheme = cb8.GetActive()
+		})
+		g.Attach(cb8, 0, row, 1, 1)
 		row++
 	}
 

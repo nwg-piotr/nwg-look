@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/nwg-piotr/nwg-look/stylepak"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gotk3/gotk3/gdk"
@@ -46,13 +47,14 @@ var (
 )
 
 type programSettings struct {
-	ExportSettingsIni  bool `json:"export-settings-ini"`
-	ExportGtkRc20      bool `json:"export-gtkrc-20"`
-	ExportIndexTheme   bool `json:"export-index-theme"`
-	ExportXsettingsd   bool `json:"export-xsettingsd"`
-	ExportGtk4Symlinks bool `json:"export-gtk4-symlinks"`
-	ExportFlatpakGTKThemeOverride bool `json:"export-flatpak-gtk-theme-override"`
-	ExportFlatpakIconThemeOverride bool `json:"export-flatpak-icon-theme-override"`
+	ExportSettingsIni              bool `json:"export-settings-ini"`
+	ExportGtkRc20                  bool `json:"export-gtkrc-20"`
+	ExportIndexTheme               bool `json:"export-index-theme"`
+	ExportXsettingsd               bool `json:"export-xsettingsd"`
+	ExportGtk4Symlinks             bool `json:"export-gtk4-symlinks"`
+	FlatpakExportGTKThemeOverride  bool `json:"flatpak-export-gtk-theme-override"`
+	FlatpakExportIconThemeOverride bool `json:"flatpak-export-icon-theme-override"`
+	FlatpakInstallCurrentGTKTheme  bool `json:"flatpak-install-current-gtk-theme"`
 }
 
 func programSettingsNewWithDefaults() programSettings {
@@ -63,8 +65,9 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportXsettingsd = true
 	p.ExportGtk4Symlinks = true
 
-	p.ExportFlatpakGTKThemeOverride = false
-    p.ExportFlatpakIconThemeOverride = false
+	p.FlatpakExportGTKThemeOverride = false
+	p.FlatpakExportIconThemeOverride = false
+	p.FlatpakInstallCurrentGTKTheme = false
 
 	return p
 }
@@ -451,15 +454,21 @@ func main() {
 			linkGtk4Stuff()
 			saveGtkIni4()
 		}
-		if preferences.ExportFlatpakGTKThemeOverride {
+		if preferences.FlatpakExportGTKThemeOverride {
 			overrideFlatpakGTKTheme()
 		} else if flatpakAvailable() {
 			unsetFlatpakGTKTheme()
 		}
-		if preferences.ExportFlatpakIconThemeOverride {
+		if preferences.FlatpakExportIconThemeOverride {
 			overrideFlatpakIconTheme()
 		} else if flatpakAvailable() {
 			unsetFlatpakIconTheme()
+		}
+
+		if preferences.FlatpakInstallCurrentGTKTheme {
+			if err := stylepak.InstallUserTheme("", nil); err != nil {
+				log.Warnf("failed to install flatpak theme: %s", err)
+			}
 		}
 		savePreferences()
 	})

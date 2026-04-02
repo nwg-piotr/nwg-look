@@ -52,7 +52,8 @@
   "ui-settings": "Ustawienia interfejsu użytkownika",
   "widgets": "Widżety",
   "widget-style-preview": "Podgląd stylu widżetów",
-  "flatpak-settings": "Ustawienia Flatpak",
-  "override-flatpak-gtk-theme": "Zastąp motyw GTK Flatpak",
-  "override-flatpak-icon-theme": "Zastąp motyw ikon Flatpak"
+  "flatpak-settings": "Ustawienia Flatpaka",
+  "flatpak-override-flatpak-gtk-theme": "Nadpisz motyw GTK Flatpaka",
+  "flatpak-override-flatpak-icon-theme": "Nadpisz motyw ikon Flatpaka",
+  "flatpak-install-current-gtk-theme": "Zainstaluj bieżący motyw GTK"
 }

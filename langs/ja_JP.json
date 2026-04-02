@@ -52,6 +52,7 @@
   "widgets": "ウィジェット",
   "widget-style-preview": "ウィジェットスタイル プレビュー",
   "flatpak-settings": "Flatpakの設定",
-  "override-flatpak-gtk-theme": "FlatpakのGTKテーマを上書き",
-  "override-flatpak-icon-theme": "Flatpakのアイコンテーマを上書き"
+  "flatpak-override-flatpak-gtk-theme": "FlatpakのGTKテーマを上書きする",
+  "flatpak-override-flatpak-icon-theme": "Flatpakのアイコンテーマを上書きする",
+  "flatpak-install-current-gtk-theme": "現在のGTKテーマをインストールする"
 }

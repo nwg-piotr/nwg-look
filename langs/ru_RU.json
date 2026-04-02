@@ -52,6 +52,7 @@
   "widgets": "Виджеты",
   "widget-style-preview": "Предпросмотр стиля виджетов",
   "flatpak-settings": "Настройки Flatpak",
-  "override-flatpak-gtk-theme": "Переопределить тему GTK Flatpak",
-  "override-flatpak-icon-theme": "Переопределить тему иконок Flatpak"
+  "flatpak-override-flatpak-gtk-theme": "Переопределить тему GTK для Flatpak",
+  "flatpak-override-flatpak-icon-theme": "Переопределить тему значков Flatpak",
+  "flatpak-install-current-gtk-theme": "Установить текущую тему GTK"
 }
