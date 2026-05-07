@@ -9,11 +9,23 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 )
 
-const gtkThemeVer = "3.22"
+
+const (
+	nwgLookMarker = ".nwg-look"
+)
+
+type themeInstallAction int
+
+const (
+	themeActionFreshInstall themeInstallAction = iota
+	themeActionUpdate
+	themeActionSkip // user-managed, don't touch
+)
 
 // Runner abstracts command execution (useful for testing/mocking)
 type Runner interface {
@@ -41,7 +53,84 @@ func (r ExecRunner) Output(name string, args ...string) ([]byte, error) {
 	return out, nil
 }
 
-// InstallUserTheme converts and installs a GTK theme for the current user.
+func determineInstallAction(themeDir string) (themeInstallAction, error) {
+	if _, err := os.Stat(themeDir); os.IsNotExist(err) {
+		return themeActionFreshInstall, nil
+	} else if err != nil {
+		return 0, fmt.Errorf("stat theme dir %q: %w", themeDir, err)
+	}
+
+	markerPath := filepath.Join(themeDir, nwgLookMarker)
+	if _, err := os.Stat(markerPath); os.IsNotExist(err) {
+		return themeActionSkip, nil
+	} else if err != nil {
+		return 0, fmt.Errorf("stat marker %q: %w", markerPath, err)
+	}
+
+	return themeActionUpdate, nil
+}
+
+func removeStaleThemes(themesDir, currentTheme string) error {
+	entries, err := os.ReadDir(themesDir)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("read themes dir %q: %w", themesDir, err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() || entry.Name() == currentTheme {
+			continue
+		}
+		markerPath := filepath.Join(themesDir, entry.Name(), nwgLookMarker)
+		if _, err := os.Stat(markerPath); err != nil {
+			continue
+		}
+		log.Infof("Removing previously managed theme: %s", entry.Name())
+		if err := os.RemoveAll(filepath.Join(themesDir, entry.Name())); err != nil {
+			return fmt.Errorf("remove previous theme %q: %w", entry.Name(), err)
+		}
+	}
+	return nil
+}
+
+func copyThemeFiles(src, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return fmt.Errorf("read theme dir %q: %w", src, err)
+	}
+
+	copied := 0
+	for _, entry := range entries {
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), "gtk-") {
+			continue
+		}
+		entryDst := filepath.Join(dst, entry.Name())
+		if err := os.MkdirAll(entryDst, 0o755); err != nil {
+			return fmt.Errorf("create dir %q: %w", entryDst, err)
+		}
+		if err := copyDir(filepath.Join(src, entry.Name()), entryDst); err != nil {
+			return fmt.Errorf("copy theme dir %q: %w", entry.Name(), err)
+		}
+		copied++
+		log.Info("Copied theme dir:", entry.Name())
+	}
+
+	if copied == 0 {
+		return fmt.Errorf("no gtk-* directories found in theme %q", src)
+	}
+
+	if data, err := os.ReadFile(filepath.Join(src, "index.theme")); err == nil {
+		if err := os.WriteFile(filepath.Join(dst, "index.theme"), data, 0o644); err != nil {
+			return fmt.Errorf("write index.theme: %w", err)
+		}
+		log.Info("Copied index.theme")
+	}
+
+	return nil
+}
+
 func InstallUserTheme(theme string, runner Runner) error {
 	if runner == nil {
 		runner = ExecRunner{}
@@ -52,11 +141,8 @@ func InstallUserTheme(theme string, runner Runner) error {
 		return fmt.Errorf("resolve home directory: %w", err)
 	}
 
-	cacheHome := getenvDefault("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
 	dataHome := getenvDefault("XDG_DATA_HOME", filepath.Join(home, ".local", "share"))
-	stylepakCache := filepath.Join(cacheHome, "stylepak")
 
-	// Resolve theme if not provided
 	if theme == "" {
 		theme, err = getCurrentGTKTheme(runner)
 		if err != nil {
@@ -64,153 +150,64 @@ func InstallUserTheme(theme string, runner Runner) error {
 		}
 	}
 
-	// Validate theme name
 	if err := validateTheme(theme); err != nil {
 		return err
 	}
 
-	appID := "org.gtk.Gtk3theme." + theme
 	log.Info("Converting theme:", theme)
 
-	// Locate theme path
+	themesDir := filepath.Join(home, ".themes")
+	userThemeDir := filepath.Join(themesDir, theme)
+	markerPath := filepath.Join(userThemeDir, nwgLookMarker)
+
+	// Find system theme path, explicitly excluding ~/.themes to avoid
+	// copying a theme into itself
 	themePath, err := findThemePath(theme, dataHome, home)
 	if err != nil {
 		return fmt.Errorf("locate theme %q: %w", theme, err)
 	}
+	if themePath == userThemeDir {
+		return fmt.Errorf("theme %q is already in ~/.themes and was not installed by nwg-look", theme)
+	}
 	log.Info("Found theme located at:", themePath)
 
-	rootDir := filepath.Join(stylepakCache, theme)
-	repoDir := filepath.Join(rootDir, "repo")
-	buildDir := filepath.Join(rootDir, "build")
-
-	// Clean previous state
-	if err := clean(rootDir, repoDir); err != nil {
-		return fmt.Errorf("cleanup previous build dirs: %w", err)
+	if err := removeStaleThemes(themesDir, theme); err != nil {
+		return fmt.Errorf("remove stale themes: %w", err)
 	}
 
-	if err := os.MkdirAll(repoDir, 0o755); err != nil {
-		return fmt.Errorf("create repo dir %q: %w", repoDir, err)
-	}
-
-	// Initialize OSTree repo
-	if err := runner.Run("ostree", "--repo="+repoDir, "init", "--mode=archive"); err != nil {
-		return fmt.Errorf("initialize ostree repo: %w", err)
-	}
-	if err := runner.Run("ostree", "--repo="+repoDir, "config", "set", "core.min-free-space-percent", "0"); err != nil {
-		return fmt.Errorf("configure ostree repo: %w", err)
-	}
-
-	// Prepare build dir
-	if err := clean(buildDir); err != nil {
-		return fmt.Errorf("cleanup build dir: %w", err)
-	}
-	if err := os.MkdirAll(filepath.Join(buildDir, "files"), 0o755); err != nil {
-		return fmt.Errorf("create build files dir: %w", err)
-	}
-
-	// Detect GTK version
-	gtkVer, err := detectGTKVersion(themePath)
+	action, err := determineInstallAction(userThemeDir)
 	if err != nil {
-		return fmt.Errorf("detect GTK version: %w", err)
+		return err
 	}
 
-	src := filepath.Join(themePath, "gtk-3."+gtkVer)
-	dst := filepath.Join(buildDir, "files")
-
-	if err := copyDir(src, dst); err != nil {
-		return fmt.Errorf("copy theme files from %q to %q: %w", src, dst, err)
+	switch action {
+	case themeActionFreshInstall:
+		log.Infof("Installing theme to ~/.themes/%s", theme)
+		if err := os.MkdirAll(userThemeDir, 0o755); err != nil {
+			return fmt.Errorf("create ~/.themes/%s: %w", theme, err)
+		}
+		if err := copyThemeFiles(themePath, userThemeDir); err != nil {
+			return err
+		}
+		if err := os.WriteFile(markerPath, []byte("managed by nwg-look\n"), 0o644); err != nil {
+			return fmt.Errorf("write nwg-look marker: %w", err)
+		}
+	case themeActionUpdate:
+		log.Infof("Updating existing nwg-look-managed theme at ~/.themes/%s", theme)
+		if err := copyThemeFiles(themePath, userThemeDir); err != nil {
+			return err
+		}
+	case themeActionSkip:
+		log.Infof("~/.themes/%s already exists and was not created by nwg-look, skipping copy", theme)
 	}
 
-	// Write appdata
-	appDataDir := filepath.Join(dst, "share", "appdata")
-	if err := os.MkdirAll(appDataDir, 0o755); err != nil {
-		return fmt.Errorf("create appdata dir: %w", err)
-	}
-
-	appData := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
-<component type="runtime">
-  <id>%s</id>
-  <metadata_license>CC0-1.0</metadata_license>
-  <name>%s GTK Theme</name>
-  <summary>%s (generated via stylepak)</summary>
-</component>`, appID, theme, theme)
-
-	appDataPath := filepath.Join(appDataDir, appID+".appdata.xml")
-	if err := os.WriteFile(appDataPath, []byte(appData), 0o644); err != nil {
-		return fmt.Errorf("write appdata file %q: %w", appDataPath, err)
-	}
-
-	// appstream-compose
-	if err := runner.Run("appstream-compose",
-		"--prefix="+dst,
-		"--basename="+appID,
-		"--origin=flatpak",
-		appID,
+	if err := runner.Run("flatpak", "override", "--user",
+		"--filesystem="+themesDir+":ro",
 	); err != nil {
-		return fmt.Errorf("run appstream-compose: %w", err)
+		return fmt.Errorf("flatpak override ~/.themes: %w", err)
 	}
+	log.Info("Configured flatpak to access ~/.themes")
 
-	// Initial commit
-	if err := runner.Run("ostree", "--repo="+repoDir, "commit", "-b", "base", "--tree=dir="+buildDir); err != nil {
-		return fmt.Errorf("ostree base commit: %w", err)
-	}
-
-	arches, err := getFlatpakArchitectures(runner)
-	if err != nil {
-		return fmt.Errorf("get flatpak architectures: %w", err)
-	}
-
-	var bundles []string
-
-	for _, arch := range arches {
-		bundle := filepath.Join(rootDir, fmt.Sprintf("%s-%s.flatpak", appID, arch))
-
-		if err := clean(buildDir); err != nil {
-			return fmt.Errorf("cleanup build dir for arch %s: %w", arch, err)
-		}
-
-		if err := runner.Run("ostree", "--repo="+repoDir, "checkout", "-U", "base", buildDir); err != nil {
-			return fmt.Errorf("ostree checkout for arch %s: %w", arch, err)
-		}
-
-		metadata := fmt.Sprintf(`[Runtime]
-name=%s
-runtime=%s/%s/%s
-sdk=%s/%s/%s`, appID, appID, arch, gtkThemeVer, appID, arch, gtkThemeVer)
-
-		metaPath := filepath.Join(buildDir, "metadata")
-		if err := os.WriteFile(metaPath, []byte(metadata), 0o644); err != nil {
-			return fmt.Errorf("write metadata for arch %s: %w", arch, err)
-		}
-
-		if err := runner.Run("ostree", "--repo="+repoDir, "commit",
-			"-b", fmt.Sprintf("runtime/%s/%s/%s", appID, arch, gtkThemeVer),
-			"--add-metadata-string", "xa.metadata="+metadata,
-			"--link-checkout-speedup",
-			buildDir,
-		); err != nil {
-			return fmt.Errorf("ostree commit for arch %s: %w", arch, err)
-		}
-
-		if err := runner.Run("flatpak", "build-bundle",
-			"--runtime",
-			"--arch="+arch,
-			repoDir,
-			bundle,
-			appID,
-			gtkThemeVer,
-		); err != nil {
-			return fmt.Errorf("build flatpak bundle for arch %s: %w", arch, err)
-		}
-
-		bundles = append(bundles, bundle)
-	}
-
-	for _, bundle := range bundles {
-		if err := runner.Run("flatpak", "install", "-y", "--user", bundle); err != nil {
-			return fmt.Errorf("install bundle %q: %w", bundle, err)
-		}
-	}
-
+	log.Infof("Successfully installed theme %s", theme)
 	return nil
 }
