@@ -55,5 +55,5 @@
   "flatpak-settings": "Configuración de Flatpak",
   "flatpak-override-flatpak-gtk-theme": "Sobrescribir el tema GTK de Flatpak",
   "flatpak-override-flatpak-icon-theme": "Sobrescribir el tema de iconos de Flatpak",
-  "flatpak-install-current-gtk-theme": "Instalar el tema GTK actual",
+  "flatpak-install-current-gtk-theme": "Instalar el tema GTK actual"
 }
