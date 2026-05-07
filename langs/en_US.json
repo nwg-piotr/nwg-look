@@ -51,5 +51,9 @@
   "toolbar-style": "Toolbar style",
   "ui-settings": "UI settings",
   "widgets": "Widgets",
-  "widget-style-preview": "Widget style preview"
+  "widget-style-preview": "Widget style preview",
+  "flatpak-settings": "Flatpak settings",
+  "flatpak-override-flatpak-gtk-theme": "Override flatpak GTK theme",
+  "flatpak-override-flatpak-icon-theme": "Override flatpak icon theme",
+  "flatpak-install-current-gtk-theme": "Install current GTK theme"
 }
