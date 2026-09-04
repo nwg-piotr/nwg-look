@@ -1443,7 +1443,10 @@ func detectLang() string {
 		defer jsonFile.Close()
 	}
 	if lang == "" {
-		if os.Getenv("LANG") != "" {
+		if os.Getenv("LC_MESSAGES") != "" {
+			lang = strings.Split(os.Getenv("LC_MESSAGES"), ".")[0]
+			log.Debugf("lang '%s' set from the $LC_MESSAGES variable", lang)
+		} else if os.Getenv("LANG") != "" {
 			lang = strings.Split(os.Getenv("LANG"), ".")[0]
 			log.Debugf("lang '%s' set from the $LANG variable", lang)
 		} else {
