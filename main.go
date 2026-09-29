@@ -2,7 +2,7 @@
 GTK settings editor adapted to work in the sway / wlroots environment
 Project: https://github.com/nwg-piotr/nwg-look
 Author's email: nwg.piotr@gmail.com
-Copyright (c) 2022-2025 Piotr Miller & Contributors
+Copyright (c) 2022-2026 Piotr Miller & Contributors
 License: MIT
 */
 
