@@ -20,6 +20,9 @@ but nwg-look is intended to free the user from a few inconveniences:
 - gtk3
 - [xcur2png](https://github.com/eworm-de/xcur2png)
 - gsettings
+- canberra-gtk-play
+
+A GTK module, such as `canberra-gtk-module`, may need to be loaded for sounds to be played across applications.
 
 Depending on your distro, you may also need to install
 [gotk3 dependencies](https://github.com/gotk3/gotk3#installation).
@@ -100,8 +103,3 @@ have been deprecated since GTK 3.10, and the values are ignored.
 - Show menu images
 
 have been deprecated since GTK 3.10, and have no corresponding gsettings values.
-
-- Enable event sounds
-- Enable input feedback sounds
-
-don't seem to change anything in non-GNOME environment.

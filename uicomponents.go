@@ -156,6 +156,57 @@ func setUpCursorThemeListBox(currentCursorTheme string) *gtk.ListBox {
 	return listBox
 }
 
+func setUpSoundThemeListBox(currentSoundTheme string) *gtk.ListBox {
+	listBox, _ := gtk.ListBoxNew()
+	var rowToSelect *gtk.ListBoxRow
+
+	// map[displayName]folderName
+	namesMap := getSoundThemeNames()
+	var displayNames []string
+	for name := range namesMap {
+		displayNames = append(displayNames, name)
+	}
+	sort.Slice(displayNames, func(i, j int) bool {
+		return strings.ToUpper(displayNames[i]) < strings.ToUpper(displayNames[j])
+	})
+
+	for _, name := range displayNames {
+		row, _ := gtk.ListBoxRowNew()
+
+		eventBox, _ := gtk.EventBoxNew()
+		box, _ := gtk.BoxNew(gtk.ORIENTATION_HORIZONTAL, 6)
+		eventBox.Add(box)
+
+		lbl, _ := gtk.LabelNew(name)
+		lbl.SetProperty("margin-start", 6)
+		lbl.SetProperty("margin-end", 6)
+		n := name
+		eventBox.Connect("button-press-event", func() {
+			gtkSettings.SetProperty("gtk-sound-theme-name", namesMap[n])
+			gsettings.soundTheme = namesMap[n]
+		})
+		row.Connect("focus-in-event", func() {
+			gtkSettings.SetProperty("gtk-sound-theme-name", namesMap[n])
+			gsettings.soundTheme = namesMap[n]
+		})
+
+		if namesMap[n] == currentSoundTheme {
+			rowToSelect = row
+		}
+
+		box.PackStart(lbl, false, false, 0)
+
+		row.Add(eventBox)
+		listBox.Add(row)
+	}
+	if rowToSelect != nil {
+		listBox.SelectRow(rowToSelect)
+		rowToFocus = rowToSelect
+	}
+
+	return listBox
+}
+
 func setUpWidgetsPreview() *gtk.Frame {
 	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["widget-style-preview"]))
 	frame.SetLabelAlign(0.5, 0.5)
@@ -519,6 +570,113 @@ func setUpFontSettingsForm() *gtk.Frame {
 	return frame
 }
 
+func setUpSoundsPreview() *gtk.Frame {
+	frame, _ := gtk.FrameNew(fmt.Sprintf("  %s  ", voc["sound-theme-preview"]))
+	frame.SetLabelAlign(0.5, 0.5)
+	frame.SetProperty("margin", 6)
+	frame.SetProperty("valign", gtk.ALIGN_START)
+
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 12)
+	box.SetProperty("margin", 12)
+	box.SetProperty("hexpand", true)
+	frame.Add(box)
+
+	if !canberraAvailable() {
+		lbl, _ := gtk.LabelNew(voc["canberra-not-found"])
+		box.PackStart(lbl, false, false, 0)
+		return frame
+	}
+
+	grid, _ := gtk.GridNew()
+	grid.SetRowSpacing(6)
+	grid.SetColumnSpacing(6)
+	grid.SetColumnHomogeneous(true)
+	grid.SetProperty("halign", gtk.ALIGN_CENTER)
+	box.PackStart(grid, false, false, 0)
+
+	btn, _ := gtk.ButtonNewFromIconName("media-playback-start", gtk.ICON_SIZE_BUTTON)
+	btn.SetLabel(voc["login"])
+	btn.SetProperty("always-show-image", true)
+	btn.Connect("clicked", func() {
+		playSound(gsettings.soundTheme, "desktop-login", "service-login")
+	})
+	grid.Attach(btn, 0, 0, 2, 1)
+
+	sounds := []struct {
+		id    string
+		label string
+	}{
+		{"bell", voc["bell"]},
+		{"dialog-information", voc["information"]},
+		{"dialog-warning", voc["warning"]},
+		{"dialog-error", voc["error"]},
+	}
+	for i, s := range sounds {
+		btn, _ := gtk.ButtonNewFromIconName("media-playback-start", gtk.ICON_SIZE_BUTTON)
+		btn.SetLabel(s.label)
+		btn.SetProperty("always-show-image", true)
+		id := s.id
+		btn.Connect("clicked", func() {
+			playSound(gsettings.soundTheme, id)
+		})
+		grid.Attach(btn, i%2, i/2+1, 1, 1)
+	}
+
+	return frame
+}
+
+func setUpSoundEffectsForm() *gtk.Box {
+	box, _ := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 6)
+	box.SetProperty("margin", 12)
+	box.SetProperty("hexpand", true)
+	box.SetProperty("vexpand", true)
+	box.SetProperty("valign", gtk.ALIGN_START)
+
+	lbl, _ := gtk.LabelNew("")
+	lbl.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["sound-effects"]))
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	box.PackStart(lbl, false, false, 0)
+
+	cbEventSounds, _ := gtk.CheckButtonNewWithLabel(voc["enable-event-sounds"])
+	cbEventSounds.SetActive(gsettings.eventSounds)
+	cbEventSounds.Connect("toggled", func() {
+		gsettings.eventSounds = cbEventSounds.GetActive()
+		gtkConfig.enableEventSounds = cbEventSounds.GetActive()
+	})
+	box.PackStart(cbEventSounds, false, false, 0)
+
+	cbInputSounds, _ := gtk.CheckButtonNewWithLabel(voc["enable-input-feedback-sounds"])
+	cbInputSounds.SetActive(gsettings.inputFeedbackSounds)
+	cbInputSounds.Connect("toggled", func() {
+		gsettings.inputFeedbackSounds = cbInputSounds.GetActive()
+		gtkConfig.enableInputFeedbackSounds = cbInputSounds.GetActive()
+	})
+	box.PackStart(cbInputSounds, false, false, 0)
+
+	lbl, _ = gtk.LabelNew(voc["sound-module-note"])
+	lbl.SetLineWrap(true)
+	lbl.SetMaxWidthChars(1)
+	lbl.SetProperty("xalign", 0)
+	ctx, _ := lbl.GetStyleContext()
+	ctx.AddClass("dim-label")
+	box.PackStart(lbl, false, false, 0)
+
+	lbl, _ = gtk.LabelNew("")
+	lbl.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["error-bell"]))
+	lbl.SetProperty("halign", gtk.ALIGN_START)
+	lbl.SetProperty("margin-top", 6)
+	box.PackStart(lbl, false, false, 0)
+
+	cbErrorBell, _ := gtk.CheckButtonNewWithLabel(voc["enable-error-bell"])
+	cbErrorBell.SetActive(gtkConfig.errorBell)
+	cbErrorBell.Connect("toggled", func() {
+		gtkConfig.errorBell = cbErrorBell.GetActive()
+	})
+	box.PackStart(cbErrorBell, false, false, 0)
+
+	return box
+}
+
 func setUpOtherSettingsForm() *gtk.Frame {
 	// We won't be applying these properties to gtk.Settings for preview,
 	// as they remain unchanged in once open window.
@@ -603,27 +761,6 @@ func setUpOtherSettingsForm() *gtk.Frame {
 		gtkConfig.menuImages = cbMnu.GetActive()
 	})
 	g.Attach(cbMnu, 0, 4, 1, 1)
-
-	lbl, _ = gtk.LabelNew("")
-	lbl.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["sound-effects"]))
-	lbl.SetProperty("halign", gtk.ALIGN_START)
-	g.Attach(lbl, 0, 5, 1, 1)
-
-	cbEventSounds, _ := gtk.CheckButtonNewWithLabel(voc["enable-event-sounds"])
-	cbEventSounds.SetActive(gsettings.eventSounds)
-	cbEventSounds.Connect("toggled", func() {
-		gsettings.eventSounds = cbEventSounds.GetActive()
-		gtkConfig.enableEventSounds = cbEventSounds.GetActive()
-	})
-	g.Attach(cbEventSounds, 0, 6, 1, 1)
-
-	cbInputSounds, _ := gtk.CheckButtonNewWithLabel(voc["enable-input-feedback-sounds"])
-	cbInputSounds.SetActive(gsettings.inputFeedbackSounds)
-	cbInputSounds.Connect("toggled", func() {
-		gsettings.inputFeedbackSounds = cbInputSounds.GetActive()
-		gtkConfig.enableInputFeedbackSounds = cbInputSounds.GetActive()
-	})
-	g.Attach(cbInputSounds, 0, 7, 2, 1)
 
 	return frame
 }

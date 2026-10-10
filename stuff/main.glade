@@ -51,6 +51,13 @@
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="item-sounds">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Sounds</property>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="item-other">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
