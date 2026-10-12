@@ -41,6 +41,7 @@ var (
 	grid                  *gtk.Grid
 	preview               *gtk.Frame
 	cursorSizeSelector    *gtk.Box
+	soundEffectsSelector  *gtk.Box
 	rowToFocus            *gtk.ListBoxRow
 	voc                   map[string]string
 	gtkThemePaths         map[string]string // theme name to path
@@ -82,8 +83,10 @@ type gtkConfigProperties struct {
 	toolbarIconSize            string
 	buttonImages               bool
 	menuImages                 bool
+	soundThemeName             string
 	enableEventSounds          bool
 	enableInputFeedbackSounds  bool
+	errorBell                  bool
 	xftAntialias               int
 	fontAntialiasing           string
 	xftDpi                     int
@@ -105,8 +108,10 @@ func gtkConfigPropertiesNewWithDefaults() gtkConfigProperties {
 	s.toolbarIconSize = "GTK_ICON_SIZE_LARGE_TOOLBAR" // ignored
 	s.buttonImages = false                            // deprecated
 	s.menuImages = false                              // deprecated
+	s.soundThemeName = "freedesktop"
 	s.enableEventSounds = true
 	s.enableInputFeedbackSounds = true
+	s.errorBell = true
 	s.xftAntialias = -1
 	s.applicationPreferDarkTheme = false
 
@@ -139,6 +144,7 @@ type gsettingsValues struct {
 	textScalingFactor float64
 	colorScheme       string
 	// org.gnome.desktop.sound
+	soundTheme          string
 	eventSounds         bool
 	inputFeedbackSounds bool
 }
@@ -156,6 +162,7 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.fontAntialiasing = "grayscale"
 	g.fontRgbaOrder = "rgb"
 	g.textScalingFactor = 1.0
+	g.soundTheme = "freedesktop"
 	g.eventSounds = true
 	g.inputFeedbackSounds = false
 	g.colorScheme = "default"
@@ -235,6 +242,27 @@ func displayFontSettingsForm() {
 	scrolledWindow.Hide()
 }
 
+func displaySoundThemes() {
+	destroyContent()
+	rowToFocus = nil
+
+	listBox = setUpSoundThemeListBox(gsettings.soundTheme)
+	viewport.Add(listBox)
+	menuBar.Deactivate()
+	if rowToFocus != nil {
+		rowToFocus.GrabFocus()
+	}
+
+	preview = setUpSoundsPreview()
+	grid.Attach(preview, 1, 1, 1, 1)
+
+	soundEffectsSelector = setUpSoundEffectsForm()
+	grid.Attach(soundEffectsSelector, 1, 2, 1, 1)
+
+	viewport.ShowAll()
+	grid.ShowAll()
+}
+
 func displayOtherSettingsForm() {
 	destroyContent()
 
@@ -267,6 +295,9 @@ func destroyContent() {
 	}
 	if cursorSizeSelector != nil {
 		cursorSizeSelector.Destroy()
+	}
+	if soundEffectsSelector != nil {
+		soundEffectsSelector.Destroy()
 	}
 }
 
@@ -418,13 +449,17 @@ func main() {
 	item4.SetLabel(voc["font"])
 	item4.Connect("button-release-event", displayFontSettingsForm)
 
-	item5, _ := getMenuItem(builder, "item-other")
-	item5.SetLabel(voc["other"])
-	item5.Connect("button-release-event", displayOtherSettingsForm)
+	item5, _ := getMenuItem(builder, "item-sounds")
+	item5.SetLabel(voc["sounds"])
+	item5.Connect("button-release-event", displaySoundThemes)
 
-	item6, _ := getMenuItem(builder, "item-preferences")
-	item6.SetLabel(voc["preferences"])
-	item6.Connect("button-release-event", displayProgramSettingsForm)
+	item6, _ := getMenuItem(builder, "item-other")
+	item6.SetLabel(voc["other"])
+	item6.Connect("button-release-event", displayOtherSettingsForm)
+
+	item7, _ := getMenuItem(builder, "item-preferences")
+	item7.SetLabel(voc["preferences"])
+	item7.Connect("button-release-event", displayProgramSettingsForm)
 
 	btnClose, _ := getButton(builder, "btn-close")
 	btnClose.SetLabel(voc["close"])

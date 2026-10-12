@@ -110,10 +110,14 @@ func loadGtkConfig() {
 					gtkConfig.buttonImages = value == "1"
 				case "gtk-menu-images":
 					gtkConfig.menuImages = value == "1"
+				case "gtk-sound-theme-name":
+					gtkConfig.soundThemeName = value
 				case "gtk-enable-event-sounds":
 					gtkConfig.enableEventSounds = value == "1"
 				case "gtk-enable-input-feedback-sounds":
 					gtkConfig.enableInputFeedbackSounds = value == "1"
+				case "gtk-error-bell":
+					gtkConfig.errorBell = value == "1"
 				case "gtk-xft-antialias":
 					gtkConfig.xftAntialias = intValue(value)
 				case "gtk-xft-hinting":
@@ -141,8 +145,10 @@ func loadGtkConfig() {
 	log.Debugf("gtk-toolbar-icon-size: %s", gtkConfig.toolbarIconSize)
 	log.Debugf("gtk-button-images: %v", gtkConfig.buttonImages)
 	log.Debugf("gtk-menu-images: %v", gtkConfig.menuImages)
+	log.Debugf("gtk-sound-theme-name: %s", gtkConfig.soundThemeName)
 	log.Debugf("gtk-enable-event-sounds: %v", gtkConfig.enableEventSounds)
 	log.Debugf("gtk-enable-input-feedback-sounds: %v", gtkConfig.enableInputFeedbackSounds)
+	log.Debugf("gtk-error-bell: %v", gtkConfig.errorBell)
 	log.Debugf("gtk-xft-antialias: %v", gtkConfig.xftAntialias)
 	log.Debugf("gtk-xft-hinting: %v", gtkConfig.xftHinting)
 	log.Debugf("gtk-xft-hintstyle: %v", gtkConfig.xftHintstyle)
@@ -277,6 +283,15 @@ func readGsettings() {
 			gsettings.colorScheme)
 	}
 
+	val, err = getGsettingsValue("org.gnome.desktop.sound", "theme-name")
+	if err == nil {
+		gsettings.soundTheme = val
+		log.Infof("theme-name: %s", gsettings.soundTheme)
+	} else {
+		log.Warnf("Couldn't read theme-name, leaving default %s",
+			gsettings.soundTheme)
+	}
+
 	val, err = getGsettingsValue("org.gnome.desktop.sound", "event-sounds")
 	if err == nil {
 		if val == "true" {
@@ -332,7 +347,7 @@ func saveGsettingsBackup() {
 			log.Warnf("Couldn't get gsettings key: %s", key)
 		}
 	}
-	for _, key := range []string{"event-sounds", "input-feedback-sounds"} {
+	for _, key := range []string{"theme-name", "event-sounds", "input-feedback-sounds"} {
 		val, err := getGsettingsValue("org.gnome.desktop.sound", key)
 		if err == nil {
 			line := fmt.Sprintf("%s=%s", key, val)
@@ -465,6 +480,14 @@ func applyGsettings() {
 	gnomeSchema = "org.gnome.desktop.sound"
 	log.Infof(">> %s", gnomeSchema)
 
+	cmd = exec.Command("gsettings", "set", gnomeSchema, "theme-name", gsettings.soundTheme)
+	err = cmd.Run()
+	if err != nil {
+		log.Warnf("theme-name: %s %s", gsettings.soundTheme, err)
+	} else {
+		log.Infof("theme-name: %s OK", gsettings.soundTheme)
+	}
+
 	if gsettings.eventSounds {
 		val = "true"
 	} else {
@@ -537,6 +560,8 @@ func applyGsettingsFromFile() {
 						if err == nil {
 							gsettings.textScalingFactor = v
 						}
+					case "theme-name":
+						gsettings.soundTheme = value
 					case "event-sounds":
 						gsettings.eventSounds = value == "true"
 					case "input-feedback-sounds":
@@ -586,6 +611,8 @@ func saveGtkIni3() {
 	}
 	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
 
+	lines = append(lines, fmt.Sprintf("gtk-sound-theme-name=%s", gsettings.soundTheme))
+
 	if gsettings.eventSounds {
 		v = 1
 	} else {
@@ -599,6 +626,13 @@ func saveGtkIni3() {
 		v = 0
 	}
 	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
+
+	if gtkConfig.errorBell {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-error-bell=%v", v))
 
 	if gsettings.fontAntialiasing != "none" {
 		v = 1
@@ -664,8 +698,14 @@ func saveGtkIni4() {
 	lines = append(lines, fmt.Sprintf("gtk-font-name=%s", gsettings.fontName))
 	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-name=%s", gsettings.cursorTheme))
 	lines = append(lines, fmt.Sprintf("gtk-cursor-theme-size=%v", gsettings.cursorSize))
+	lines = append(lines, fmt.Sprintf("gtk-sound-theme-name=%s", gsettings.soundTheme))
 
 	v := 0
+	if gtkConfig.errorBell {
+		v = 1
+	}
+	lines = append(lines, fmt.Sprintf("gtk-error-bell=%v", v))
+
 	if gsettings.colorScheme == "prefer-dark" {
 		v = 1
 	} else {
@@ -691,8 +731,10 @@ func isSupported(line string) bool {
 		"gtk-toolbar-icon-size",
 		"gtk-button-images",
 		"gtk-menu-images",
+		"gtk-sound-theme-name",
 		"gtk-enable-event-sounds",
 		"gtk-enable-input-feedback-sounds",
+		"gtk-error-bell",
 		"gtk-xft-antialias",
 		"gtk-xft-hinting",
 		"gtk-xft-hintstyle",
@@ -745,6 +787,8 @@ func saveGtkRc20() {
 	}
 	lines = append(lines, fmt.Sprintf("gtk-menu-images=%v", v))
 
+	lines = append(lines, fmt.Sprintf("gtk-sound-theme-name=\"%s\"", gsettings.soundTheme))
+
 	if gsettings.eventSounds {
 		v = 1
 	} else {
@@ -758,6 +802,13 @@ func saveGtkRc20() {
 		v = 0
 	}
 	lines = append(lines, fmt.Sprintf("gtk-enable-input-feedback-sounds=%v", v))
+
+	if gtkConfig.errorBell {
+		v = 1
+	} else {
+		v = 0
+	}
+	lines = append(lines, fmt.Sprintf("gtk-error-bell=%v", v))
 
 	if gsettings.fontAntialiasing != "none" {
 		v = 1
@@ -813,6 +864,7 @@ func saveXsettingsd() {
 	lines = append(lines, fmt.Sprintf("Net/ThemeName \"%s\"", gsettings.gtkTheme))
 	lines = append(lines, fmt.Sprintf("Net/IconThemeName \"%s\"", gsettings.iconTheme))
 	lines = append(lines, fmt.Sprintf("Gtk/CursorThemeName \"%s\"", gsettings.cursorTheme))
+	lines = append(lines, fmt.Sprintf("Net/SoundThemeName \"%s\"", gsettings.soundTheme))
 
 	var v int
 	if gsettings.eventSounds {
@@ -827,7 +879,7 @@ func saveXsettingsd() {
 	} else {
 		v = 0
 	}
-	lines = append(lines, fmt.Sprintf("EnableInputFeedbackSounds %v", v))
+	lines = append(lines, fmt.Sprintf("Net/EnableInputFeedbackSounds %v", v))
 
 	if gsettings.fontAntialiasing != "none" {
 		v = 1
@@ -1184,6 +1236,48 @@ func getCursorThemes() (map[string]string, map[string]string) {
 	return name2path, name2FolderName
 }
 
+// returns map[displayName]folderName
+func getSoundThemeNames() map[string]string {
+	var dirs []string
+	name2folderName := make(map[string]string)
+
+	// get sound theme dirs
+	for _, dir := range dataDirs {
+		if pathExists(filepath.Join(dir, "sounds")) {
+			dirs = append(dirs, filepath.Join(dir, "sounds"))
+		}
+	}
+
+	home := os.Getenv("HOME")
+	if home != "" {
+		if pathExists(filepath.Join(home, ".sounds")) {
+			dirs = append(dirs, filepath.Join(home, ".sounds"))
+		}
+	}
+
+	for _, d := range dirs {
+		files, err := listFiles(d)
+		if err == nil {
+			for _, f := range files {
+				if f.IsDir() {
+					name, _, err := iconThemeName(filepath.Join(d, f.Name()))
+					if err == nil {
+						if name == "" {
+							name = f.Name()
+						}
+						if _, ok := name2folderName[name]; !ok {
+							name2folderName[name] = f.Name()
+							log.Debugf("Sound theme found: %s", name)
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return name2folderName
+}
+
 func dataHome() string {
 	xdgDataHome := os.Getenv("XDG_DATA_HOME")
 	if xdgDataHome != "" {
@@ -1462,6 +1556,25 @@ func flatpakAvailable() bool {
 		return false
 	}
 	return true
+}
+
+func canberraAvailable() bool {
+	if _, err := exec.LookPath("canberra-gtk-play"); err != nil {
+		return false
+	}
+	return true
+}
+
+func playSound(theme string, ids ...string) {
+	go func() {
+		for _, id := range ids {
+			cmd := exec.Command("canberra-gtk-play", "-i", id, fmt.Sprintf("--property=canberra.xdg-theme.name=%s", theme))
+			if err := cmd.Run(); err == nil {
+				return
+			}
+		}
+		log.Warnf("Couldn't play sound '%s' from theme '%s'", strings.Join(ids, "', '"), theme)
+	}()
 }
 
 func loadVocabulary(lang string) map[string]string {
