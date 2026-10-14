@@ -53,6 +53,7 @@ type programSettings struct {
 	ExportIndexTheme               bool `json:"export-index-theme"`
 	ExportXsettingsd               bool `json:"export-xsettingsd"`
 	ExportGtk4Symlinks             bool `json:"export-gtk4-symlinks"`
+	ExportNwgHelloSoundConfig      bool `json:"export-nwg-hello-sound-config"`
 	FlatpakExportGTKThemeOverride  bool `json:"flatpak-export-gtk-theme-override"`
 	FlatpakExportIconThemeOverride bool `json:"flatpak-export-icon-theme-override"`
 	FlatpakInstallCurrentGTKTheme  bool `json:"flatpak-install-current-gtk-theme"`
@@ -65,7 +66,7 @@ func programSettingsNewWithDefaults() programSettings {
 	p.ExportIndexTheme = true
 	p.ExportXsettingsd = true
 	p.ExportGtk4Symlinks = true
-
+	p.ExportNwgHelloSoundConfig = true
 	p.FlatpakExportGTKThemeOverride = false
 	p.FlatpakExportIconThemeOverride = false
 	p.FlatpakInstallCurrentGTKTheme = false
@@ -168,6 +169,11 @@ func gsettingsNewWithDefaults() gsettingsValues {
 	g.colorScheme = "default"
 
 	return g
+}
+
+type nwgHelloSoundConfig struct {
+	GtkSoundThemeName    string `json:"gtk-sound-theme-name"`
+	GtkEnableEventSounds bool   `json:"gtk-enable-event-sounds"`
 }
 
 func displayThemes() {
@@ -360,6 +366,9 @@ func main() {
 			} else {
 				clearGtk4Symlinks()
 			}
+			if preferences.ExportNwgHelloSoundConfig {
+				exportNwgHelloSoundConfig()
+			}
 		}
 		os.Exit(0)
 	}
@@ -387,6 +396,9 @@ func main() {
 				_, gtkThemePaths = getThemeNames()
 				linkGtk4Stuff()
 				saveGtkIni4()
+			}
+			if preferences.ExportNwgHelloSoundConfig {
+				exportNwgHelloSoundConfig()
 			}
 		}
 		os.Exit(0)
@@ -488,6 +500,9 @@ func main() {
 		if preferences.ExportGtk4Symlinks {
 			linkGtk4Stuff()
 			saveGtkIni4()
+		}
+		if preferences.ExportNwgHelloSoundConfig {
+			exportNwgHelloSoundConfig()
 		}
 		if preferences.FlatpakExportGTKThemeOverride {
 			overrideFlatpakGTKTheme()

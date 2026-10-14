@@ -28,6 +28,10 @@ func configHome() string {
 func loadPreferences() {
 	cH := configHome()
 	preferencesFile := filepath.Join(cH, "/nwg-look/config")
+
+	// Set defaults to avoid empty values
+	preferences = programSettingsNewWithDefaults()
+
 	if !pathExists(preferencesFile) {
 		log.Infof("%s file not found, creating", preferencesFile)
 		makeDir(filepath.Join(cH, "/nwg-look/"))
@@ -1631,4 +1635,35 @@ func loadVocabulary(lang string) map[string]string {
 	log.Errorf("Couldn't load the basic lang file")
 	os.Exit(1)
 	return nil
+}
+
+func exportNwgHelloSoundConfig() {
+	cacheDir := "/var/cache/nwg-hello"
+	if pathExists(cacheDir) {
+		cfg := nwgHelloSoundConfig{
+			GtkSoundThemeName:    gsettings.soundTheme,
+			GtkEnableEventSounds: gsettings.eventSounds,
+		}
+		jsonData, err := json.MarshalIndent(cfg, "", "  ")
+		if err != nil {
+			log.Warnf("Failed to marshal nwg-hello sound config: %s", err)
+			return
+		}
+
+		soundFile := filepath.Join(cacheDir, "sound.json")
+		log.Infof(">>> Exporting %s", soundFile)
+		err = os.WriteFile(soundFile, jsonData, 0664)
+		if err != nil {
+			log.Warnf("Couldn't export %s: %s", soundFile, err)
+		}
+	}
+}
+
+func isWritable(path string) bool {
+	file, err := os.OpenFile(path, os.O_WRONLY, 0)
+	if err != nil {
+		return false
+	}
+	file.Close()
+	return true
 }
