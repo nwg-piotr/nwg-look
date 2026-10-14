@@ -50,6 +50,7 @@
   "slight": "Slight",
   "small": "Small",
   "sound-effects": "Sound effects",
+  "sound-json-absent": "File /var/cache/nwg-hello/sound.json not found (requires nwg-hello installed)",
   "sound-module-note": "A GTK module, such as canberra-gtk-module, may need to be loaded for sounds to be played across applications",
   "sound-theme-preview": "Sound theme preview",
   "sounds": "Sounds",

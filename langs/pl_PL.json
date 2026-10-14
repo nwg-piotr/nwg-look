@@ -49,6 +49,7 @@
   "slight": "Lekki",
   "small": "Mały",
   "sound-effects": "Efekty dźwiękowe",
+  "sound-json-absent": "Brak pliku /var/cache/nwg-hello/sound.json (wymaga instalacji nwg-hello)",
   "sound-module-note": "Moduł GTK jak canberra-gtk-module powinien być załadowany, by aplikacje mogły odtwarzać dźwięki",
   "sound-theme-preview": "Podgląd tematu dźwiękowego",
   "sounds": "Dźwięki",

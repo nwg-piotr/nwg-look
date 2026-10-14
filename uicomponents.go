@@ -830,6 +830,20 @@ func setUpProgramSettingsForm() *gtk.Frame {
 	g.Attach(btn, 1, row, 1, 1)
 	row++
 
+	cbHello, _ := gtk.CheckButtonNewWithLabel("/var/cache/nwg-hello/sound.json")
+	fileExists := pathExists("/var/cache/nwg-hello/sound.json")
+	cbHello.SetSensitive(fileExists)
+	if !fileExists {
+		cbHello.SetTooltipText(voc["sound-json-absent"])
+	} else {
+		cbHello.SetActive(preferences.ExportNwgHelloSoundConfig)
+	}
+	cbHello.Connect("toggled", func() {
+		preferences.ExportNwgHelloSoundConfig = cbHello.GetActive()
+	})
+	g.Attach(cbHello, 0, row, 1, 1)
+	row++
+
 	if flatpakAvailable() {
 		lbl2, _ := gtk.LabelNew("")
 		lbl2.SetMarkup(fmt.Sprintf("<b>%s</b>", voc["flatpak-settings"]))
